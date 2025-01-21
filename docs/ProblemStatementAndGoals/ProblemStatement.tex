@@ -3,14 +3,11 @@
 \usepackage{tabularx}
 \usepackage{booktabs}
 
-\title{Problem Statement and Goals\\\progname}
+\title{Problem Statement and Goals\\2D Robot Arms for Path Planning}
 
-\author{\authname}
+\author{\Ziyang Fang}
 
 \date{}
-
-\input{../Comments}
-\input{../Common}
 
 \begin{document}
 
@@ -22,72 +19,73 @@
 \toprule
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-Date1 & Name(s) & Description of changes\\
-Date2 & Name(s) & Description of changes\\
-... & ... & ...\\
+2025-01-20 & Ziyang Fang & Initial the document.\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \section{Problem Statement}
 
-\wss{You should check your problem statement with the
-\href{https://github.com/smiths/capTemplate/blob/main/docs/Checklists/ProbState-Checklist.pdf}
-{problem statement checklist}.} 
-
-\wss{You can change the section headings, as long as you include the required
-information.}
-
 \subsection{Problem}
+The project involves developing a framework for distance-geometric representation of 2D (planar) robot arms to facilitate path planning in environments with circular obstacles. Unlike traditional inverse kinematics (IK) methods, the proposed approach uses a geometric graph representation of the manipulator and formulates the IK problem as a distance-based graph problem. The goal is to determine the joint positions and angles along a feasible path that avoids obstacles and satisfies the goal configuration.
 
 \subsection{Inputs and Outputs}
+\textbf{Inputs:}
+\begin{itemize}
+    \item Environment: Circular obstacles defined by positions (x,y) and radius.
+    \item Robot arm: Number of joints and their respective lengths.
+    \item Initial pose: Configuration of the robot arm at the start.
+    \item Goal: Desired end-effector position or pose.
+    \item Number of poses: Initial value for the number of intermediate poses along the path.
+\end{itemize}
 
-\wss{Characterize the problem in terms of ``high level'' inputs and outputs.  
-Use abstraction so that you can avoid details.}
+\textbf{Outputs:}
+\begin{itemize}
+    \item Distance-geometric representation: Joint positions at each time step.
+    \item Angular representation: Joint angles along the path to the goal.
+\end{itemize}
 
 \subsection{Stakeholders}
+\begin{itemize}
+    \item Researchers and developers in robotics and motion planning.
+    \item Robotics engineers working on manipulators and autonomous systems.
+    \item End users interested in robust and scalable IK solutions.
+\end{itemize}
 
 \subsection{Environment}
-
-\wss{Hardware and software environment}
+\textbf{Hardware:} Simulation environment.\\
+\textbf{Software:} Python or MATLAB-based implementation, integrating with existing libraries include GraphIK and Convex Iteration-based solvers.
 
 \section{Goals}
+\begin{itemize}
+    \item Develop a framework that generalizes to various 2D robotic manipulators.
+    \item Ensure accurate and efficient path planning through distance-geometric representations.
+    \item Validate the approach using benchmark problems and compare with traditional IK solvers.
+\end{itemize}
 
 \section{Stretch Goals}
+\begin{itemize}
+    \item Extend the framework to include angular velocity and acceleration calculations.
+    \item Incorporate additional obstacle types or dynamic obstacles.
+    \item Optimize the algorithm for real-time applications.
+    \item Extend the framework to handle 3D robot arms, enabling path planning in three-dimensional space.
+    \item Enable real-world testing on physical robotic systems to validate the algorithm’s practical applicability and performance.
+    \item Achieve higher computational efficiency compared to existing solvers, demonstrating faster convergence and lower computational resource usage.
+\end{itemize}
+
 
 \section{Challenge Level and Extras}
+\textbf{Challenge Level:} General.\\
+\textbf{Rationale:}
+\begin{itemize}
+    \item This is a problem with a general-level challenge. 
+    \item It requires a solid understanding of robotics kinematics, inverse kinematics solving techniques, and convex optimization theories. 
+    \item Solving this problem involves integrating these theoretical foundations into a path-planning framework for planar manipulators, with a focus on handling complex configurations and constrained environments effectively.
+\end{itemize}
 
-\wss{State your expected challenge level (advanced, general or basic).  The
-challenge can come through the required domain knowledge, the implementation or
-something else.  Usually the greater the novelty of a project the greater its
-challenge level.  You should include your rationale for the selected level.
-Approval of the level will be part of the discussion with the instructor for
-approving the project.  The challenge level, with the approval (or request) of
-the instructor, can be modified over the course of the term.}
-
-\wss{Teams may wish to include extras as either potential bonus grades, or to
-make up for a less advanced challenge level.  Potential extras include usability
-testing, code walkthroughs, user documentation, formal proof, GenderMag
-personas, Design Thinking, etc.  Normally the maximum number of extras will be
-two.  Approval of the extras will be part of the discussion with the instructor
-for approving the project.  The extras, with the approval (or request) of the
-instructor, can be modified over the course of the term.}
-
-\newpage{}
-
-\section*{Appendix --- Reflection}
-
-\wss{Not required for CAS 741}
-
-\input{../Reflection.tex}
-
-\begin{enumerate}
-    \item What went well while writing this deliverable? 
-    \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
-    \item How did you and your team adjust the scope of your goals to ensure
-    they are suitable for a Capstone project (not overly ambitious but also of
-    appropriate complexity for a senior design project)?
-\end{enumerate}  
+\textbf{Extras:}
+\begin{itemize}
+    \item Provide user manual for researchers and engineers.
+\end{itemize}
 
 \end{document}
