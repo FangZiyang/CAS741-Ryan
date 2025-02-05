@@ -572,8 +572,8 @@ Equation&
 Description & 
 The forward kinematics equations describe the position of the end-effector in Cartesian coordinates given the joint angles and link lengths.
 \\
-& $x, y$ are the Cartesian coordinates of the end-effector (\si{\centi\metre}).\\
-& $L_1, L_2$ are the lengths of the arm’s links (\si{\centi\metre}).\\
+& $x, y$ are the Cartesian coordinates of the end-effector (\si{\milli\metre}).\\
+& $L_1, L_2$ are the lengths of the arm’s links (\si{\milli\metre}).\\
 & $\theta_1, \theta_2$ are the joint angles (radians).\\
 & Assumptions:
 \begin{itemize}
@@ -644,8 +644,8 @@ Description &
 Forward kinematics describes how the end-effector position in Cartesian coordinates $(x, y)$ is computed as a function of the joint angles $\theta_1, \theta_2$ and link lengths $L_1, L_2$. 
 
 \begin{itemize}
-    \item $x, y$: Cartesian coordinates of the end-effector (\si{\centi\metre}).
-    \item $L_1, L_2$: Lengths of the robotic arm's links (\si{\centi\metre}).
+    \item $x, y$: Cartesian coordinates of the end-effector (\si{\milli\metre}).
+    \item $L_1, L_2$: Lengths of the robotic arm's links (\si{\milli\metre}).
     \item $\theta_1, \theta_2$: Joint angles (radians).
 \end{itemize}
 
@@ -682,9 +682,9 @@ This section defines the data types used in the robotic arm path planning (2D-RA
   \hline
   \texttt{Angle} & Represents joint angles of the robotic arm in radians. \\
   \hline
-  \texttt{Length} & Represents physical lengths (e.g., arm links, obstacle radii) in centimeters. \\
+  \texttt{Length} & Represents physical lengths (e.g., arm links, obstacle radii) in millsmeters. \\
   \hline
-  \texttt{Position} & A 2D Cartesian coordinate represented as $(x, y)$ in centimeters. \\
+  \texttt{Position} & A 2D Cartesian coordinate represented as $(x, y)$ in millsmeters. \\
   \hline
   \texttt{Velocity} & Represents joint angular velocity in radians per second. \\
   \hline
