@@ -18,6 +18,7 @@
 \usepackage{caption}
 \usepackage{pdflscape}
 \usepackage{afterpage}
+\usepackage{svg}
 
 \usepackage[round]{natbib}
 
@@ -128,8 +129,8 @@
 
 \begin{document}
 
-\title{Software Requirements Specification for \progname: subtitle describing software} 
-\author{\authname}
+\title{Software Requirements Specification for 2D Robot Arms for Path Planning} 
+\author{\ Ziyang(Ryan) Fang}
 \date{\today}
 	
 \maketitle
@@ -147,8 +148,8 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+Feb 02 2025 & 1.0 & Notes\\
+% Date 2 & 1.1 & Notes\\
 \bottomrule
 \end{tabularx}
 
@@ -174,17 +175,17 @@ description of the unit and the SI name.
 ~\newline
 
 \renewcommand{\arraystretch}{1.2}
-%\begin{table}[ht]
   \noindent \begin{tabular}{l l l} 
     \toprule		
     \textbf{symbol} & \textbf{unit} & \textbf{SI}\\
     \midrule 
-    \si{\metre} & length & metre\\
-    \si{\kilogram} & mass	& kilogram\\
-    \si{\second} & time & second\\
-    \si{\celsius} & temperature & centigrade\\
-    \si{\joule} & energy & joule\\
-    \si{\watt} & power & watt (W = \si{\joule\per\second})\\
+    \si{\centi\metre} & length & centimetre \\
+    % \si{\kilogram} & mass & kilogram \\
+    \si{\second} & time & second \\
+    \( q \) & joint angle & radians \\
+    \(\dot{q}\) & joint velocity & rad/s \\
+    \(\ddot{q}\) & joint acceleration & rad/s² \\
+    % \si{\newton\metre} & torque & newton metre \\
     \bottomrule
   \end{tabular}
   %	\caption{Provide a caption}
@@ -220,15 +221,25 @@ systems.  The symbols are listed in alphabetical order.
 \noindent \begin{longtable*}{l l p{12cm}} \toprule
 \textbf{symbol} & \textbf{unit} & \textbf{description}\\
 \midrule 
-$A_C$ & \si[per-mode=symbol] {\square\metre} & coil surface area
-\\
-$A_\text{in}$ & \si[per-mode=symbol] {\square\metre} & surface area over 
-which heat is transferred in
-\\ 
+\( L \) & \si{\centi\metre} & Link length of the robot arm \\
+\( q \) & radians & Joint angle \\
+\( \dot{q} \) & rad/s & Joint angular velocity \\
+\( \ddot{q} \) & rad/s² & Joint angular acceleration \\
+\( x, y \) & \si{\centi\metre} & Cartesian coordinates of the end-effector \\
+\( T \) & \si{\second} & Total time for motion execution \\
+\( t \) & \si{\second} & Time step \\
+\( \mathbf{q}_{\text{init}} \) & radians & Initial joint configuration \\
+\( \mathbf{q}_{\text{goal}} \) & radians & Goal joint configuration \\
+\( O_i \) & \si{\centi\metre} & Position of the \(i\)-th obstacle (circular) \\
+\( r_i \) & \si{\centi\metre} & Radius of the \(i\)-th obstacle \\
+\( M \) & - & Number of discrete joint positions in A* search grid \\
+\( \theta_i \) & radians & Discretized joint angle for A* search \\
+\( \mathcal{G} \) & - & Occupancy grid (joint space) \\
+\( \mathbf{p}_i \) & \si{\centi\metre} & Position of the \(i\)-th joint \\
+
 \bottomrule
 \end{longtable*}
-\plt{Use your problems actual symbols.  The si package is a good idea to use for
-  units.}
+
 
 \subsection{Abbreviations and Acronyms}
 
@@ -246,271 +257,126 @@ which heat is transferred in
   PS & Physical System Description\\
   R & Requirement\\
   SRS & Software Requirements Specification\\
-  \progname{} & \plt{put an expanded version of your program name here (as appropriate)}\\
   TM & Theoretical Model\\
+  IK & Inverse Kinematics \\
+  FK & Forward Kinematics \\
+  A* & A-star Pathfinding Algorithm \\
+  DOF & Degrees of Freedom \\
+  EE & End-Effector \\
+  % \progname{} & 2DPL\\
+  TM & Theoretical Model\\
+  2D-RAPP & 2D Robot Arm Path Planning\\
   \bottomrule
 \end{tabular}\\
 
 \plt{Add any other abbreviations or acronyms that you add}
 
-\subsection{Mathematical Notation}
 
-\plt{This section is optional, but should be included for projects that make use
-  of notation to convey mathematical information.  For instance, if typographic
-  conventions (like bold face font) are used to distinguish matrices, this
-  should be stated here.  If symbols are used to show mathematical operations,
-  these should be summarized here.  In some cases the easiest way to summarize
-  the notation is to point to a text or other source that explains the
-  notation.}
-
-\plt{This section was added to the template because some students use very
-  domain specific notation.  This notation will not be readily understandable to
-  people outside of your domain.  It should be explained.}
-
-\newpage
-
-\pagenumbering{arabic}
-
-\plt{This SRS template is based on \citet{SmithAndLai2005, SmithEtAl2007,
-  SmithAndKoothoor2016}.  It will get you started.  You should not modify the
-  section headings, without first discussing the change with the course
-  instructor.  Modification means you are not following the template, which
-  loses some of the advantage of a template, especially standardization.
-  Although the bits shown below do not include type information, you may need to
-  add this information for your problem.  If you are unsure, please can ask the
-  instructor.}
-
-\plt{Feel free to change the appearance of the report by modifying the LaTeX
-  commands.}
-
-\plt{This template document assumes that a single program is being documented.
-  If you are documenting a family of models, you should start with a commonality
-  analysis.  A separate template is provided for this.  For program
-  families you should look at \cite{Smith2006, SmithMcCutchanAndCarette2017}.
-  Single family member programs are often programs based on a single physical
-  model.  General purpose tools are usually documented as a family.  Families of
-  physical models also come up.}
-
-\plt{The SRS is not generally written, or read, sequentially.  The SRS is a
-  reference document.  It is generally read in an ad hoc order, as the need
-  arises.  For writing an SRS, and for reading one for the first time, the
-  suggested order of sections is:
-\begin{itemize}
-\item Goal Statement
-\item Instance Models
-\item Requirements
-\item Introduction
-\item Specific System Description
-\end{itemize}
-}
-
-\plt{Guiding principles for the SRS document:
-\begin{itemize}
-\item Do not repeat the same information at the same abstraction level.  If
-  information is repeated, the repetition should be at a different abstraction
-  level.  For instance, there will be overlap between the scope section and the
-  assumptions, but the scope section will not go into as much detail as the
-  assumptions section.
-\end{itemize}
-}
-
-\plt{The template description comments should be disabled before submitting this
-  document for grading.}
-
-\plt{You can borrow any wording from the text given in the template.  It is part
-  of the template, and not considered an instance of academic integrity.  Of
-  course, you need to cite the source of the template.}
-
-\plt{When the documentation is done, it should be possible to trace back to the
-  source of every piece of information.  Some information will come from
-  external sources, like terminology.  Other information will be derived, like
-  General Definitions.}
-
-\plt{An SRS document should have the following qualities: unambiguous,
-  consistent, complete, validatable, abstract and traceable.}
-
-\plt{The overall goal of the SRS is that someone that meets the Characteristics
-  of the Intended Reader (Section~\ref{sec_IntendedReader}) can learn,
-  understand and verify the captured domain knowledge.  They should not have to
-  trust the authors of the SRS on any statements.  They should be able to
-  independently verify/derive every statement made.}
 
 \section{Introduction}
+Path planning for robotic manipulators is a fundamental problem in robotics, enabling robots to move efficiently and safely within constrained environments. Unlike mobile robots that navigate in free space, robotic arms must operate in a higher-dimensional joint space, where each degree of freedom contributes to the overall complexity of motion planning. Traditional inverse kinematics (IK) methods solve for joint angles that satisfy end-effector goals, but they often struggle with obstacle avoidance and computational efficiency in real-time applications.
 
-\plt{The introduction section is written to introduce the problem.  It starts
-  general and focuses on the problem domain. The general advice is to start with
-a paragraph or two that describes the problem, followed by a ``roadmap''
-paragraph.  A roadmap orients the reader by telling them what sub-sections to
-expect in the Introduction section.}
+This document provides an overview of the Software Requirements Specification (SRS) for a 2D robotic arm path planning system based on a graph-based inverse kinematics (IK) approach with A* search. The developed program will be referred to as 2D Robot Arm Path Planning (2D-RAPP) throughout this document. This section explains the purpose of this document, the scope of the requirements, the characteristics of the intended reader, and the organization of the document.
 
 \subsection{Purpose of Document}
+The primary purpose of this document is to record the requirements of 2D-RAPP. Goals, assumptions, theoretical models, definitions, and other derivation information are specified, allowing the reader to fully understand and verify the purpose and scientific basis of 2D-RAPP. With the exception of system constraints, this SRS remains abstract, describing what problem is being solved, but not how to solve it.
 
-\plt{This section summarizes the purpose of the SRS document.  It does not focus
-  on the problem itself.  The problem is described in the ``Problem
-  Description'' section (Section~\ref{Sec_pd}).  The purpose is for the document
-  in the context of the project itself, not in the context of this course.
-  Although the ``purpose'' of the document is to get a grade, you should not
-  mention this.  Instead, ``fake it'' as if this is a real project.  The purpose
-  section will be similar between projects.  The purpose of the document is the
-  purpose of the SRS, including communication, planning for the design stage,
-  etc.}
+This document serves as a starting point for subsequent development phases, including writing the design specification and the software verification and validation plan. The design document will show how the requirements are to be realized, including decisions on numerical algorithms, data structures, and programming frameworks. The verification and validation plan will outline the steps required to increase confidence in the software’s correctness, reliability, and performance. 
+
+Although this SRS follows a structured documentation approach, it does not impose any specific software development methodology. Regardless of whether a waterfall, agile, or iterative development process is followed, it remains useful to present the documentation in a way that maintains clarity and logical structure, as recommended by Parnas and Clements.
+
+
 
 \subsection{Scope of Requirements} 
+The scope of the requirements includes path planning for a 2D robotic arm with N revolute joints, operating in a workspace with circular obstacles. The system is designed to compute collision-free paths in joint space, using distance-based inverse kinematics and search algorithms.
 
-\plt{Modelling the real world requires simplification.  The full complexity of
-  the actual physics, chemistry, biology is too much for existing models, and
-  for existing computational solution techniques.  Rather than say what is in
-  the scope, it is usually easier to say what is not.  You can think of it as
-  the scope is initially everything, and then it is constrained to create the
-  actual scope.  For instance, the problem can be restricted to 2 dimensions, or
-  it can ignore the effect of temperature (or pressure) on the material
-  properties, etc.}  
-
-\plt{The scope section is related to the assumptions section
-  (Section~\ref{sec_assumpt}).  However, the scope and the assumptions are not
-  at the same level of abstraction.  The scope is at a high level.  The focus is
-  on the ``big picture'' assumptions.  The assumptions section lists, and
-  describes, all of the assumptions.}
-
-\plt{The scope section is relevant for later determining typical values of inputs. The scope should make it clear what inputs are reasonable to expect. This is a distinction between scope and context (context is a later section).  Scope affects the inputs while context affects how the software will be used.}
 
 \subsection{Characteristics of Intended Reader} \label{sec_IntendedReader}
+Reviewers of this documentation should have a fundamental understanding of robotics kinematics at an undergraduate level, specifically covering forward kinematics, inverse kinematics, and path planning. Familiarity with graph-based search algorithms (such as A*) and numerical optimization techniques is also recommended.
 
-\plt{This section summarizes the skills and knowledge of the readers of the
-  SRS.  It does NOT have the same purpose as the ``User Characteristics''
-  section (Section~\ref{SecUserCharacteristics}).  The intended readers are the
-  people that will read, review and maintain the SRS.  They are the people that
-  will conceivably design the software that is intended to meet the
-  requirements.  The user, on the other hand, is the person that uses the
-  software that is built.  They may never read this SRS document.  Of course,
-  the same person could be a ``user'' and an ``intended reader.''}
+The users of 2D-RAPP (e.g., robotics researchers, engineers) may have varying levels of expertise, as explained in Section~\ref{SecUserCharacteristics}. However, those involved in **reviewing, modifying, or maintaining this SRS** should have a **strong background in computational kinematics and algorithmic path planning**.
 
-\plt{The intended reader characteristics should be written as unambiguously and
-  as specifically as possible.  Rather than say, the user should have an
-  understanding of physics, say what kind of physics and at what level.  For
-  instance, is high school physics adequate, or should the reader have had a
-  graduate course on advanced quantum mechanics?}
 
 \subsection{Organization of Document}
 
-\plt{This section provides a roadmap of the SRS document.  It will help the
-  reader orient themselves.  It will provide direction that will help them
-  select which sections they want to read, and in what order.  This section will
-  be similar between project.}
+This document follows the standard structure of an SRS for scientific computing software. It begins with the problem statement and goals, followed by theoretical foundations, definitions, and assumptions. The document then presents instance models and specific requirements.
+
+The problem is introduced through kinematic models and path planning techniques, including forward and inverse kinematics and graph-based search methods. Assumptions related to joint constraints and obstacle avoidance are also outlined.
+
+Readers can approach this document either top-down, starting from goals to implementation, or bottom-up, beginning with instance models and tracing back to theoretical foundations. The instance model IM:PathPlanning defines the core algorithm for collision-free motion planning of a 2D robot arm.
+
 
 \section{General System Description}
 
 This section provides general information about the system.  It identifies the
 interfaces between the system and its environment, describes the user
-characteristics and lists the system constraints.  \plt{This text can likely be
-  borrowed verbatim.}
+characteristics and lists the system constraints. 
 
-\plt{The purpose of this section is to provide general information about the
-  system so the specific requirements in the next section will be easier to
-  understand. The general system description section is designed to be
-  changeable independent of changes to the functional requirements documented in
-  the specific system description. The general system description provides a
-  context for a family of related models.  The general description can stay the
-  same, while specific details are changed between family members.}
 
 \subsection{System Context}
 
-\plt{Your system context will include a figure that shows the abstract view of
-  the software.  Often in a scientific context, the program can be viewed
-  abstractly following the design pattern of Inputs $\rightarrow$ Calculations
-  $\rightarrow$ Outputs.  The system context will therefore often follow this
-  pattern.  The user provides inputs, the system does the calculations, and then
-  provides the outputs to the user.  The figure should not show all of the
-  inputs, just an abstract view of the main categories of inputs (like material
-  properties, geometry, etc.).  Likewise, the outputs should be presented from
-  an abstract point of view.  In some cases the diagram will show other external
-  entities, besides the user.  For instance, when the software product is a
-  library, the user will be another software program, not an actual end user.
-  If there are system constraints that the software must work with external
-  libraries, these libraries can also be shown on the System Context diagram.
-  They should only be named with a specific library name if this is required by
-  the system constraint.}
+
+Fig.~\ref{Fig:SysCon} illustrates the system context. The circle represents the user, an external entity providing inputs to the system. The rectangle represents the software system, 2D-RAPP. Arrows indicate the data flow between the user and the system.
 
 \begin{figure}[h!]
-\begin{center}
- \includegraphics[width=0.6\textwidth]{SystemContextFigure}
+\centering
+\includegraphics[width=0.8\textwidth]{SystemContextFigure}
 \caption{System Context}
-\label{Fig_SystemContext} 
-\end{center}
+\label{Fig:SysCon}
 \end{figure}
 
-\plt{For each of the entities in the system context diagram its responsibilities
-  should be listed.  Whenever possible the system should check for data quality,
-  but for some cases the user will need to assume that responsibility.  The list
-  of responsibilities should be about the inputs and outputs only, and they
-  should be abstract.  Details should not be presented here.  However, the
-  information should not be so abstract as to just say ``inputs'' and
-  ``outputs''.  A summarizing phrase can be used to characterize the inputs.
-  For instance, saying ``material properties'' provides some information, but it
-  stays away from the detail of listing every required properties.}
+The interaction between the user and the system is described as follows:
 
+\subsubsection*{User Responsibilities}
 \begin{itemize}
-\item User Responsibilities:
-\begin{itemize}
-\item 
-\end{itemize}
-\item \progname{} Responsibilities:
-\begin{itemize}
-\item Detect data type mismatch, such as a string of characters instead of a
-  floating point number
-\item 
-\end{itemize}
+    \item Provide the input data to the system, including:
+    \begin{itemize}
+        \item Initial joint angles (\(q_{\text{init}}\)) to specify the starting configuration of the robotic arm.
+        \item Goal position (\(x_{\text{goal}}, y_{\text{goal}}\)) to indicate the desired end-effector target.
+        \item Obstacle data, including radii (\(r_i\)) and positions (\(O_i = (x_i, y_i)\)).
+    \end{itemize}
+    \item Ensure the input data is accurate and in the required units.
 \end{itemize}
 
-\plt{Identify in what context the software will typically be used.  Is it for
-exploration? education? engineering work? scientific work?. Identify whether it
-will be used for mission-critical or safety-critical applications.} \plt{This
-additional context information is needed to determine how much effort should be
-devoted to the rationale section.  If the application is safety-critical, the
-bar is higher.  This is currently less structured, but analogous to, the idea to
-the Automotive Safety Integrity Levels (ASILs) that McSCert uses in their
-automotive hazard analyses.}
+\subsubsection*{2D-RAPP Responsibilities}
+\begin{itemize}
+    \item Detect input errors, such as invalid data types or inconsistent units.
+    \item Verify that the inputs satisfy physical and software constraints.
+    \item Compute a collision-free trajectory for the robotic arm, including:
+    \begin{itemize}
+        \item Joint angles (\(q\), \(\dot{q}\), \(\ddot{q}\)) for each motion stage.
+        \item Cartesian path (\(x, y\)) of the end-effector.
+    \end{itemize}
+    \item Provide a visual representation of the robotic arm's movement and obstacle avoidance.
+\end{itemize}
+
+This system context defines the roles and interactions between the user and the 2D-RAPP system, ensuring clarity in the data flow and system responsibilities.
+
 
 \subsection{User Characteristics} \label{SecUserCharacteristics}
+The intended users of \progname{} are individuals with a background in robotics, computer science, and mechanical engineering. They are expected to have a fundamental understanding of kinematics, particularly inverse kinematics, and be familiar with basic path planning algorithms. 
 
-\plt{This section summarizes the knowledge/skills expected of the user.
-  Measuring usability, which is often a required non-function requirement,
-  requires knowledge of a typical user.  As mentioned above, the user is a
-  different role from the ``intended reader,'' as given in
-  Section~\ref{sec_IntendedReader}.  As in Section~\ref{sec_IntendedReader}, the
-  user characteristics should be specific an unambiguous.  For instance, ``The
-  end user of \progname{} should have an understanding of undergraduate Level 1
-  Calculus and Physics.''}
 
 \subsection{System Constraints}
+There are no system constraints.
 
-\plt{System constraints differ from other type of requirements because they
-  limit the developers' options in the system design and they identify how the
-  eventual system must fit into the world. This is the only place in the SRS
-  where design decisions can be specified.  That is, the quality requirement for
-  abstraction is relaxed here.  However, system constraints should only be
-  included if they are truly required.}
 
 \section{Specific System Description}
 
 This section first presents the problem description, which gives a high-level
 view of the problem to be solved.  This is followed by the solution characteristics
 specification, which presents the assumptions, theories, definitions and finally
-the instance models.  \plt{Add any project specific details that are relevant
-  for the section overview.}
+the instance models. The system focuses on generating a collision-free trajectory for a 2D robotic arm in an environment with static obstacles. The robotic arm is modeled as a serial manipulator with revolute joints, and its configuration is defined by a set of joint angles.
+
 
 \subsection{Problem Description} \label{Sec_pd}
 
-\progname{} is intended to solve ... \plt{What problem does your program solve?
-The description here should be in the problem space, not the solution space.}
+\progname{} is intended to solve the path planning for 2D robotic arms.
+
+
 
 \subsubsection{Terminology and  Definitions}
 
-\plt{This section is expressed in words, not with equations.  It provide the
-  meaning of the different words and phrases used in the domain of the problem.
-The terminology is used to introduce concepts from the world outside of the
-mathematical model  The terminology provides a real world connection to give the
-mathematical model meaning.}
 
 This subsection provides a list of terms that are used in the subsequent
 sections and their meaning, with the purpose of reducing ambiguity and making it
@@ -518,117 +384,80 @@ easier to correctly understand the requirements:
 
 \begin{itemize}
 
-\item 
-
-\end{itemize}
+  \item \textbf{Joint space:} The space defined by the possible values of the robot arm’s joint angles.
+  
+  \item \textbf{Workspace:} The Cartesian space where the end-effector of the robotic arm can reach.
+  
+  \item \textbf{Obstacle:} A static circular object in the workspace that the robotic arm must avoid.
+  
+  \item \textbf{Trajectory:} A sequence of joint configurations representing a smooth motion of the robotic arm from the start to the goal.
+  
+  \item \textbf{Configuration:} A specific set of joint angles that fully describes the position of the robotic arm.
+  
+  \item \textbf{Collision detection:} The process of determining whether the robotic arm intersects with an obstacle.
+  
+  \item \textbf{Path planning:} The process of computing a collision-free sequence of configurations to move the robotic arm from the start to the goal.
+  
+  \item \textbf{Inverse kinematics:} The process of determining joint angles given a desired end-effector position.
+  
+  \item \textbf{Forward kinematics:} The computation of the end-effector position given joint angles.
+  
+  \end{itemize}
 
 \subsubsection{Physical System Description} \label{sec_phySystDescrip}
 
-\plt{The purpose of this section is to clearly and unambiguously state the
-  physical system that is to be modelled. Effective problem solving requires a
-  logical and organized approach. The statements on the physical system to be
-  studied should cover enough information to solve the problem. The physical
-  description involves element identification, where elements are defined as
-  independent and separable items of the physical system. Some example elements
-  include acceleration due to gravity, the mass of an object, and the size and
-  shape of an object. Each element should be identified and labelled, with their
-  interesting properties specified clearly. The physical description can also
-  include interactions of the elements, such as the following: i) the
-  interactions between the elements and their physical environment; ii) the
-  interactions between elements; and, iii) the initial or boundary conditions.}
 
-\plt{The elements of the physical system do not have to correspond to an actual
-physical entity.  They can be conceptual.  This is particularly important when
-the documentation is for a numerical method. }
-
-The physical system of \progname{}, as shown in Figure~?,
+The physical system of \progname{}, as shown in Figure~\ref{Fig:Robotic arm},
 includes the following elements:
 
 \begin{itemize}
 
-\item[PS1:] 
+  \item[PS1:] A robotic arm with two revolute joints, defining a two-link planar mechanism.
+  
+  \item[PS2:] The environment contains static circular obstacles that must be avoided by the arm.
+  
+  \item[PS3:] A discretized joint space where joint angles are sampled uniformly to form a toroidal search space.
+  
+  \item[PS4:] A start configuration that represents the initial joint angles of the robotic arm.
+  
+  \item[PS5:] A goal configuration that represents the desired joint angles to reach the target position.
+  
+  \item[PS6:] The A* algorithm used to compute the shortest collision-free path in joint space.
+  
+  \end{itemize}
 
-\item[PS2:] ...
 
-\end{itemize}
-
-\plt{A figure here makes sense for most SRS documents}
-
-% \begin{figure}[h!]
-% \begin{center}
-% %\rotatebox{-90}
-% {
-%  \includegraphics[width=0.5\textwidth]{<FigureName>}
-% }
-% \caption{\label{<Label>} <Caption>}
-% \end{center}
-% \end{figure}
+\begin{figure}[h!]
+\begin{center}
+%\rotatebox{-90}
+{
+ \includegraphics[width=0.5\textwidth]{Physical System Description}
+}
+\caption{Robotic arm finding a path to target point}
+\label{Fig:Robotic arm} 
+\end{center}
+\end{figure}
 
 \subsubsection{Goal Statements}
 
-\plt{The goal statements refine the ``Problem Description''
-  (Section~\ref{Sec_pd}).  A goal is a functional objective the system under
-  consideration should achieve. Goals provide criteria for sufficient
-  completeness of a requirements specification and for requirements
-  pertinence. Goals will be refined in Section “Instanced Models”
-  (Section~\ref{sec_instance}). Large and complex goals should be decomposed
-  into smaller sub-goals.  The goals are written abstractly, with a minimal
-  amount of technical language.  They should be understandable by non-domain
-  experts.}
-
-\noindent Given the \plt{inputs}, the goal statements are:
+\noindent Given the initial joint angles, the goal joint angles, and the obstacle locations, the goal statements are:
 
 \begin{itemize}
 
-\item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] \plt{One
-    sentence description of the goal.  There may be more than one.  Each Goal
-    should have a meaningful label.}
+\item[GS\refstepcounter{goalnum}\thegoalnum \label{GS_CollisionFreePath}:] Compute a collision-free trajectory in joint space from the start configuration to the goal configuration.
+
+\item[GS\refstepcounter{goalnum}\thegoalnum \label{GS_OptimizePath}:] Minimize the total path length while ensuring obstacle avoidance.
+
+\item[GS\refstepcounter{goalnum}\thegoalnum \label{GS_SmoothMotion}:] Generate a smooth and continuous motion trajectory for the robotic arm.
+
+\item[GS\refstepcounter{goalnum}\thegoalnum \label{GS_PathSafety}:] Validate the safety of the planned path by verifying obstacle-free movement at each configuration.
 
 \end{itemize}
 
 \subsection{Solution Characteristics Specification}
 
-\plt{This section specifies the information in the solution domain of the system
-  to be developed. This section is intended to express what is required in
-  such a way that analysts and stakeholders get a clear picture, and the
-  latter will accept it. The purpose of this section is to reduce the problem
-  into one expressed in mathematical terms. Mathematical expertise is used to
-  extract the essentials from the underlying physical description of the
-  problem, and to collect and substantiate all physical data pertinent to the
-  problem.}
+The instance models that govern \progname{} are presented in the Instance Model Section. The necessary information to understand the meaning of the instance models and their derivation is also included, ensuring that the instance models can be verified. The solution characteristics describe the assumptions, theoretical foundations, and mathematical formulations that define the problem space and provide a basis for trajectory planning and obstacle avoidance in robotic arm motion.
 
-\plt{This section presents the solution characteristics by successively refining
-  models.  It starts with the abstract/general Theoretical Models (TMs) and
-  refines them to the concrete/specific Instance Models (IMs).  If necessary
-  there are intermediate refinements to General Definitions (GDs).  All of these
-  refinements can potentially use Assumptions (A) and Data Definitions (DD).
-  TMs are refined to create new models, that are called GMs or IMs. DDs are not
-  refined; they are just used. GDs and IMs are derived, or refined, from other
-  models. DDs are not derived; they are just given. TMs are also just given, but
-  they are refined, not used.  If a potential DD includes a derivation, then
-  that means it is refining other models, which would make it a GD or an IM.}
-
-\plt{The above makes a distinction between ``refined'' and ``used.'' A model is
-  refined to another model if it is changed by the refinement. When we change a
-  general 3D equation to a 2D equation, we are making a refinement, by applying
-  the assumption that the third dimension does not matter. If we use a
-  definition, like the definition of density, we aren't refining, or changing
-  that definition, we are just using it.}
-
-\plt{The same information can be a TM in one problem and a DD in another.  It is
-  about how the information is used.  In one problem the definition of
-  acceleration can be a TM, in another it would be a DD.}
-
-\plt{There is repetition between the information given in the different chunks
-  (TM, GDs etc) with other information in the document.  For instance, the
-  meaning of the symbols, the units etc are repeated.  This is so that the
-  chunks can stand on their own when being read by a reviewer/user.  It also
-  facilitates reuse of the models in a different context.}
-
-\noindent \plt{The relationships between the parts of the document are show in
-  the following figure.  In this diagram ``may ref'' has the same role as
-  ``uses'' above.  The figure adds ``Likely Changes,'' which are able to
-  reference (use) Assumptions.}
 
 \begin{figure}[H]
   \includegraphics[scale=0.9]{RelationsBetweenTM_GD_IM_DD_A.pdf}
@@ -639,31 +468,8 @@ Subsection~\ref{sec_instance}.  The information to understand the meaning of the
 instance models and their derivation is also presented, so that the instance
 models can be verified.
 
-\subsubsection{Types}
-
-\plt{This section is optional. Defining types can make the document easier to
-understand.}
-
-\subsubsection{Scope Decisions}
-
-\plt{This section is optional.}
-\subsubsection{Modelling Decisions}
-
-\plt{This section is optional.}
-
 \subsubsection{Assumptions} \label{sec_assumpt}
 
-\plt{The assumptions are a refinement of the scope.  The scope is general, where
-  the assumptions are specific.  All assumptions should be listed, even those
-  that domain experts know so well that they are rarely (if ever) written down.}
-\plt{The document should not take for granted that the reader knows which
-  assumptions have been made. In the case of unusual assumptions, it is
-  recommended that the documentation either include, or point to, an explanation
-  and justification for the assumption.} 
-\plt{If it helps with the organization and understandability, the assumptions
-can be presented as sub sections.  The following sub-sections are options:
-background theory assumptions, helper theory assumptions, generic theory
-assumptions, problem specific assumptions, and rationale assumptions}
 
 This section simplifies the original problem and helps in developing the
 theoretical model by filling in the missing information for the physical system.
@@ -673,63 +479,72 @@ change [LC], in which the respective assumption is used.
 
 \begin{itemize}
 
-\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_meaningfulLabel}:]
-  \plt{Short description of each assumption.  Each assumption
-    should have a meaningful label.  Use cross-references to identify the
-    appropriate traceability to TM, GD, DD etc., using commands like dref, ddref
-    etc.  Each assumption should be atomic - that is, there should not be an
-    explicit (or implicit) ``and'' in the text of an assumption.}
+  \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_KinematicMotionOnly}:] 
+  The motion of the robotic arm is modeled purely kinematically, without considering the effects of dynamics such as forces, torques, or friction. (RefBy: IM:PathPlanning)
+
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_LinkLengthsConstant}:] 
+  The lengths of all links in the robotic arm are constant and do not change during motion. (RefBy: GD:ForwardKinematics)
+
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_JointMotionContinuous}:] 
+  The joint angles of the robotic arm vary smoothly and continuously without sudden jumps. (RefBy: IM:TrajectoryGeneration)
+
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_NoMechanicalDeflection}:] 
+  The robotic arm links are considered rigid, meaning there is no mechanical deflection or deformation. (RefBy: GD:InverseKinematics)
+
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_ObstacleShapeCircular}:] 
+  Obstacles in the environment are approximated as circles with predefined radii. (RefBy: IM:CollisionDetection)
+
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_TrajectoryDiscretized}:] 
+  The planned trajectory is discretized into a series of intermediate waypoints in joint space. (RefBy: IM:TrajectoryGeneration)
+
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_InitialAndGoalConfigurationsKnown}:] 
+  The initial joint configuration and the goal joint configuration are known before path planning begins. (RefBy: IM:PathPlanning)
 
 \end{itemize}
 
 \subsubsection{Theoretical Models}\label{sec_theoretical}
 
-\plt{Theoretical models are sets of abstract mathematical equations or axioms
-  for solving the problem described in Section ``Physical System Description''
-  (Section~\ref{sec_phySystDescrip}). Examples of theoretical models are
-  physical laws, constitutive equations, relevant conversion factors, etc.}
-
-\plt{Optionally the theory section could be divided into subsections to provide
-more structure and improve understandability and reusability.  Potential
-subsections include the following: Context theories, background theories, helper
-theories, generic theories, problem specific theories, final theories and
-rationale theories.}
-
 This section focuses on the general equations and laws that \progname{} is based
-on.  \plt{Modify the examples below for your problem, and add additional models
-  as appropriate.}
+on. The theoretical models serve as fundamental principles governing the kinematic motion and path planning of the robotic arm. 
 
 ~\newline
 
 \noindent
 \deftheory
 % #2 refname of theory
-{TM:COE}
+{TM:FWDKinematics}
 % #3 label
-{Conservation of thermal energy}
+{Forward Kinematics}
 % #4 equation
 {
-  $-{\bf \nabla \cdot q} + g$ = $\rho C \frac{\partial T}{\partial t}$
+  $\mathbf{x} = f(\mathbf{q}) = \begin{bmatrix}
+  L_1 \cos(\theta_1) + L_2 \cos(\theta_1 + \theta_2) \\
+  L_1 \sin(\theta_1) + L_2 \sin(\theta_1 + \theta_2)
+  \end{bmatrix}$
 }
 % #5 description
 {
-  The above equation gives the conservation of energy for transient heat transfer in a material
-  of specific heat capacity $C$ (\si{\joule\per\kilogram\per\celsius}) and density $\rho$ 
-  (\si{\kilogram\per\cubic\metre}), where $\bf q$ is the thermal flux vector (\si{\watt\per\square\metre}),
-  $g$ is the volumetric heat generation
-  (\si{\watt\per\cubic\metre}), $T$ is the temperature
-  (\si{\celsius}),  $t$ is time (\si{\second}), and $\nabla$ is
-  the gradient operator.  For this equation to apply, other forms
-  of energy, such as mechanical energy, are assumed to be negligible in the
-  system (\aref{A_OnlyThermalEnergy}).  In general, the material properties ($\rho$ and $C$) depend on temperature.
+  \begin{itemize}
+    \item $\mathbf{q}$: Joint angles, where $\theta_1$ is the angle of the first joint and $\theta_2$ is the relative angle of the second joint.
+    \item $L_1$: Length of the first link (\si{\centi\metre}).
+    \item $L_2$: Length of the second link (\si{\centi\metre}).
+  \end{itemize}
 }
 % #6 Notes
 {
-None.
+  This forward kinematics model assumes:
+  \begin{itemize}
+    \item Rigid links: The links are assumed to be perfectly rigid and do not deform under load (\aref{A_LinkLengthsConstant}).
+    \item Fixed base: The base of the arm is considered stationary, located at the origin $(0, 0)$.
+    \item Ideal joints: The joints rotate without friction or other physical limitations.
+    \item Planar motion: The arm operates in a 2D plane, and there is no out-of-plane movement.
+  \end{itemize}
+
+  These assumptions ensure simplicity and accuracy for theoretical modeling. For real-world applications, additional factors such as joint compliance, link flexibility, and external forces may need to be considered.
 }
 % #7 Source
 {
-  \url{http://www.efunda.com/formulae/heat_transfer/conduction/overview_cond.cfm}
+  \url{https://atsushisakai.github.io/PythonRobotics/modules/7_arm_navigation/planar_two_link_ik.html}
 }
 % #8 Referenced by
 {
@@ -1047,9 +862,6 @@ A correct solution must exhibit \plt{fill in the details}.  \plt{These
 
 \section{Requirements}
 
-\plt{The requirements refine the goal statement.  They will make heavy use of
-  references to the instance models.}
-
 This section provides the functional requirements, the business tasks that the
 software is expected to complete, and the nonfunctional requirements, the
 qualities that the software is expected to exhibit.
@@ -1058,82 +870,72 @@ qualities that the software is expected to exhibit.
 
 \noindent \begin{itemize}
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:] \plt{Requirements
-    for the inputs that are supplied by the user.  This information has to be
-    explicit.}
+  \item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:]  
+    The system shall accept the following inputs from the user:
+    \begin{itemize}
+      \item Initial joint angles \( q_{\text{init}} = (\theta_1, \theta_2) \) in radians.
+      \item Goal position \( (x_{\text{goal}}, y_{\text{goal}}) \) in Cartesian coordinates (\si{\centi\metre}).
+      \item Obstacle positions \( O_i = (x_i, y_i) \) and radii \( r_i \) (\si{\centi\metre}).
+      \item Link lengths \( L_1, L_2 \) of the robotic arm (\si{\centi\metre}).
+    \end{itemize}
+  
+  \item[R\refstepcounter{reqnum}\thereqnum \label{R_OutputInputs}:]  
+    The system shall echo all input values to ensure correctness before computation.
+  
+  \item[R\refstepcounter{reqnum}\thereqnum \label{R_Calculate}:]  
+    The system shall perform the following calculations:
+    \begin{itemize}
+      \item Compute the forward kinematics to determine the end-effector position.
+      \item Determine the collision-free path from \( q_{\text{init}} \) to the goal using A* search.
+      \item Generate the sequence of intermediate joint configurations \( q(t) \) for smooth motion.
+    \end{itemize}
+  
+  \item[R\refstepcounter{reqnum}\thereqnum \label{R_VerifyOutput}:]  
+    The system shall verify that:
+    \begin{itemize}
+      \item The computed path avoids all obstacles.
+      \item The final joint configuration corresponds to the given goal position.
+      \item The output trajectory is continuous and feasible for the robotic arm.
+    \end{itemize}
+  
+  \item[R\refstepcounter{reqnum}\thereqnum \label{R_Output}:]  
+    The system shall output the following:
+    \begin{itemize}
+      \item The computed path in joint space, represented as a sequence of joint angles \( q(t) \).
+      \item The Cartesian positions of the end-effector throughout the motion.
+      \item A visualization of the planned motion with the robotic arm and obstacles.
+    \end{itemize}
+  
+  \end{itemize}
+  
+  \subsection{Nonfunctional Requirements}
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_OutputInputs}:] \plt{It isn't
-    always required, but often echoing the inputs as part of the output is a
-    good idea.}
+  This section defines the nonfunctional requirements that specify the qualities and characteristics the software should exhibit.
+  
+  \noindent \begin{itemize}
+  
+  \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]  
+    \textbf{Accuracy} \\
+    The system shall compute the robotic arm trajectory with an accuracy sufficient for motion planning in a dynamic environment. The precision of the joint angles shall be within \(0.01\) radians, and the calculated Cartesian positions of the end-effector shall have an error margin within \(0.1\) cm. The accuracy shall be validated through simulation and empirical testing.
+  
+  \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Maintainability}:]  
+    \textbf{Maintainability} \\
+    The effort required to make likely modifications to the software (such as adjusting the planning algorithm or adding new constraints) shall be at most \(10\%\) of the original development time, assuming the same development resources are available. Code modularization and documentation will facilitate future modifications.
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Calculate}:] \plt{Calculation
-    related requirements.}
-
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_VerifyOutput}:]
-  \plt{Verification related requirements.}
-
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Output}:] \plt{Output related
-    requirements.}
-
-\end{itemize}
-
-\plt{Every IM should map to at least one requirement, but not every requirement
-  has to map to a corresponding IM.}
-
-\subsection{Nonfunctional Requirements}
-
-\plt{List your nonfunctional requirements.  You may consider using a fit
-  criterion to make them verifiable.}
-\plt{The goal is for the nonfunctional requirements to be unambiguous, abstract
-  and verifiable.  This isn't easy to show succinctly, so a good strategy may be
-to give a ``high level'' view of the requirement, but allow for the details to
-be covered in the Verification and Validation document.}
-\plt{An absolute requirement on a quality of the system is rarely needed.  For
-  instance, an accuracy of 0.0101 \% is likely fine, even if the requirement is
-  for 0.01 \% accuracy.  Therefore, the emphasis will often be more on
-  describing now well the quality is achieved, through experimentation, and
-  possibly theory, rather than meeting some bar that was defined a priori.}
-\plt{You do not need an entry for correctness in your NFRs.  The purpose of the
-  SRS is to record the requirements that need to be satisfied for correctness.
-  Any statement of correctness would just be redundant. Rather than discuss
-  correctness, you can characterize how far away from the correct (true)
-  solution you are allowed to be.  This is discussed under accuracy.}
-
-\noindent \begin{itemize}
-
-\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]
-  \textbf{Accuracy} \plt{Characterize the accuracy by giving the context/use for
-    the software.  Maybe something like, ``The accuracy of the computed
-    solutions should meet the level needed for $<$engineering or scientific
-    application$>$.  The level of accuracy achieved by \progname{} shall be
-    described following the procedure given in Section~X of the Verification and
-    Validation Plan.''  A link to the VnV plan would be a nice extra.}
-
-\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Usability}:] \textbf{Usability}
-  \plt{Characterize the usability by giving the context/use for the software.
-    You should likely reference the user characteristics section.  The level of
-    usability achieved by the software shall be described following the
-    procedure given in Section~X of the Verification and Validation Plan.  A
-    link to the VnV plan would be a nice extra.}
-
-\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Maintainability}:]
-  \textbf{Maintainability} \plt{The effort required to make any of the likely
-    changes listed for \progname{} should be less than FRACTION of the original
-    development time.  FRACTION is then a symbolic constant that can be defined
-    at the end of the report.}
-
-\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Portability}:]
-  \textbf{Portability} \plt{This NFR is easier to write than the others.  The
-    systems that \progname{} should run on should be listed here.  When possible
-    the specific versions of the potential operating environments should be
-    given.  To make the NFR verifiable a statement could be made that the tests
-    from a given section of the VnV plan can be successfully run on all of the
-    possible operating environments.}
-
-\item Other NFRs that might be discussed include verifiability,
-  understandability and reusability.
-
-\end{itemize}
+  \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Verifiability}:]  
+    \textbf{Verifiability} \\
+    The correctness of the system shall be tested with a complete verification and validation (V\&V) plan. The outputs shall be compared against theoretical models and experimental data.
+  
+  \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Understandability}:]  
+    \textbf{Understandability} \\
+    The software shall follow a modular architecture with clear documentation, including a module guide and interface specification. Each function and class shall have inline comments explaining its purpose and usage.
+  
+  \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Reusability}:]  
+    \textbf{Reusability} \\
+    The system shall be designed with reusability in mind, allowing for easy adaptation to different robotic configurations. The kinematic and planning modules shall be abstracted so they can be reused in other robotic applications.
+  
+  \end{itemize}
+  
 
 \subsection{Rationale}
 
