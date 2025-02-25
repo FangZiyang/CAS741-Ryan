@@ -3,6 +3,7 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{hyperref}
+\usepackage{amsmath}
 \hypersetup{
     colorlinks,
     citecolor=blue,
@@ -30,25 +31,11 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+Feb 24 & 1.0 & Notes\\
 \bottomrule
 \end{tabularx}
 
-~\\
-\wss{The intention of the VnV plan is to increase confidence in the software.
-However, this does not mean listing every verification and validation technique
-that has ever been devised.  The VnV plan should also be a \textbf{feasible}
-plan. Execution of the plan should be possible with the time and team available.
-If the full plan cannot be completed during the time available, it can either be
-modified to ``fake it'', or a better solution is to add a section describing
-what work has been completed and what work is still planned for the future.}
 
-\wss{The VnV plan is typically started after the requirements stage, but before
-the design stage.  This means that the sections related to unit testing cannot
-initially be completed.  The sections will be filled in after the design stage
-is complete.  the final version of the VnV plan should have all sections filled
-in.}
 
 \newpage
 
@@ -67,430 +54,450 @@ in.}
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{l l} 
   \toprule		
-  \textbf{symbol} & \textbf{description}\\
+  \textbf{Symbol} & \textbf{Description}\\
   \midrule 
-  T & Test\\
+  $q$ & Joint angle (rad) \\  
+  $\dot{q}$ & Joint angular velocity (rad/s) \\  
+  $\ddot{q}$ & Joint angular acceleration (rad/s$^2$) \\  
+  $L$ & Link length (mm) \\  
   \bottomrule
 \end{tabular}\\
 
-\wss{symbols, abbreviations, or acronyms --- you can simply reference the SRS
-  \citep{SRS} tables, if appropriate}
-
-\wss{Remove this section if it isn't needed}
 
 \newpage
 
 \pagenumbering{arabic}
 
-This document ... \wss{provide an introductory blurb and roadmap of the
-  Verification and Validation plan}
+This document describes the Verification and Validation (V\&V) plan for our software system, which addresses the path-planning and inverse-kinematics (IK) verification tasks for 2D robotic manipulators. The document outlines our approach, objectives, and the tests to be performed to ensure that the system meets the specified requirements. A roadmap of the plan is as follows:
+\begin{itemize}
+  \item Section 1 covers general information about the software, its purpose, and the primary V\&V objectives.
+  \item Section 2 provides details on the V\&V plan, the team, and the methods and tools used.
+  \item Section 3 describes the system-level tests for both functional and nonfunctional requirements.
+  \item Section 4 focuses on unit-level testing, including scope, test coverage, and traceability to modules.
+\end{itemize}
 
 \section{General Information}
 
 \subsection{Summary}
+The software under test is a \textbf{2D Robot Arm Path-Planning and IK Solver} for manipulators with circular obstacles. The system:
+\begin{itemize}
+    \item Represents the manipulator’s joints and links in a distance-geometric framework.
+    \item Uses path-planning algorithms (e.g., A*) and inverse-kinematics solvers to find feasible joint angles.
+    \item Ensures collision-free paths around circular obstacles.
+\end{itemize}
 
-\wss{Say what software is being tested.  Give its name and a brief overview of
-  its general functions.}
+
 
 \subsection{Objectives}
 
-\wss{State what is intended to be accomplished.  The objective will be around
-  the qualities that are most important for your project.  You might have
-  something like: ``build confidence in the software correctness,''
-  ``demonstrate adequate usability.'' etc.  You won't list all of the qualities,
-  just those that are most important.}
-
-\wss{You should also list the objectives that are out of scope.  You don't have 
-the resources to do everything, so what will you be leaving out.  For instance, 
-if you are not going to verify the quality of usability, state this.  It is also 
-worthwhile to justify why the objectives are left out.}
-
-\wss{The objectives are important because they highlight that you are aware of 
-limitations in your resources for verification and validation.  You can't do everything, 
-so what are you going to prioritize?  As an example, if your system depends on an 
-external library, you can explicitly state that you will assume that external library 
-has already been verified by its implementation team.}
+The primary objectives of the V\&V process are:
+\begin{itemize}
+    \item Build confidence in software correctness by systematically testing the functional requirements (e.g., path planning, collision avoidance).
+    \item Demonstrate acceptable performance, including computational efficiency and accuracy of solutions.
+    \item Verify reliability, so that the solution can be used for 2D manipulator control scenarios with minimal failures.
+\end{itemize}
+\textbf{Out of scope:}
+\begin{itemize}
+    \item Extensive \emph{usability} testing. We will focus on correctness and performance rather than user interface design.
+    \item Verification of external libraries (e.g., numerical solvers). We assume they have been validated by their providers.
+\end{itemize}
 
 \subsection{Challenge Level and Extras}
-
-\wss{State the challenge level (advanced, general, basic) for your project.
-Your challenge level should exactly match what is included in your problem
-statement.  This should be the challenge level agreed on between you and the
-course instructor.  You can use a pull request to update your challenge level
-(in TeamComposition.csv or Repos.csv) if your plan changes as a result of the
-VnV planning exercise.}
-
-\wss{Summarize the extras (if any) that were tackled by this project.  Extras
-can include usability testing, code walkthroughs, user documentation, formal
-proof, GenderMag personas, Design Thinking, etc.  Extras should have already
-been approved by the course instructor as included in your problem statement.
-You can use a pull request to update your extras (in TeamComposition.csv or
-Repos.csv) if your plan changes as a result of the VnV planning exercise.}
+\textbf{Challenge Level:} General (per agreement with the course instructor).
+\textbf{Extras:}
+\begin{itemize}
+    \item A brief user manual for researchers/engineers.
+    \item Potential code walkthroughs and extended design documentation, as time and resources permit.
+\end{itemize}
 
 \subsection{Relevant Documentation}
+\begin{itemize}
+  \item \textbf{Software Requirements Specification} (SRS) :
+  This defines the required functionalities for the 2D robot arm path planner, including input constraints, output specifications, and performance requirements.
+  \item \textbf{Other Project Documents} (MG, MIS, etc.):
+  These documents describe the design and detailed modules of the system. They are relevant for deriving unit tests and ensuring that design decisions align with requirements.
+  \item \textbf{Code Reference}:
+  An example is the A* toroidal grid code for obstacle navigation, which will be referenced or adapted for verifying path-planning correctness.
+\end{itemize}
 
-\wss{Reference relevant documentation.  This will definitely include your SRS
-  and your other project documents (design documents, like MG, MIS, etc).  You
-  can include these even before they are written, since by the time the project
-  is done, they will be written.  You can create BibTeX entries for your
-  documents and within those entries include a hyperlink to the documents.}
 
-\citet{SRS}
 
-\wss{Don't just list the other documents.  You should explain why they are relevant and 
-how they relate to your VnV efforts.}
 
 \section{Plan}
 
-\wss{Introduce this section.  You can provide a roadmap of the sections to
-  come.}
+This section outlines the multiple stages of the verification and validation (V\&V) process. First, the V\&V team is introduced. Then, verification plans for the SRS, design, V\&V plan, and implementation are described. Finally, automated testing and verification tools are briefly discussed.
 
 \subsection{Verification and Validation Team}
 
-\wss{Your teammates.  Maybe your supervisor.
-  You should do more than list names.  You should say what each person's role is
-  for the project's verification.  A table is a good way to summarize this information.}
+The following personnel will be involved in the verification and validation of the 2D Robot Arm Path Planning system:
+
+\begin{itemize}
+    \item \textbf{Ziyang Fang}: The author of the program. Responsible for the creation of the V\&V plan, implementation of the tests, and analysis of results.
+    \item \textbf{Dr. Spencer Smith}: The project supervisor. Responsible for reviewing the V\&V plan, test cases, and overall validation of the system.
+    \item \textbf{Alaap Grandhi}: The domain expert. Responsible for reviewing the V\&V plan, ensuring scientific correctness, and verifying test coverage.
+\end{itemize}
 
 \subsection{SRS Verification Plan}
 
-\wss{List any approaches you intend to use for SRS verification.  This may
-  include ad hoc feedback from reviewers, like your classmates (like your
-  primary reviewer), or you may plan for something more rigorous/systematic.}
+To ensure the SRS is complete, correct, and consistent, we will use the following verification methods:
 
-\wss{If you have a supervisor for the project, you shouldn't just say they will
-read over the SRS.  You should explain your structured approach to the review.
-Will you have a meeting?  What will you present?  What questions will you ask?
-Will you give them instructions for a task-based inspection?  Will you use your
-issue tracker?}
+\begin{itemize}
+    \item \textbf{Supervisor Review}: Dr. Spencer Smith will review the SRS for completeness and clarity. A structured checklist will be provided to guide feedback.
+    \item \textbf{Domain Expert Review}: Alaap Grandhi will review the SRS to ensure technical accuracy and feasibility.
+    \item \textbf{Issue Tracker}: Feedback from reviews will be logged as GitHub issues, and necessary modifications will be made accordingly.
+    \item \textbf{Peer Feedback}: Classmates will provide additional feedback to identify any unclear or missing requirements.
+\end{itemize}
 
-\wss{Maybe create an SRS checklist?}
 
 \subsection{Design Verification Plan}
+\begin{itemize}
+  \item \textbf{Classmate / Peer Design Review}: We will have scheduled walkthrough sessions where classmates provide feedback on the design documents (MG, MIS).
+  \item \textbf{Design Checklists}: We will ensure that each requirement in the SRS is addressed at the design level. Checklists will cover topics like modularity, clarity, and traceability to requirements.
+\end{itemize}
 
-\wss{Plans for design verification}
-
-\wss{The review will include reviews by your classmates}
-
-\wss{Create a checklists?}
 
 \subsection{Verification and Validation Plan Verification Plan}
 
-\wss{The verification and validation plan is an artifact that should also be
-verified.  Techniques for this include review and mutation testing.}
-
-\wss{The review will include reviews by your classmates}
-
-\wss{Create a checklists?}
+\begin{itemize}
+  \item \textbf{Internal Review}: The same team members will review this V\&V plan for completeness and feasibility.
+  \item \textbf{Mutation of Plan}: Introduce hypothetical changes (mutations) to test if the plan remains robust and comprehensive.
+\end{itemize}
 
 \subsection{Implementation Verification Plan}
 
-\wss{You should at least point to the tests listed in this document and the unit
-  testing plan.}
-
-\wss{In this section you would also give any details of any plans for static
-  verification of the implementation.  Potential techniques include code
-  walkthroughs, code inspection, static analyzers, etc.}
-
-\wss{The final class presentation in CAS 741 could be used as a code
-walkthrough.  There is also a possibility of using the final presentation (in
-CAS741) for a partial usability survey.}
+\begin{itemize}
+  \item \textbf{Unit Tests}: We will write unit tests for each major component, automated by a suitable framework (e.g., \texttt{pytest} for Python).
+  \item \textbf{Static Analysis}: Use a linter (e.g., \texttt{flake8}), possibly additional tools like \texttt{pylint} or \texttt{mypy}, to verify code standards and catch potential errors.
+  \item \textbf{Code Walkthroughs}: During final presentations or peer sessions, we will review code segments dealing with core algorithms (IK solver, collision detection, path planning).
+\end{itemize}
 
 \subsection{Automated Testing and Verification Tools}
 
-\wss{What tools are you using for automated testing.  Likely a unit testing
-  framework and maybe a profiling tool, like ValGrind.  Other possible tools
-  include a static analyzer, make, continuous integration tools, test coverage
-  tools, etc.  Explain your plans for summarizing code coverage metrics.
-  Linters are another important class of tools.  For the programming language
-  you select, you should look at the available linters.  There may also be tools
-  that verify that coding standards have been respected, like flake9 for
-  Python.}
+\begin{itemize}
+  \item \textbf{Continuous Integration (CI)}: GitHub Actions is used to run automated test suites on every pull request and commit to ensure code reliability.
+  \item \textbf{Unit Testing Framework}: The project uses \texttt{pytest} for unit testing, which provides powerful fixtures and easy test case management.
+  \item \textbf{Coverage Analysis}: The tool \texttt{coverage.py} is used to measure code coverage, ensuring critical components are well-tested.
+  \item \textbf{Static Code Analysis}: \texttt{flake8} is used to check for style violations and potential errors in Python code.
+  \item \textbf{Type Checking}: \texttt{mypy} is used to enforce type annotations and detect type inconsistencies.
+  \item \textbf{Performance Profiling}: \texttt{cProfile} is used for runtime performance analysis to identify bottlenecks in critical functions.
+  \item \textbf{Memory Profiling}: \texttt{memory-profiler} helps track memory usage during execution to detect leaks and optimize performance.
+  \item \textbf{Automated Dependency Management}: \texttt{pip-tools} is used to manage dependencies and ensure a stable development environment.
+\end{itemize}
 
-\wss{If you have already done this in the development plan, you can point to
-that document.}
 
-\wss{The details of this section will likely evolve as you get closer to the
-  implementation.}
 
 \subsection{Software Validation Plan}
 
-\wss{If there is any external data that can be used for validation, you should
-  point to it here.  If there are no plans for validation, you should state that
-  here.}
-
-\wss{You might want to use review sessions with the stakeholder to check that
-the requirements document captures the right requirements.  Maybe task based
-inspection?}
-
-\wss{For those capstone teams with an external supervisor, the Rev 0 demo should 
-be used as an opportunity to validate the requirements.  You should plan on 
-demonstrating your project to your supervisor shortly after the scheduled Rev 0 demo.  
-The feedback from your supervisor will be very useful for improving your project.}
-
-\wss{For teams without an external supervisor, user testing can serve the same purpose 
-as a Rev 0 demo for the supervisor.}
-
-\wss{This section might reference back to the SRS verification section.}
+\begin{itemize}
+  \item \textbf{Supervisor/Stakeholder Review}: If an external stakeholder is available, we will present a demo (Rev 0) to validate the requirements match real-world needs.
+  \item \textbf{Comparison with Known Benchmarks}: Use small or known scenarios to validate the solution’s correctness against expected paths/angles.
+\end{itemize}
 
 \section{System Tests}
 
-\wss{There should be text between all headings, even if it is just a roadmap of
-the contents of the subsections.}
+System-level tests will address functional requirements (such as collision avoidance and path planning success) and nonfunctional requirements (such as performance and accuracy). These tests will be conducted after individual modules pass unit tests to ensure the entire system functions as expected.
 
 \subsection{Tests for Functional Requirements}
 
-\wss{Subsets of the tests may be in related, so this section is divided into
-  different areas.  If there are no identifiable subsets for the tests, this
-  level of document structure can be removed.}
+This section defines tests for key functional areas of the \textbf{2D Robot Arm Path Planning System}, ensuring that the system correctly computes collision-free paths and valid inverse kinematics (IK) solutions. The test cases are derived from the functional requirements specified in the Software Requirements Specification (SRS).
 
-\wss{Include a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good here.}
+\subsubsection{Path Planning and Obstacle Avoidance}
 
-\subsubsection{Area of Testing1}
+These tests ensure that the system can generate valid and collision-free paths from the start to the goal configuration. \textbf{Reference: SRS Sections on Path Planning and Collision-Free Paths.}
 
-\wss{It would be nice to have a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good here.  If a section
-  covers tests for input constraints, you should reference the data constraints
-  table in the SRS.}
-		
-\paragraph{Title for Test}
+\paragraph{Collision-Free Path Generation}
 
 \begin{enumerate}
 
-\item{test-id1\\}
+\item \textbf{Test ID: T1}  
 
-Control: Manual versus Automatic
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs.  Output is not how you
-are going to return the results of the test.  The output is the expected
-result.}
+\textbf{Control:} Automatic  
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-					
-How test will be performed: 
-					
-\item{test-id2\\}
+\textbf{Initial State:}  
+\begin{itemize}
+    \item Defined robotic arm parameters (link lengths, joint limits)  
+    \item Known obstacle positions and sizes  
+    \item Initial and goal joint configurations  
+\end{itemize}
 
-Control: Manual versus Automatic
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
+\textbf{Input:}  
+\begin{itemize}
+    \item Initial joint angles \( q_{\text{init}} \)  
+    \item Goal position \( (x_{\text{goal}}, y_{\text{goal}}) \)  
+    \item Obstacle positions and radii  
+\end{itemize}
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+\textbf{Expected Output:}  
+\begin{itemize}
+    \item A valid sequence of joint angles \( q(t) \) ensuring obstacle avoidance  
+    \item No intersection between the arm and any obstacle  
+\end{itemize}
 
-How test will be performed: 
+\textbf{Test Case Derivation:} Ensures that the system correctly computes a path from the initial to the goal state while maintaining a safe clearance from obstacles.  
+
+\textbf{How Test Will Be Performed:}  
+\begin{itemize}
+    \item Use predefined obstacle environments  
+    \item Execute the path-planning function and validate results  
+    \item Visually inspect plotted trajectories  
+    \item Check computational efficiency  
+\end{itemize}
+
+\item \textbf{Test ID: T2}  
+
+\textbf{Control:} Automatic  
+
+\textbf{Initial State:} Same as T1  
+
+\textbf{Input:}  
+\begin{itemize}
+    \item Multiple circular obstacles blocking the direct path  
+\end{itemize}
+
+\textbf{Expected Output:}  
+\begin{itemize}
+    \item The planned trajectory avoids all obstacles  
+    \item The trajectory remains kinematically feasible  
+\end{itemize}
+
+\textbf{Test Case Derivation:} Ensures the system can handle more complex environments and still find feasible paths.  
+
+\textbf{How Test Will Be Performed:}  
+\begin{itemize}
+    \item Introduce additional obstacles in varying configurations  
+    \item Validate computed trajectories  
+\end{itemize}
 
 \end{enumerate}
 
-\subsubsection{Area of Testing2}
+\subsubsection{Inverse Kinematics (IK) Solver Validation}
 
-...
+These tests verify that the IK solver correctly computes joint angles for a given end-effector position. \textbf{Reference: SRS Section on Forward Kinematics and Inverse Kinematics.}
+
+\paragraph{Feasibility of IK Solutions}
+
+\begin{enumerate}
+
+\item \textbf{Test ID: T3}  
+
+\textbf{Control:} Automatic  
+
+\textbf{Initial State:} Defined robotic arm parameters  
+
+\textbf{Input:}  
+\begin{itemize}
+    \item A reachable target position \( (x_{\text{goal}}, y_{\text{goal}}) \)  
+\end{itemize}
+
+\textbf{Expected Output:}  
+\begin{itemize}
+    \item A valid set of joint angles \( (\theta_1, \theta_2) \)  
+    \item The computed position matches the expected end-effector position  
+\end{itemize}
+
+\textbf{Test Case Derivation:} Ensures that inverse kinematics computations return correct and feasible joint angles.  
+
+\textbf{How Test Will Be Performed:}  
+\begin{itemize}
+    \item Compute joint angles using inverse kinematics  
+    \item Validate against forward kinematics  
+    \item Check if solutions respect joint limits  
+\end{itemize}
+
+\end{enumerate}
 
 \subsection{Tests for Nonfunctional Requirements}
 
-\wss{The nonfunctional requirements for accuracy will likely just reference the
-  appropriate functional tests from above.  The test cases should mention
-  reporting the relative error for these tests.  Not all projects will
-  necessarily have nonfunctional requirements related to accuracy.}
+\subsubsection{Performance and Computational Efficiency}
 
-\wss{For some nonfunctional tests, you won't be setting a target threshold for
-passing the test, but rather describing the experiment you will do to measure
-the quality for different inputs.  For instance, you could measure speed versus
-the problem size.  The output of the test isn't pass/fail, but rather a summary
-table or graph.}
-
-\wss{Tests related to usability could include conducting a usability test and
-  survey.  The survey will be in the Appendix.}
-
-\wss{Static tests, review, inspections, and walkthroughs, will not follow the
-format for the tests given below.}
-
-\wss{If you introduce static tests in your plan, you need to provide details.
-How will they be done?  In cases like code (or document) walkthroughs, who will
-be involved? Be specific.}
-
-\subsubsection{Area of Testing1}
-		
-\paragraph{Title for Test}
+These tests ensure that the system computes paths within acceptable time limits and does not exceed memory constraints. \textbf{Reference: SRS Section on Accuracy and Performance.}
 
 \begin{enumerate}
 
-\item{test-id1\\}
+\item \textbf{Test ID: N1}  
 
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input/Condition: 
-					
-Output/Result: 
-					
-How test will be performed: 
-					
-\item{test-id2\\}
+\textbf{Type:} Performance, Automatic  
 
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input: 
-					
-Output: 
-					
-How test will be performed: 
+\textbf{Initial State:} None  
+
+\textbf{Input:}  
+\begin{itemize}
+    \item A large number of obstacles (e.g., 50+)  
+    \item Randomized goal positions  
+\end{itemize}
+
+\textbf{Expected Output:}  
+\begin{itemize}
+    \item Execution time statistics  
+    \item Peak memory usage report  
+\end{itemize}
+
+\textbf{How Test Will Be Performed:}  
+\begin{itemize}
+    \item Profile the system while computing paths  
+    \item Measure time-to-solution for varying complexity levels  
+    \item Compare against baseline performance requirements  
+\end{itemize}
+
+\item \textbf{Test ID: N2}  
+
+\textbf{Type:} Scalability, Automatic  
+
+\textbf{Initial State:} None  
+
+\textbf{Input:}  
+\begin{itemize}
+    \item Increasing number of degrees of freedom (DOF) in the robotic arm (e.g., from 2-DOF to 6-DOF)  
+\end{itemize}
+
+\textbf{Expected Output:}  
+\begin{itemize}
+    \item System performance degradation analysis  
+    \item Success rate of path planning for different DOF levels  
+\end{itemize}
+
+\textbf{How Test Will Be Performed:}  
+\begin{itemize}
+    \item Measure computation time for different arm configurations  
+    \item Evaluate feasibility of solutions at high DOF levels  
+\end{itemize}
 
 \end{enumerate}
-
-\subsubsection{Area of Testing2}
-
-...
 
 \subsection{Traceability Between Test Cases and Requirements}
 
-\wss{Provide a table that shows which test cases are supporting which
-  requirements.}
+The traceability matrix below maps test cases to the corresponding requirements from the SRS to ensure complete coverage.
+
+\begin{table}[h!]
+  \centering
+  \caption{Traceability Matrix for System Tests}
+  \begin{tabular}{l l l}
+  \toprule
+  \textbf{Requirement} & \textbf{Test Case(s)} & \textbf{Comments} \\
+  \midrule
+  FR1: Single Obstacle Avoidance & T1 & Ensures safe navigation around obstacles \\
+  FR2: Multiple Obstacles & T2 & Tests complex environment handling \\
+  FR3: Solve Feasible IK & T3 & Verifies correct IK computations \\
+  NFR1: Accuracy & N1 & Validates end-effector positioning accuracy \\
+  NFR2: Performance & N2 & Ensures computational efficiency \\
+  \bottomrule
+  \end{tabular}
+\end{table}
+
 
 \section{Unit Test Description}
-
-\wss{This section should not be filled in until after the MIS (detailed design
-  document) has been completed.}
-
-\wss{Reference your MIS (detailed design document) and explain your overall
-philosophy for test case selection.}  
-
-\wss{To save space and time, it may be an option to provide less detail in this section.  
-For the unit tests you can potentially layout your testing strategy here.  That is, you 
-can explain how tests will be selected for each module.  For instance, your test building 
-approach could be test cases for each access program, including one test for normal behaviour 
-and as many tests as needed for edge cases.  Rather than create the details of the input 
-and output here, you could point to the unit testing code.  For this to work, you code 
-needs to be well-documented, with meaningful names for all of the tests.}
+Unit testing will occur once the detailed designs are finalized (see the MIS). Below is the general approach for module-level testing.
 
 \subsection{Unit Testing Scope}
 
-\wss{What modules are outside of the scope.  If there are modules that are
-  developed by someone else, then you would say here if you aren't planning on
-  verifying them.  There may also be modules that are part of your software, but
-  have a lower priority for verification than others.  If this is the case,
-  explain your rationale for the ranking of module importance.}
+All modules described in the MIS are considered in-scope, except for any third-party libraries. Priority is given to:
+\begin{itemize}
+    \item IK Solver Module
+    \item Collision Detection Module
+    \item Path Planner Module
+\end{itemize}
+We assume external math/optimization libraries (e.g., for matrix operations) are already tested by their providers.
 
 \subsection{Tests for Functional Requirements}
 
-\wss{Most of the verification will be through automated unit testing.  If
-  appropriate specific modules can be verified by a non-testing based
-  technique.  That can also be documented in this section.}
-
-\subsubsection{Module 1}
-
-\wss{Include a blurb here to explain why the subsections below cover the module.
-  References to the MIS would be good.  You will want tests from a black box
-  perspective and from a white box perspective.  Explain to the reader how the
-  tests were selected.}
+\subsubsection{Collision Detection Module Tests}
 
 \begin{enumerate}
-
-\item{test-id1\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
-
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-
-How test will be performed: 
-					
-\item{test-id2\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
-
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-
-How test will be performed: 
-
-\item{...\\}
-    
+\item \textbf{Test ID}: U1 \\ 
+\textbf{Type}: Functional, Automatic \\ 
+\textbf{Initial State}: Environment with at least one circular obstacle \\ 
+\textbf{Input}: A line segment representing a robot arm link and an obstacle defined by center position and radius \\ 
+\textbf{Expected Output}: Boolean indicating whether a collision occurs \\ 
+\textbf{Test Case Derivation}: Verify collision detection under different scenarios:
+\begin{itemize}
+    \item No collision (link does not intersect obstacle)
+    \item Tangential collision (link touches the edge of the obstacle)
+    \item Full overlap (link completely inside the obstacle)
+\end{itemize}
+\textbf{How Test Will be Performed}: Simulate known geometries and compare algorithm outputs with analytical results.
 \end{enumerate}
 
-\subsubsection{Module 2}
+\subsubsection{IK Solver Module Tests}
 
-...
+\begin{enumerate}
+\item \textbf{Test ID}: U2 \\ 
+\textbf{Type}: Functional, Automatic \\ 
+\textbf{Initial State}: 2-link robotic arm with fixed link lengths \\ 
+\textbf{Input}: Target position in Cartesian coordinates \\ 
+\textbf{Expected Output}: Set of joint angles that place the end-effector at the target \\ 
+\textbf{Test Case Derivation}: Verify correctness under different conditions:
+\begin{itemize}
+    \item Target reachable within workspace
+    \item Target at singularity points (e.g., fully extended or folded)
+    \item Target unreachable (should return failure)
+\end{itemize}
+\textbf{How Test Will be Performed}: Compare solver results to analytical solutions and verify feasibility of output joint angles.
+\end{enumerate}
+
+\subsubsection{Path Planner Module Tests}
+
+\begin{enumerate}
+\item \textbf{Test ID}: U3 \\ 
+\textbf{Type}: Functional, Automatic \\ 
+\textbf{Initial State}: Defined workspace with static obstacles \\ 
+\textbf{Input}: Start and goal positions, obstacle map \\ 
+\textbf{Expected Output}: A sequence of joint angles forming a valid path from start to goal \\ 
+\textbf{Test Case Derivation}: Ensure correct path generation under:
+\begin{itemize}
+    \item No obstacles (should return a direct path)
+    \item Single obstacle blocking the direct path (should generate a detour)
+    \item Multiple obstacles with narrow passage (should generate an optimal feasible path)
+\end{itemize}
+\textbf{How Test Will be Performed}: Compare generated paths with expected solutions in predefined test environments.
+\end{enumerate}
 
 \subsection{Tests for Nonfunctional Requirements}
 
-\wss{If there is a module that needs to be independently assessed for
-  performance, those test cases can go here.  In some projects, planning for
-  nonfunctional tests of units will not be that relevant.}
+\subsubsection{Performance and Scalability Tests}
 
-\wss{These tests may involve collecting performance data from previously
-  mentioned functional tests.}
-
-\subsubsection{Module ?}
-		
 \begin{enumerate}
-
-\item{test-id1\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input/Condition: 
-					
-Output/Result: 
-					
-How test will be performed: 
-					
-\item{test-id2\\}
-
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input: 
-					
-Output: 
-					
-How test will be performed: 
-
+\item \textbf{Test ID}: U4 \\ 
+\textbf{Type}: Performance, Automatic \\ 
+\textbf{Initial State}: Environment with varying numbers of obstacles \\ 
+\textbf{Input}: Multiple path-planning queries with increasing workspace complexity \\ 
+\textbf{Expected Output}: Execution time and memory usage statistics \\ 
+\textbf{How Test Will be Performed}: Use a profiler to measure performance overhead and scalability under high computational loads.
 \end{enumerate}
 
-\subsubsection{Module ?}
+\subsubsection{Numerical Stability Tests}
 
-...
+\begin{enumerate}
+\item \textbf{Test ID}: U5 \\ 
+\textbf{Type}: Accuracy, Automatic \\ 
+\textbf{Initial State}: Workspace with no obstacles \\ 
+\textbf{Input}: Multiple IK queries with floating-point precision limits \\ 
+\textbf{Expected Output}: Consistent and numerically stable joint angles \\ 
+\textbf{How Test Will be Performed}: Compare solver results with high-precision analytical solutions and detect anomalies in floating-point calculations.
+\end{enumerate}
 
 \subsection{Traceability Between Test Cases and Modules}
 
-\wss{Provide evidence that all of the modules have been considered.}
-				
+\begin{table}[h!]
+  \centering
+  \caption{Traceability Matrix for Unit Tests}
+  \begin{tabular}{l l l}
+  \toprule
+  \textbf{Module} & \textbf{Test Case(s)} & \textbf{Comments}\\
+  \midrule
+  Collision Detection & U1, U4 & Checking correctness and performance \\
+  IK Solver & U2, U5 & Ensuring correctness and numerical stability \\
+  Path Planner & U3, U4 & Validates A* search efficiency and scalability \\
+  \bottomrule
+  \end{tabular}
+\end{table}
+
 \bibliographystyle{plainnat}
-
 \bibliography{../../refs/References}
-
 \newpage
 
 \section{Appendix}
 
-This is where you can place additional information.
+Any symbolic constants referenced in the test cases (like tolerances or maximum obstacle counts) can be listed here for easier maintenance.
 
 \subsection{Symbolic Parameters}
 
@@ -499,31 +506,10 @@ Their values are defined in this section for easy maintenance.
 
 \subsection{Usability Survey Questions?}
 
-\wss{This is a section that would be appropriate for some projects.}
+If we conduct a small-scale usability survey, we can place the questionnaire or script here.
+
 
 \newpage{}
-\section*{Appendix --- Reflection}
 
-\wss{This section is not required for CAS 741}
-
-The information in this section will be used to evaluate the team members on the
-graduate attribute of Lifelong Learning.
-
-\input{../Reflection.tex}
-
-\begin{enumerate}
-  \item What went well while writing this deliverable? 
-  \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
-  \item What knowledge and skills will the team collectively need to acquire to
-  successfully complete the verification and validation of your project?
-  Examples of possible knowledge and skills include dynamic testing knowledge,
-  static testing knowledge, specific tool usage, Valgrind etc.  You should look to
-  identify at least one item for each team member.
-  \item For each of the knowledge areas and skills identified in the previous
-  question, what are at least two approaches to acquiring the knowledge or
-  mastering the skill?  Of the identified approaches, which will each team
-  member pursue, and why did they make this choice?
-\end{enumerate}
 
 \end{document}
