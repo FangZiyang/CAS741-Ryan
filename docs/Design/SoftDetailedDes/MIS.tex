@@ -53,8 +53,7 @@ urlcolor=cyan          % color of external links
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+2025 March 19 & 1.0 & Notes\\
 \bottomrule
 \end{tabularx}
 
@@ -62,9 +61,8 @@ Date 2 & 1.1 & Notes\\
 
 \section{Symbols, Abbreviations and Acronyms}
 
-See SRS Documentation at \wss{give url}
+See SRS Documentation at \url{https://github.com/FangZiyang/CAS741-Ryan/blob/main/docs/SRS/SRS.pdf}.
 
-\wss{Also add any additional symbols, abbreviations or acronyms}
 
 \newpage
 
@@ -76,18 +74,20 @@ See SRS Documentation at \wss{give url}
 
 \section{Introduction}
 
+
 The following document details the Module Interface Specifications for
-\wss{Fill in your project name and description}
+\textbf{2D Robot Arm Path Planning} 
 
 Complementary documents include the System Requirement Specifications
 and Module Guide.  The full documentation and implementation can be
-found at \url{...}.  \wss{provide the url for your repo}
+found at \url{https://github.com/FangZiyang/CAS741-Ryan}. 
+
+% This document is the Module Interface Specification (MIS) for the system. It is developed in accordance with the Software Requirements Specification (SRS) for the project. The MIS defines the modular structure of the software and the interface of each module that together fulfill the requirements for planning a collision-free path for a two-dimensional robotic arm. The system's goal, as outlined in the SRS, is to compute a safe and efficient path for the robotic arm to move from a given starting position to a desired goal position without colliding with any obstacles in its environment.
+
+% The design described herein is implemented in \textbf{Python}, aligning with the SRS implementation constraints. Each module's responsibilities and interactions are clearly delineated to ensure the system meets the functional goals (path computation, collision avoidance, etc.) and outputs specified in the SRS. A pathfinding algorithm (such as \textit{A*}) is utilized within the Path Planning module to find an optimal route; however, the detailed mechanics of this algorithm are abstracted away in this document, focusing instead on the interface and role of the module within the system.
+
 
 \section{Notation}
-
-\wss{You should describe your notation.  You can use what is below as
-  a starting point.}
-
 The structure of the MIS for modules comes from \citet{HoffmanAndStrooper1995},
 with the addition that template modules have been adapted from
 \cite{GhezziEtAl2003}.  The mathematical notation comes from Chapter 3 of
@@ -98,19 +98,23 @@ multiple assignment statement and conditional rules follow the form $(c_1
 The following table summarizes the primitive data types used by \progname. 
 
 \begin{center}
-\renewcommand{\arraystretch}{1.2}
-\noindent 
-\begin{tabular}{l l p{7.5cm}} 
-\toprule 
-\textbf{Data Type} & \textbf{Notation} & \textbf{Description}\\ 
-\midrule
-character & char & a single symbol or digit\\
-integer & $\mathbb{Z}$ & a number without a fractional component in (-$\infty$, $\infty$) \\
-natural number & $\mathbb{N}$ & a number without a fractional component in [1, $\infty$) \\
-real & $\mathbb{R}$ & any number in (-$\infty$, $\infty$)\\
-\bottomrule
-\end{tabular} 
-\end{center}
+  \renewcommand{\arraystretch}{1.2}
+  \noindent 
+  \begin{tabular}{l l p{7.5cm}} 
+  \toprule 
+  \textbf{Data Type} & \textbf{Notation} & \textbf{Description}\\ 
+  \midrule
+  character & char & a single symbol or digit\\
+  integer & $\mathbb{Z}$ & a number without a fractional component in $(-\infty, \infty)$ \\[4pt]
+  natural number & $\mathbb{N}$ & a number without a fractional component in $[1, \infty)$ \\[4pt]
+  real & $\mathbb{R}$ & any number in $(-\infty, \infty)$\\[4pt]
+  point & $\mathbb{R} \times \mathbb{R}$ & ordered pair representing a 2D coordinate\\[4pt]
+  configuration & $\mathbb{R}^n$ & vector of joint angles, length $n$ corresponds to the number of joints\\[4pt]
+  path & sequence of configurations & ordered list of configurations representing a robot path\\[4pt]
+  obstacle & (point, real) & tuple containing position (center) and radius defining a circular obstacle\\
+  \bottomrule
+  \end{tabular} 
+  \end{center}
 
 \noindent
 The specification of \progname \ uses some derived data types: sequences, strings, and
@@ -124,108 +128,263 @@ described by giving their type signature followed by their specification.
 
 The following table is taken directly from the Module Guide document for this project.
 
+
 \begin{table}[h!]
-\centering
-\begin{tabular}{p{0.3\textwidth} p{0.6\textwidth}}
-\toprule
-\textbf{Level 1} & \textbf{Level 2}\\
-\midrule
+  \centering
+  \begin{tabular}{p{0.3\textwidth} p{0.6\textwidth}}
+  \toprule
+  \textbf{Level 1} & \textbf{Level 2}\\
+  \midrule
+  \textbf{Hardware-Hiding Module} & Simulation Interface Module\\
+  \midrule
+  \multirow{4}{0.3\textwidth}{\textbf{Behaviour-Hiding Module}} 
+  & Input Parameters Module \\
+  & Output Format Module \\
+  & Output Verification Module \\
+  & Path Planning Module \\
+  & Collision Detection Module \\
+  & Inverse Kinematics Solver Module \\
+  & Configuration Management Module \\
+  \midrule
+  \multirow{3}{0.3\textwidth}{\textbf{Software Decision Module}} 
+  & Plotting Module \\
+  & Logging and Debugging Module \\
+  \bottomrule
+  \end{tabular}
+  \caption{Module Hierarchy}
+  \label{TblMH}
+  \end{table}
 
-{Hardware-Hiding} & ~ \\
-\midrule
-
-\multirow{7}{0.3\textwidth}{Behaviour-Hiding} & Input Parameters\\
-& Output Format\\
-& Output Verification\\
-& Temperature ODEs\\
-& Energy Equations\\ 
-& Control Module\\
-& Specification Parameters Module\\
-\midrule
-
-\multirow{3}{0.3\textwidth}{Software Decision} & {Sequence Data Structure}\\
-& ODE Solver\\
-& Plotting\\
-\bottomrule
-
-\end{tabular}
-\caption{Module Hierarchy}
-\label{TblMH}
-\end{table}
 
 \newpage
 ~\newpage
 
-\section{MIS of \wss{Module Name}} \label{Module} \wss{Use labels for
-  cross-referencing}
-
-\wss{You can reference SRS labels, such as R\ref{R_Inputs}.}
-
-\wss{It is also possible to use \LaTeX for hypperlinks to external documents.}
+\section{MIS of Path Planning Module} \label{Module:PathPlanning}
 
 \subsection{Module}
-
-\wss{Short name for the module}
+Path Plann
 
 \subsection{Uses}
+This module interacts with the following components:
+\begin{itemize}
+\item \textbf{Input Parameters Module} (for start and goal configurations, obstacles, and robot parameters)
+\item \textbf{Collision Avoidance Module} (to verify that planned paths are free of collisions)
+\item \textbf{Output Format Module} (to return and display the final planned path)
+\item \textbf{Data Structures Module} (for managing robot configurations, obstacles, and paths)
+\end{itemize}
 
 
 \subsection{Syntax}
 
 \subsubsection{Exported Constants}
 
+\begin{itemize}
+  \item \texttt{MAX\_ITERATIONS} : $\mathbb{N}$ \quad (Maximum iterations allowed for path search, default: 10,000)
+  \item \texttt{HEURISTIC\_FACTOR} : $\mathbb{R}$ \quad (Scaling factor for heuristic function in A* search, default: 1.0)
+\end{itemize}
+
+
 \subsubsection{Exported Access Programs}
 
 \begin{center}
-\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
-\hline
-\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
-\hline
-\wss{accessProg} & - & - & - \\
-\hline
-\end{tabular}
-\end{center}
+  \renewcommand{\arraystretch}{1.4}
+  \begin{tabular}{p{3.5cm} p{3cm} p{4cm} p{4cm}}
+  \toprule
+  \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+  \midrule
+  \texttt{load\_params} & string & - & FileNotFound, InvalidFormat, MissingParameter, InvalidValue \\[4pt]
+  
+  \texttt{verify\_params} & - & - & InvalidRobotDimensions, InvalidJointLimits, InvalidObstacleData, InvalidInitialPose, InvalidGoalPose \\[4pt]
+  
+  \texttt{getRobotParams} & - & RobotParams & - \\[4pt]
+  
+  \texttt{getObstacles} & - & Obstacles & - \\[4pt]
+  
+  \texttt{getInitialConfig} & - & $\mathbb{R}^n$ & - \\[4pt]
+  
+  \texttt{getGoalConfig} & - & $\mathbb{R}^n$ & - \\[4pt]
+  
+  \texttt{planPath} & $\mathbb{R}^n \times \mathbb{R}^n \times Obstacles \times RobotParams$ & sequence of $\mathbb{R}^n$ & NoPathFoundException \\
+  
+  \bottomrule
+  \end{tabular}
+  \end{center}
+
+  
 
 \subsection{Semantics}
 
 \subsubsection{State Variables}
 
-\wss{Not all modules will have state variables.  State variables give the module
-  a memory.}
+None. The module does not maintain any persistent state.
 
 \subsubsection{Environment Variables}
 
-\wss{This section is not necessary for all modules.  Its purpose is to capture
-  when the module has external interaction with the environment, such as for a
-  device driver, screen interface, keyboard, file, etc.}
+None. The module does not interact with external devices.
 
 \subsubsection{Assumptions}
 
-\wss{Try to minimize assumptions and anticipate programmer errors via
-  exceptions, but for practical purposes assumptions are sometimes appropriate.}
+
+\begin{itemize}
+  \item The robotic arm operates in a 2D plane.
+  \item The environment is known beforehand and does not change dynamically.
+  \item Obstacles are represented as circles with given positions and radii.
+  \item The A* algorithm is used for path search in joint space.
+  \end{itemize}
+
+  \subsubsection{Access Routine Semantics}
+
+  \noindent \texttt{load\_params}(filePath: string):
+  \begin{itemize}
+  \item transition: Parameters (robot dimensions, joint limits, initial and goal configurations, obstacles) are loaded from the given file into the module's state variables.
+  \item exception: Raises \texttt{FileNotFound} if the file does not exist; raises \texttt{InvalidFormat}, \texttt{MissingParameter}, or \texttt{InvalidValue} if any input is invalid.
+  \end{itemize}
+  
+  \noindent \texttt{verify\_params}():
+  \begin{itemize}
+  \item output: none
+  \item exception: Raises \texttt{InvalidRobotDimensions}, \texttt{InvalidJointLimits}, \texttt{InvalidObstacleData}, \texttt{InvalidInitialPose}, or \texttt{InvalidGoalPose} if the loaded parameters violate constraints or logical consistency.
+  \end{itemize}
+  
+  \noindent \texttt{getRobotParams}():
+  \begin{itemize}
+  \item output: \( RobotParams \), a tuple containing robot dimension parameters and joint constraints.
+  \item exception: none
+  \end{itemize}
+  
+  \noindent \texttt{getObstacles}():
+  \begin{itemize}
+  \item output: A sequence of \( Obstacles \), where each obstacle is represented as a tuple \((\mathbb{R}^2, \mathbb{R})\), containing the center coordinates and radius.
+  \item exception: none
+  \end{itemize}
+  
+  \noindent \texttt{getInitialConfig}():
+  \begin{itemize}
+  \item output: Initial robot configuration as a vector in \( \mathbb{R}^n \).
+  \item exception: none
+  \end{itemize}
+  
+  \noindent \texttt{getGoalConfig}():
+  \begin{itemize}
+  \item output: Goal robot configuration as a vector in \( \mathbb{R}^n \).
+  \item exception: none
+  \end{itemize}
+  
+  \noindent \texttt{planPath}(start: \( \mathbb{R}^n \), goal: \( \mathbb{R}^n \), obstacles: \( Obstacles \), robotParams: \( RobotParams \)):
+  \begin{itemize}
+  \item output: A collision-free sequence of robot configurations (path) from the initial configuration (\(start\)) to the goal configuration (\(goal\)), represented as a sequence of \( \mathbb{R}^n \).
+  \item exception: Raises \texttt{NoPathFoundException} if no collision-free path exists between the provided configurations given the environment and robot constraints.
+  \end{itemize}
+  
+
+  \subsubsection{Local Functions}
+
+  The following local functions are defined for specifying internal logic clearly. These functions are primarily for specification purposes; they may not necessarily correspond directly to explicit implementations.
+  
+  \noindent \texttt{isValidConfig}(config: $\mathbb{R}^n$, robotParams: $RobotParams$):
+  \begin{itemize}
+    \item output: boolean, true if the given robot configuration satisfies the joint angle constraints, false otherwise.
+  \end{itemize}
+  
+  \noindent \texttt{isCollisionFree}(config: $\mathbb{R}^n$, obstacles: $Obstacles$, robotParams: $RobotParams$):
+  \begin{itemize}
+    \item output: boolean, true if the given configuration does not result in collisions with obstacles, false otherwise.
+  \end{itemize}
+  
+  \noindent \texttt{heuristicCost}(config1: $\mathbb{R}^n$, config2: $\mathbb{R}^n$):
+  \begin{itemize}
+    \item output: real, heuristic cost (estimated distance or effort) between two configurations for guiding the A* algorithm.
+  \end{itemize}
+  
+  \noindent \texttt{distance}(config1: $\mathbb{R}^n$, config2: $\mathbb{R}^n$):
+  \begin{itemize}
+    \item output: real, actual distance metric used to compute the edge costs between configurations during path planning.
+  \end{itemize}
+  
+
+  \newpage
+  \newpage  
+
+
+
+
+
+\section{MIS of Collision Detection Module} \label{Module:CollisionDetection}
+
+\subsection{Module}
+Collision Detection
+
+\subsection{Uses}
+This module interacts with:
+\begin{itemize}
+\item \textbf{Input Parameters Module} (to obtain obstacle definitions and robot dimensions)
+\item \textbf{Path Planning Module} (to provide collision checks for planned paths)
+\item \textbf{Inverse Kinematics Solver Module} (to verify joint configurations are collision-free)
+\end{itemize}
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+None.
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+  \renewcommand{\arraystretch}{1.4}
+  \begin{tabular}{p{4cm} p{4cm} p{3cm} p{4cm}}
+    \toprule
+    \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+    \midrule
+    \texttt{checkCollision} & $\mathbb{R}^n \times Obstacles \times RobotParams$ & boolean & InvalidConfiguration \\[4pt]
+    \texttt{checkPathCollision} & sequence of $\mathbb{R}^n$ $\times$ Obstacles $\times$ RobotParams & boolean & InvalidPath \\[4pt]
+    \bottomrule
+  \end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+None. This module does not maintain any persistent state.
+
+\subsubsection{Environment Variables}
+None. This module does not interact with external devices or environments.
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+  \item Obstacles are defined as circles with a given position and radius.
+  \item Robot arm links are modeled as line segments between joint positions.
+  \item The environment and obstacle positions remain static during collision detection.
+\end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \wss{accessProg}():
+\noindent \texttt{checkCollision}(config: $\mathbb{R}^n$, obstacles: Obstacles, robotParams: RobotParams):
 \begin{itemize}
-\item transition: \wss{if appropriate} 
-\item output: \wss{if appropriate} 
-\item exception: \wss{if appropriate} 
+\item output: Returns \texttt{true} if the provided robot configuration collides with any obstacle; otherwise, returns \texttt{false}.
+\item exception: Raises \texttt{InvalidConfiguration} if the configuration provided violates joint constraints or robot parameters.
 \end{itemize}
 
-\wss{A module without environment variables or state variables is unlikely to
-  have a state transition.  In this case a state transition can only occur if
-  the module is changing the state of another module.}
-
-\wss{Modules rarely have both a transition and an output.  In most cases you
-  will have one or the other.}
+\noindent \texttt{checkPathCollision}(path: sequence of $\mathbb{R}^n$, obstacles: Obstacles, robotParams: RobotParams):
+\begin{itemize}
+\item output: Returns \texttt{true} if any configuration in the provided path results in a collision; otherwise, returns \texttt{false}.
+\item exception: Raises \texttt{InvalidPath} if the provided path contains invalid configurations or is improperly defined.
+\end{itemize}
 
 \subsubsection{Local Functions}
 
-\wss{As appropriate} \wss{These functions are for the purpose of specification.
-  They are not necessarily something that is going to be implemented
-  explicitly.  Even if they are implemented, they are not exported; they only
-  have local scope.}
+The following functions are local specification tools that clarify the module's collision-checking logic:
+
+\noindent \texttt{detectSegmentCollision}(pointA: $\mathbb{R}^2$, pointB: $\mathbb{R}^2$, obstacle: ( $\mathbb{R}^2$, $\mathbb{R}$ )):
+\begin{itemize}
+  \item output: boolean, true if the line segment defined by \texttt{pointA} and \texttt{pointB} intersects the obstacle; false otherwise.
+\end{itemize}
+
+\noindent \texttt{forwardKinematics}(config: $\mathbb{R}^n$, robotParams: RobotParams):
+\begin{itemize}
+  \item output: sequence of $\mathbb{R}^2$, representing the positions of all joints and the end-effector, used for collision checking.
+\end{itemize}
+
 
 \newpage
 
@@ -233,6 +392,9 @@ The following table is taken directly from the Module Guide document for this pr
 \bibliography {../../../refs/References}
 
 \newpage
+
+
+
 
 \section{Appendix} \label{Appendix}
 

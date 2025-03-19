@@ -1,0 +1,50 @@
+flowchart TD
+
+    %% 控制模块（放在顶部）
+    subgraph ControlLayer [" "]
+        ControlModule["🛠 Control Module"]
+    end
+
+    %% 核心路径规划和碰撞检测模块（放在中间）
+    subgraph CoreLayer [" "]
+        PathPlanningModule["📍 Path Planning Module"]
+        CollisionDetectionModule["⚠️ Collision Detection Module"]
+    end
+
+    %% 输入和数据存储模块（放在左侧）
+    subgraph InputLayer [" "]
+        InputParametersModule["📥 Input Parameters Module"]
+        DataStructuresModule["🗄 Data Structures Module"]
+    end
+
+    %% 输出、可视化和验证模块（放在右侧）
+    subgraph OutputLayer [" "]
+        OutputFormatModule["📤 Output Format Module"]
+        OutputVerificationModule["✅ Output Verification Module"]
+        PlottingModule["📊 Plotting Module"]
+    end
+
+    %% 硬件隐藏模块（放在右下角）
+    subgraph HardwareLayer [" "]
+        direction TB
+        HardwareHidingModule["🖥 Hardware Hiding Module"]
+    end
+
+    %% 连接关系
+    ControlModule --> PathPlanningModule
+    PathPlanningModule --> CollisionDetectionModule
+    PathPlanningModule --> OutputFormatModule
+    PathPlanningModule --> OutputVerificationModule
+    PathPlanningModule --> PlottingModule
+    CollisionDetectionModule --> OutputVerificationModule
+    OutputVerificationModule --> DataStructuresModule
+    OutputFormatModule --> DataStructuresModule
+    PlottingModule --> DataStructuresModule
+
+    %% `InputParametersModule` 交互
+    InputParametersModule --> PathPlanningModule
+    InputParametersModule --> CollisionDetectionModule
+    InputParametersModule --> DataStructuresModule
+
+    %% 硬件模块 (独立，不与其他模块交互，放在右下角)
+    DataStructuresModule ~~~ HardwareHidingModule
