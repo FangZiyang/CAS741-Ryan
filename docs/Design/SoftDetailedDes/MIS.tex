@@ -108,10 +108,7 @@ The following table summarizes the primitive data types used by \progname.
   integer & $\mathbb{Z}$ & a number without a fractional component in $(-\infty, \infty)$ \\[4pt]
   natural number & $\mathbb{N}$ & a number without a fractional component in $[1, \infty)$ \\[4pt]
   real & $\mathbb{R}$ & any number in $(-\infty, \infty)$\\[4pt]
-  point & $\mathbb{R} \times \mathbb{R}$ & ordered pair representing a 2D coordinate\\[4pt]
-  configuration & $\mathbb{R}^n$ & vector of joint angles, length $n$ corresponds to the number of joints\\[4pt]
-  path & sequence of configurations & ordered list of configurations representing a robot path\\[4pt]
-  obstacle & (point, real) & tuple containing position (center) and radius defining a circular obstacle\\
+
   \bottomrule
   \end{tabular} 
   \end{center}
@@ -135,175 +132,119 @@ The following table is taken directly from the Module Guide document for this pr
   \toprule
   \textbf{Level 1} & \textbf{Level 2}\\
   \midrule
-  \textbf{Hardware-Hiding Module} & Simulation Interface Module\\
+  \textbf{Hardware Hiding} & \\ 
   \midrule
-  \multirow{4}{0.3\textwidth}{\textbf{Behaviour-Hiding Module}} 
-  & Input Parameters Module \\
-  & Output Format Module \\
-  & Output Verification Module \\
-  & Path Planning Module \\
-  & Collision Detection Module \\
-  & Inverse Kinematics Solver Module \\
-  & Configuration Management Module \\
+  \multirow{6}{0.3\textwidth}{\textbf{Behaviour Hiding}} 
+  & Input Parameters Module \\ 
+  & Output Format Module \\ 
+  & Output Verification Module \\ 
+  & Inverse Kinematics Solver Module \\ 
+  & Configuration Management Module \\ 
+  & Path Planning Module \\ 
+  & Collision Detection Module \\ 
   \midrule
-  \multirow{3}{0.3\textwidth}{\textbf{Software Decision Module}} 
-  & Plotting Module \\
-  & Logging and Debugging Module \\
+  \multirow{1}{0.3\textwidth}{\textbf{Software Decision}} 
+  & Plotting Module \\ 
   \bottomrule
   \end{tabular}
   \caption{Module Hierarchy}
   \label{TblMH}
-  \end{table}
+\end{table}
 
 
 \newpage
-~\newpage
+% ~\newpage
 
 \section{MIS of Path Planning Module} \label{Module:PathPlanning}
 
 \subsection{Module}
-Path Plann
+Path Planning Module
 
 \subsection{Uses}
 This module interacts with the following components:
 \begin{itemize}
-\item \textbf{Input Parameters Module} (for start and goal configurations, obstacles, and robot parameters)
-\item \textbf{Collision Avoidance Module} (to verify that planned paths are free of collisions)
-\item \textbf{Output Format Module} (to return and display the final planned path)
-\item \textbf{Data Structures Module} (for managing robot configurations, obstacles, and paths)
+\item \textbf{Input Parameters Module}: Provides start and goal configurations, obstacles, and robot parameters.
+\item \textbf{Collision Detection Module}: Ensures that planned paths avoid obstacles.
+\item \textbf{Output Format Module}: Handles the formatting and visualization of the planned path.
 \end{itemize}
-
 
 \subsection{Syntax}
 
 \subsubsection{Exported Constants}
-
 \begin{itemize}
-  \item \texttt{MAX\_ITERATIONS} : $\mathbb{N}$ \quad (Maximum iterations allowed for path search, default: 10,000)
+  \item \texttt{MAX\_ITERATIONS} : $\mathbb{N}$ \quad (Maximum iterations for path search, default: 10,000)
   \item \texttt{HEURISTIC\_FACTOR} : $\mathbb{R}$ \quad (Scaling factor for heuristic function in A* search, default: 1.0)
 \end{itemize}
 
-
 \subsubsection{Exported Access Programs}
-
 \begin{center}
   \renewcommand{\arraystretch}{1.4}
   \begin{tabular}{p{3.5cm} p{3cm} p{4cm} p{4cm}}
   \toprule
   \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
   \midrule
-  \texttt{load\_params} & string & - & FileNotFound, InvalidFormat, MissingParameter, InvalidValue \\[4pt]
-  
-  \texttt{verify\_params} & - & - & InvalidRobotDimensions, InvalidJointLimits, InvalidObstacleData, InvalidInitialPose, InvalidGoalPose \\[4pt]
-  
-  \texttt{getRobotParams} & - & RobotParams & - \\[4pt]
-  
-  \texttt{getObstacles} & - & Obstacles & - \\[4pt]
-  
-  \texttt{getInitialConfig} & - & $\mathbb{R}^n$ & - \\[4pt]
-  
-  \texttt{getGoalConfig} & - & $\mathbb{R}^n$ & - \\[4pt]
-  
-  \texttt{planPath} & $\mathbb{R}^n \times \mathbb{R}^n \times Obstacles \times RobotParams$ & sequence of $\mathbb{R}^n$ & NoPathFoundException \\
-  
+  \texttt{planPath} & $\mathbb{R}^n \times \mathbb{R}^n \times Obstacles \times RobotParams$ & sequence of $\mathbb{R}^n$ & NoPathFoundException \\[4pt]
   \bottomrule
   \end{tabular}
-  \end{center}
-
-  
+\end{center}
 
 \subsection{Semantics}
 
 \subsubsection{State Variables}
-
 None. The module does not maintain any persistent state.
 
 \subsubsection{Environment Variables}
-
 None. The module does not interact with external devices.
 
 \subsubsection{Assumptions}
-
-
 \begin{itemize}
   \item The robotic arm operates in a 2D plane.
   \item The environment is known beforehand and does not change dynamically.
   \item Obstacles are represented as circles with given positions and radii.
   \item The A* algorithm is used for path search in joint space.
-  \end{itemize}
+\end{itemize}
 
-  \subsubsection{Access Routine Semantics}
+\subsubsection{Access Routine Semantics}
 
-  \noindent \texttt{load\_params}(filePath: string):
-  \begin{itemize}
-  \item transition: Parameters (robot dimensions, joint limits, initial and goal configurations, obstacles) are loaded from the given file into the module's state variables.
-  \item exception: Raises \texttt{FileNotFound} if the file does not exist; raises \texttt{InvalidFormat}, \texttt{MissingParameter}, or \texttt{InvalidValue} if any input is invalid.
-  \end{itemize}
-  
-  \noindent \texttt{verify\_params}():
-  \begin{itemize}
-  \item output: none
-  \item exception: Raises \texttt{InvalidRobotDimensions}, \texttt{InvalidJointLimits}, \texttt{InvalidObstacleData}, \texttt{InvalidInitialPose}, or \texttt{InvalidGoalPose} if the loaded parameters violate constraints or logical consistency.
-  \end{itemize}
-  
-  \noindent \texttt{getRobotParams}():
-  \begin{itemize}
-  \item output: \( RobotParams \), a tuple containing robot dimension parameters and joint constraints.
-  \item exception: none
-  \end{itemize}
-  
-  \noindent \texttt{getObstacles}():
-  \begin{itemize}
-  \item output: A sequence of \( Obstacles \), where each obstacle is represented as a tuple \((\mathbb{R}^2, \mathbb{R})\), containing the center coordinates and radius.
-  \item exception: none
-  \end{itemize}
-  
-  \noindent \texttt{getInitialConfig}():
-  \begin{itemize}
-  \item output: Initial robot configuration as a vector in \( \mathbb{R}^n \).
-  \item exception: none
-  \end{itemize}
-  
-  \noindent \texttt{getGoalConfig}():
-  \begin{itemize}
-  \item output: Goal robot configuration as a vector in \( \mathbb{R}^n \).
-  \item exception: none
-  \end{itemize}
-  
-  \noindent \texttt{planPath}(start: \( \mathbb{R}^n \), goal: \( \mathbb{R}^n \), obstacles: \( Obstacles \), robotParams: \( RobotParams \)):
-  \begin{itemize}
-  \item output: A collision-free sequence of robot configurations (path) from the initial configuration (\(start\)) to the goal configuration (\(goal\)), represented as a sequence of \( \mathbb{R}^n \).
-  \item exception: Raises \texttt{NoPathFoundException} if no collision-free path exists between the provided configurations given the environment and robot constraints.
-  \end{itemize}
-  
+\noindent \texttt{planPath}(start: \( \mathbb{R}^n \), goal: \( \mathbb{R}^n \), obstacles: \( Obstacles \), robotParams: \( RobotParams \)):
 
-  \subsubsection{Local Functions}
+\begin{itemize}
+  \item \textbf{transition}: Computes an optimal path from \(start\) to \(goal\) in joint space using A* search, ensuring that the path avoids obstacles.
 
-  The following local functions are defined for specifying internal logic clearly. These functions are primarily for specification purposes; they may not necessarily correspond directly to explicit implementations.
-  
-  \noindent \texttt{isValidConfig}(config: $\mathbb{R}^n$, robotParams: $RobotParams$):
-  \begin{itemize}
-    \item output: boolean, true if the given robot configuration satisfies the joint angle constraints, false otherwise.
-  \end{itemize}
-  
-  \noindent \texttt{isCollisionFree}(config: $\mathbb{R}^n$, obstacles: $Obstacles$, robotParams: $RobotParams$):
-  \begin{itemize}
-    \item output: boolean, true if the given configuration does not result in collisions with obstacles, false otherwise.
-  \end{itemize}
-  
-  \noindent \texttt{heuristicCost}(config1: $\mathbb{R}^n$, config2: $\mathbb{R}^n$):
-  \begin{itemize}
-    \item output: real, heuristic cost (estimated distance or effort) between two configurations for guiding the A* algorithm.
-  \end{itemize}
-  
-  \noindent \texttt{distance}(config1: $\mathbb{R}^n$, config2: $\mathbb{R}^n$):
-  \begin{itemize}
-    \item output: real, actual distance metric used to compute the edge costs between configurations during path planning.
-  \end{itemize}
-  
+  \item \textbf{output}: \( path \) is a valid and optimal sequence of robot configurations in \( \mathbb{R}^n \), satisfying the following properties:
 
-  \newpage
-  \newpage  
+\[
+\text{isOptimalPath}(p) \equiv \forall q \in \text{validPaths}(start, goal), \quad \text{cost}(p) \leq \text{cost}(q)
+\]
+
+\[
+\text{validPath}(p) \equiv \bigwedge_{i=0}^{|p|-1} \text{collisionFree}(p_i, p_{i+1}) \wedge p_0 = start \wedge p_{|p|} = goal
+\]
+
+\[
+\text{cost}(p) = \sum_{i=0}^{|p|-1} \text{distance}(p_i, p_{i+1})
+\]
+
+\[
+\text{heuristic}(q) = \min_{q' \in \text{neighbors}(q)} \text{distance}(q', goal)
+\]
+
+  \item \textbf{exception}: Raises \texttt{NoPathFoundException} if no valid collision-free path exists from \( start \) to \( goal \).
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+
+\noindent \texttt{heuristicCost}(config1: $\mathbb{R}^n$, config2: $\mathbb{R}^n$):
+\begin{itemize}
+  \item output: real, heuristic cost for A* search.
+\end{itemize}
+
+\noindent \texttt{distance}(config1: $\mathbb{R}^n$, config2: $\mathbb{R}^n$):
+\begin{itemize}
+  \item output: real, actual distance between configurations.
+\end{itemize}
+
 
 
 
@@ -312,19 +253,24 @@ None. The module does not interact with external devices.
 \section{MIS of Collision Detection Module} \label{Module:CollisionDetection}
 
 \subsection{Module}
+
 Collision Detection
 
 \subsection{Uses}
+
 This module interacts with:
 \begin{itemize}
-\item \textbf{Input Parameters Module} (to obtain obstacle definitions and robot dimensions)
-\item \textbf{Path Planning Module} (to provide collision checks for planned paths)
-\item \textbf{Inverse Kinematics Solver Module} (to verify joint configurations are collision-free)
-\end{itemize}
+  \item \textbf{Input Parameters Module} (to obtain obstacle definitions and robot dimensions)
+  \item \textbf{Path Planning Module} (to provide collision checks for planned paths)
+  \item \textbf{Inverse Kinematics Solver Module} (to verify joint configurations are collision-free)
+  \item \textbf{Configuration Management Module} (to access stored robot and obstacle data)
+  \item \textbf{Logging and Debugging Module} (to record collision detection results for debugging)
+  \end{itemize}
 
 \subsection{Syntax}
 
 \subsubsection{Exported Constants}
+
 None.
 
 \subsubsection{Exported Access Programs}
@@ -335,8 +281,8 @@ None.
     \toprule
     \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
     \midrule
-    \texttt{checkCollision} & $\mathbb{R}^n \times Obstacles \times RobotParams$ & boolean & InvalidConfiguration \\[4pt]
-    \texttt{checkPathCollision} & sequence of $\mathbb{R}^n$ $\times$ Obstacles $\times$ RobotParams & boolean & InvalidPath \\[4pt]
+    \texttt{checkCollision} & ADT \text{angle info} $\mathbb{R}^n \times Obstacles \times RobotParams$ & boolean & InvalidConfiguration \\[4pt]
+    \texttt{checkPathCollision} & sequence of  ADT \text{angle info} $\mathbb{R}^n$ $\times$ Obstacles $\times$ RobotParams & boolean & InvalidPath \\[4pt]
     \bottomrule
   \end{tabular}
 \end{center}
@@ -344,9 +290,11 @@ None.
 \subsection{Semantics}
 
 \subsubsection{State Variables}
+
 None. This module does not maintain any persistent state.
 
 \subsubsection{Environment Variables}
+
 None. This module does not interact with external devices or environments.
 
 \subsubsection{Assumptions}
@@ -359,34 +307,463 @@ None. This module does not interact with external devices or environments.
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \texttt{checkCollision}(config: $\mathbb{R}^n$, obstacles: Obstacles, robotParams: RobotParams):
+\noindent \texttt{checkCollision}($config: \mathbb{R}^n$, $obstacles: Obstacles$, $robotParams: RobotParams$):
 \begin{itemize}
-\item output: Returns \texttt{true} if the provided robot configuration collides with any obstacle; otherwise, returns \texttt{false}.
-\item exception: Raises \texttt{InvalidConfiguration} if the configuration provided violates joint constraints or robot parameters.
+\item transition: Computes whether the given configuration results in a collision by applying forward kinematics to determine the position of each joint and link. The joint positions are calculated as:
+
+\[
+p_0 = (0, 0), \quad p_i = p_{i-1} + L_i \begin{bmatrix} \cos(\theta_i) \\ \sin(\theta_i) \end{bmatrix}, \quad \forall i \in \{1, ..., n\}
+\]
+
+where:
+  - \( p_i \) is the position of the \( i \)-th joint,
+  - \( L_i \) is the link length,
+  - \( \theta_i \) is the joint angle.
+
+For each obstacle \( O_k = (x_k, y_k, r_k) \), the minimum distance between each robot link segment and the obstacle is computed:
+
+\[
+d = \frac{| (x_2 - x_1)(y_1 - y_k) - (y_2 - y_1)(x_1 - x_k) |}{\sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}}
+\]
+
+where \( (x_1, y_1) \) and \( (x_2, y_2) \) are endpoints of a robot link. A collision occurs if \( d \leq r_k \).
+
+\item output: Returns \texttt{true} if any link collides with an obstacle; otherwise, returns \texttt{false}.
+\item exception: Raises \texttt{InvalidConfiguration} if the configuration violates joint constraints or is out of the robot's feasible workspace.
 \end{itemize}
 
-\noindent \texttt{checkPathCollision}(path: sequence of $\mathbb{R}^n$, obstacles: Obstacles, robotParams: RobotParams):
+\noindent \texttt{checkPathCollision}($path: sequence\ of\ \mathbb{R}^n$, $obstacles: Obstacles$, $robotParams: RobotParams$):
 \begin{itemize}
+\item transition: Iterates over a given discrete sequence of configurations \( path = [q_1, q_2, ..., q_m] \), checking each configuration \( q_i \) using \texttt{checkCollision}. The path is validated using:
+
+\[
+\forall q_i \in path, \quad \texttt{checkCollision}(q_i, obstacles, robotParams) = false
+\]
+
+If any configuration \( q_i \) fails this check, the path is marked as invalid.
+
 \item output: Returns \texttt{true} if any configuration in the provided path results in a collision; otherwise, returns \texttt{false}.
-\item exception: Raises \texttt{InvalidPath} if the provided path contains invalid configurations or is improperly defined.
+\item exception: Raises \texttt{InvalidPath} if the provided path contains invalid configurations or does not conform to robot motion constraints.
 \end{itemize}
+
 
 \subsubsection{Local Functions}
 
 The following functions are local specification tools that clarify the module's collision-checking logic:
 
-\noindent \texttt{detectSegmentCollision}(pointA: $\mathbb{R}^2$, pointB: $\mathbb{R}^2$, obstacle: ( $\mathbb{R}^2$, $\mathbb{R}$ )):
+\noindent \texttt{forwardKinematics}($config: \mathbb{R}^n$, $robotParams: RobotParams$):
 \begin{itemize}
-  \item output: boolean, true if the line segment defined by \texttt{pointA} and \texttt{pointB} intersects the obstacle; false otherwise.
+  \item output: A sequence of joint positions representing the locations of all joints and the end-effector, used for collision checking.
 \end{itemize}
 
-\noindent \texttt{forwardKinematics}(config: $\mathbb{R}^n$, robotParams: RobotParams):
+\noindent \texttt{detectSegmentCollision}($pointA: \mathbb{R}^2$, $pointB: \mathbb{R}^2$, $obstacle: (\mathbb{R}^2, \mathbb{R})$):
 \begin{itemize}
-  \item output: sequence of $\mathbb{R}^2$, representing the positions of all joints and the end-effector, used for collision checking.
+  \item output: \texttt{true} if the line segment defined by \texttt{pointA} and \texttt{pointB} intersects the obstacle; \texttt{false} otherwise.
+\end{itemize}
+
+
+
+\newpage
+
+\section{MIS of Input Parameters Module} \label{Module:InputParameters}
+
+\subsection{Module}
+
+Input Parameters Module
+
+\subsection{Uses}
+
+This module interacts with:
+\begin{itemize}
+    \item \textbf{Configuration Management Module} (for validating and managing stored parameters)
+    \item \textbf{Path Planning Module} (to provide robot configuration, obstacles, and joint limits)
+    \item \textbf{Collision Detection Module} (to verify that loaded parameters do not lead to invalid configurations)
+\end{itemize}
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+  \renewcommand{\arraystretch}{1.4}
+  \begin{tabular}{p{3cm} p{4cm} p{4cm} p{3cm}}
+    \toprule
+    \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+    \midrule
+    \texttt{loadParams} & ADT & - & FileNotFound, InvalidFormat, MissingParameter, InvalidValue \\[4pt]
+    \texttt{getRobotParams} & - & ADT & - \\[4pt]
+    \texttt{getObstacles} & - & ADT & - \\[4pt]
+    \bottomrule
+  \end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+\begin{itemize}
+    \item \( RobotParams \) : Stores the dimensions and joint constraints of the robot.
+    \item \( Obstacles \) : A set of obstacles represented as tuples \( (center, radius) \).
+    \item \( InitialConfig \) : The starting configuration of the robot in joint space.
+    \item \( GoalConfig \) : The goal configuration of the robot in joint space.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+    \item \textbf{inputFile}: sequence of ADT, where each ADT corresponds to a parameter read from an external file.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+    \item The input file contains properly formatted parameters.
+    \item The input file follows a specific order in listing parameters.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \texttt{loadParams}(filePath: string):
+\begin{itemize}
+  \item transition: Loads robot parameters, obstacles, and configurations from the specified file.
+  \item exception: Raises \texttt{FileNotFound} if the file does not exist. Raises \texttt{InvalidFormat}, \texttt{MissingParameter}, or \texttt{InvalidValue} if any input is invalid.
+\end{itemize}
+
+\noindent \texttt{getRobotParams}():
+\begin{itemize}
+  \item output: Returns \( RobotParams \), a structure containing the robot's dimensions and joint constraints.
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+\noindent \texttt{parseParameter}:
+\begin{itemize}
+  \item output: Extracts numerical values from the input string and converts them to the appropriate type.
 \end{itemize}
 
 
 \newpage
+
+
+
+
+
+\section{MIS of Inverse Kinematics Solver Module} \label{Module:InverseKinematics}
+
+\subsection{Module}
+
+Inverse Kinematics Solver
+
+\subsection{Uses}
+
+This module interacts with:
+\begin{itemize}
+    \item \textbf{Input Parameters Module} (to obtain robot kinematic parameters and constraints)
+    \item \textbf{Path Planning Module} (to generate valid joint-space trajectories)
+    \item \textbf{Collision Detection Module} (to ensure the computed inverse kinematics solutions do not result in collisions)
+\end{itemize}
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+  \renewcommand{\arraystretch}{1.4}
+  \begin{tabular}{p{3.5cm} p{4cm} p{4cm} p{3cm}}
+    \toprule
+    \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+    \midrule
+    \texttt{solveIK} & $point \mathbb{R}^2 \times RobotParams$ & $\text{Seq}(ADT(\text{AngleInfo}))$ & NoSolutionException \\[4pt]
+
+    \bottomrule
+  \end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None. This module does not maintain any persistent state.
+
+\subsubsection{Environment Variables}
+
+None. This module does not interact with external devices.
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+    \item The forward kinematics function \( FK \) is well-defined and differentiable.
+    \item The workspace coordinates provided are within the robot’s reachable region.
+    \item The Jacobian matrix is not singular when computing inverse kinematics.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \texttt{solveIK}(target: $\mathbb{R}^m$, robotParams: RobotParams):
+\begin{itemize}
+    \item transition: Computes the joint configuration \( q \) that satisfies the inverse kinematics equation:
+
+    \[
+    FK(q) = target
+    \]
+
+    where \( FK: \mathbb{R}^n \to \mathbb{R}^m \) is the forward kinematics function of the robot. In the case where \( FK^{-1} \) is not explicitly defined, an iterative numerical method is used to approximate \( q \).
+
+    Given an initial guess \( q_0 \), the update rule follows Newton-Raphson iteration:
+
+    \[
+    q_{k+1} = q_k + J(q_k)^{-1} (target - FK(q_k))
+    \]
+
+    where \( J(q) = \frac{\partial FK(q)}{\partial q} \) is the Jacobian matrix.
+
+    If \( J(q) \) is singular or near-singular, a damped least-squares (DLS) method is applied:
+
+    \[
+    q_{k+1} = q_k + J(q_k)^T (J(q_k) J(q_k)^T + \lambda^2 I)^{-1} (target - FK(q_k))
+    \]
+
+    where \( \lambda \) is a small damping factor.
+
+    \item output: A sequence of valid joint-space solutions \( q \) in \( \mathbb{R}^n \) such that:
+
+    \[
+    \| FK(q) - target \| \leq \epsilon
+    \]
+
+    where \( \epsilon \) is a predefined tolerance for numerical accuracy.
+
+    \item exception: Raises \texttt{NoSolutionException} if no valid joint-space solution exists within the given iteration limit.
+\end{itemize}
+
+
+
+\subsubsection{Local Functions}
+
+\noindent \texttt{forwardKinematics}(q: $\mathbb{R}^n$, robotParams: RobotParams):
+\begin{itemize}
+  \item output: Returns the corresponding workspace coordinates \( FK(q) \).
+\end{itemize}
+
+\noindent \texttt{jacobianMatrix}(q: $\mathbb{R}^n$, robotParams: RobotParams):
+\begin{itemize}
+  \item output: Computes the Jacobian matrix \( J(q) = \frac{\partial FK(q)}{\partial q} \), used in numerical inverse kinematics solutions.
+\end{itemize}
+
+\noindent \texttt{numericalIK}(target: $\mathbb{R}^m$, robotParams: RobotParams):
+\begin{itemize}
+  \item output: Uses an iterative method (such as Newton-Raphson) to compute an approximate inverse kinematics solution.
+\end{itemize}
+
+\newpage
+
+\section{MIS of Output Verification Module} \label{Module:OutputVerification}
+
+\subsection{Module}
+
+Output Verification Module
+
+\subsection{Uses}
+
+This module interacts with:
+\begin{itemize}
+    \item \textbf{Path Planning Module} (to verify the correctness of planned paths)
+    \item \textbf{Collision Detection Module} (to check if the final path avoids collisions)
+    \item \textbf{Input Parameters Module} (to access the input parameters and thresholds for validation)
+\end{itemize}
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+\begin{itemize}
+    \item \texttt{ADMIS\_ER} = \(1 \times 10^{-6}\) (Tolerance threshold for acceptable numerical errors)
+\end{itemize}
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{4cm} p{6cm} p{3cm} p{3cm}}
+    \toprule
+    \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+    \midrule
+    \texttt{verifyOutput} & $path: ADT(Path), obstacles: ADT(Obstacles), robotParams: ADT(RobotParams)$ & - & PATH\_INVALID, COLLISION\_DETECTED \\[4pt]
+    \bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None. This module does not maintain any persistent state.
+
+\subsubsection{Environment Variables}
+
+None. This module does not interact with external devices.
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+    \item The computed path is a discrete sequence of configurations in \( \mathbb{R}^n \).
+    \item Obstacles are represented as closed regions in \( \mathbb{R}^2 \) or \( \mathbb{R}^3 \).
+    \item The verification module ensures that the planned path is both valid and collision-free.
+    \item The energy conservation check ensures numerical accuracy.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \texttt{verifyOutput}$(path, obstacles, robotParams)$:
+\begin{itemize}
+    \item transition: Validates the computed path to ensure:
+    \[
+    \forall q_i \in path, \quad q_i \text{ satisfies joint constraints and does not intersect obstacles.}
+    \]
+    \item output: If the path passes all verification checks, the module does not return an explicit output.
+    \item exception: Raises:
+    \begin{itemize}
+        \item \texttt{PATH\_INVALID} if any configuration \( q_i \) violates kinematic constraints.
+        \item \texttt{COLLISION\_DETECTED} if any segment in the path intersects an obstacle:
+        \[
+        \exists i, \quad detectCollision(q_i, obstacles) = \text{true}.
+        \]
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+\noindent \texttt{detectCollision}$(q, obstacles)$:
+\begin{itemize}
+    \item output: Returns \texttt{true} if \( q \) results in a collision with any obstacle; otherwise, returns \texttt{false}.
+\end{itemize}
+
+\noindent \texttt{computePathError}$(path)$:
+\begin{itemize}
+    \item output: Computes the total deviation in path smoothness:
+    \[
+    \sum_{i=0}^{n-2} ||q_{i+1} - q_i||.
+    \]
+\end{itemize}
+
+\newpage
+
+\section{MIS of Plotting Module} \label{Module:Plotting}
+
+\subsection{Module}
+
+Plotting
+
+\subsection{Uses}
+
+This module interacts with:
+\begin{itemize}
+
+    \item \textbf{Output Format Module} (to format the the data that is correctly structured before plotting)
+\end{itemize}
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3.5cm} p{6cm} p{3cm} p{3cm}}
+    \toprule
+    \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+    \midrule
+    \texttt{plot} & $point R^{2}$, $RobotParams$, $Obstacles$  & - & - \\[4pt]
+
+    \bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None. This module does not maintain any persistent state.
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+    \item \texttt{win}: 2D graphical window displaying the plot.
+\end{itemize}
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+    \item The plotting module receives validated input data.
+    \item The visualization environment supports real-time rendering.
+    \item The plotted path and metrics remain static during execution.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \texttt{plotPath}$(path)$:
+\begin{itemize}
+    \item transition: Reads the planned path and generates a 2D trajectory plot using Python's Matplotlib.
+    \item output: Displays the robot's motion along the planned path, with:
+    \begin{itemize}
+        \item Waypoints marked as circles.
+        \item The robot's trajectory visualized as a continuous line.
+        \item A legend showing the start and goal positions.
+    \end{itemize}
+    \item exception: Raises \texttt{PLOT\_ERROR} if path data is empty or not formatted correctly.
+\end{itemize}
+
+\noindent \texttt{plotMetrics}$(metrics)$:
+\begin{itemize}
+    \item transition: Reads performance metrics (e.g., execution time, path length) and generates a bar chart or line graph.
+    \item output: Displays a graphical comparison of metrics with labeled axes.
+    \item exception: Raises \texttt{PLOT\_ERROR} if metric data is missing or improperly formatted.
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+The following helper functions are used internally for plotting:
+
+\noindent \texttt{drawTrajectory}(path):
+\begin{itemize}
+    \item Reads the sequence of waypoints and plots them on a 2D plane.
+\end{itemize}
+
+\noindent \texttt{addAnnotations}(plot):
+\begin{itemize}
+    \item Adds titles, labels, and legends to the generated plot.
+\end{itemize}
+
+\newpage
+
+
+
+
+\newpage
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \bibliographystyle {plainnat}
 \bibliography {../../../refs/References}

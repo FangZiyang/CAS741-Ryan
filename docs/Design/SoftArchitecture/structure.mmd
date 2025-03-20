@@ -1,50 +1,59 @@
-flowchart TD
+flowchart TD 
 
-    %% 控制模块（放在顶部）
-    subgraph ControlLayer [" "]
-        ControlModule["🛠 Control Module"]
-    end
+    %% 核心路径规划模块（单独放置）
+    PathPlanningModule["Path Planning Module (M5)"]
 
-    %% 核心路径规划和碰撞检测模块（放在中间）
+    %% 主要计算模块（路径规划 + 逆运动学 + 碰撞检测）
     subgraph CoreLayer [" "]
-        PathPlanningModule["📍 Path Planning Module"]
-        CollisionDetectionModule["⚠️ Collision Detection Module"]
+        direction LR
+        CollisionDetectionModule["Collision Detection Module (M6)"]
+        InverseKinematicsModule["Inverse Kinematics Solver Module (M7)"]
     end
 
-    %% 输入和数据存储模块（放在左侧）
+    %% 输入和配置管理模块
     subgraph InputLayer [" "]
-        InputParametersModule["📥 Input Parameters Module"]
-        DataStructuresModule["🗄 Data Structures Module"]
-    end
-
-    %% 输出、可视化和验证模块（放在右侧）
-    subgraph OutputLayer [" "]
-        OutputFormatModule["📤 Output Format Module"]
-        OutputVerificationModule["✅ Output Verification Module"]
-        PlottingModule["📊 Plotting Module"]
-    end
-
-    %% 硬件隐藏模块（放在右下角）
-    subgraph HardwareLayer [" "]
         direction TB
-        HardwareHidingModule["🖥 Hardware Hiding Module"]
+        InputParametersModule["Input Parameters Module (M2)"]
+        ConfigurationModule["Configuration Management Module (M9)"]
+    end
+
+    %% 输出、可视化和日志模块
+    subgraph OutputLayer [" "]
+        direction LR
+        OutputFormatModule["Output Format Module (M3)"]
+        OutputVerificationModule["Output Verification Module (M4)"]
+        PlottingModule["Plotting Module (M8)"]
+        LoggingModule["Logging and Debugging Module (M10)"]
+    end
+
+    %% 硬件隐藏模块（单独放置）
+    subgraph HardwareLayer [" "]
+        HardwareHidingModule["Hardware Hiding Module (M1)"]
     end
 
     %% 连接关系
-    ControlModule --> PathPlanningModule
     PathPlanningModule --> CollisionDetectionModule
+    PathPlanningModule --> InverseKinematicsModule
     PathPlanningModule --> OutputFormatModule
     PathPlanningModule --> OutputVerificationModule
-    PathPlanningModule --> PlottingModule
+
     CollisionDetectionModule --> OutputVerificationModule
-    OutputVerificationModule --> DataStructuresModule
-    OutputFormatModule --> DataStructuresModule
-    PlottingModule --> DataStructuresModule
+
+    OutputVerificationModule --> OutputFormatModule
+    OutputFormatModule --> PlottingModule
 
     %% `InputParametersModule` 交互
     InputParametersModule --> PathPlanningModule
     InputParametersModule --> CollisionDetectionModule
-    InputParametersModule --> DataStructuresModule
+    InputParametersModule --> InverseKinematicsModule
+    InputParametersModule --> ConfigurationModule
 
-    %% 硬件模块 (独立，不与其他模块交互，放在右下角)
-    DataStructuresModule ~~~ HardwareHidingModule
+    ConfigurationModule --> OutputVerificationModule
+
+    %% `Logging and Debugging Module` 连接
+    LoggingModule --> PathPlanningModule
+    LoggingModule --> CollisionDetectionModule
+    LoggingModule --> InverseKinematicsModule
+
+    %% 硬件模块 (单独放置，不与其他模块交互)
+    OutputVerificationModule ~~~ HardwareHidingModule
