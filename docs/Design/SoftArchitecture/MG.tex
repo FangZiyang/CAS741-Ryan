@@ -212,7 +212,7 @@ actually be implemented.
 \item [\refstepcounter{mnum} \mthemnum \label{mHH8}:] Plotting Module
 \item [\refstepcounter{mnum} \mthemnum \label{mHH9}:] Configuration Management Module
 \item [\refstepcounter{mnum} \mthemnum \label{mHH10}:] Logging and Debugging Module
-
+\item [\refstepcounter{mnum} \mthemnum \label{mHH11}:] Control Module
 \end{description}
 
 
@@ -230,6 +230,7 @@ actually be implemented.
   & Output Verification Module \\ 
   & Inverse Kinematics Solver Module \\ 
   & Configuration Management Module \\ 
+  & Control Module\\
   & Path Planning Module \\ 
   & Collision Detection Module \\ 
   \midrule
@@ -398,6 +399,16 @@ to be implemented.
 \item[Implemented By:] Python logging module
 \item[Type of Module:] Library
 \end{description}
+
+\subsubsection{Control Module (\mref{mHH11})}
+
+\begin{description} \item[Secrets:] The logic and sequencing of interactions among different modules, including the order of invocation for path planning, collision detection, inverse kinematics solving, and output verification.
+
+\item[Services:] Coordinates and manages the workflow of the system by invoking appropriate modules in the correct order. Specifically, it obtains input parameters, triggers path planning (using A*), performs collision checks, computes inverse kinematics, verifies output correctness, and generates final results for plotting and logging.
+
+\item[Implemented By:] 2D Robot Arm Path Planner
+
+\item[Type of Module:] Abstract Object \end{description}
 
 
 \section{Traceability Matrix} \label{SecTM}

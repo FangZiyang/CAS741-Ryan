@@ -142,6 +142,7 @@ The following table is taken directly from the Module Guide document for this pr
   & Configuration Management Module \\ 
   & Path Planning Module \\ 
   & Collision Detection Module \\ 
+  & COntroll Module\\
   \midrule
   \multirow{1}{0.3\textwidth}{\textbf{Software Decision}} 
   & Plotting Module \\ 
@@ -744,6 +745,91 @@ The following helper functions are used internally for plotting:
 \end{itemize}
 
 \newpage
+
+
+
+\newpage
+
+\section{MIS of Control Module} \label{Module:Control}
+
+\subsection{Module}
+
+Control Module
+
+\subsection{Uses}
+
+This module interacts with:
+\begin{itemize}
+    \item \textbf{Input Parameters Module} (to retrieve initial configuration, goal configuration, robot parameters, and obstacle definitions)
+    \item \textbf{Path Planning Module} (to generate a collision-free path)
+    \item \textbf{Collision Detection Module} (to verify the safety of planned paths)
+    \item \textbf{Inverse Kinematics Solver Module} (to compute joint configurations along the path)
+    \item \textbf{Output Verification Module} (to validate computed outputs)
+    \item \textbf{Plotting Module} (to visualize the planned path)
+    \item \textbf{Logging and Debugging Module} (to log execution details and debug information)
+\end{itemize}
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+None.
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{3.5cm} p{5cm} p{3cm} p{3cm}}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\midrule
+\texttt{executePlanning} & - & ADT(Path) & CONTROL\_ERR \\[4pt]
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None. This module does not maintain any persistent state.
+
+\subsubsection{Environment Variables}
+
+None. This module does not interact with external devices.
+
+\subsubsection{Assumptions}
+
+\begin{itemize}
+    \item All input parameters provided by the Input Parameters Module are valid and complete.
+    \item The modules used by this control module operate without internal errors under normal circumstances.
+    \item No dynamic changes occur in the environment during the planning and verification process.
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \texttt{executePlanning}():
+\begin{itemize}
+    \item transition: The Control Module orchestrates the entire path planning process, executing the following sequential operations:
+    
+    \begin{enumerate}
+        \item Retrieves initial and goal configurations, robot parameters, and obstacle data from the Input Parameters Module.
+        \item Invokes the Path Planning Module to compute an initial collision-free path.
+        \item Utilizes the Collision Detection Module to ensure the generated path is collision-free.
+        \item Calls the Inverse Kinematics Solver Module to compute feasible joint angles corresponding to the planned path.
+        \item Employs the Output Verification Module to validate the correctness and feasibility of the computed path.
+        \item Passes the verified path to the Plotting Module for visualization.
+        \item Records relevant information and any encountered issues via the Logging and Debugging Module.
+    \end{enumerate}
+
+    \item output: Returns a verified and collision-free path (ADT(Path)), consisting of a valid sequence of robot configurations.
+    
+    \item exception: Raises \texttt{CONTROL\_ERR} if any step in the planning or verification sequence fails, or if internal communication with any module is disrupted.
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+None.
 
 
 
