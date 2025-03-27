@@ -1,7 +1,7 @@
 # main.py
 
 import sys
-import numpy as np
+
 from math import pi
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QPushButton, QVBoxLayout,
@@ -14,7 +14,10 @@ from examples import get_all_examples
 from planner.nlink_arm import NLinkArm
 from planner.collision import get_occupancy_grid
 from planner.astar_planner import astar_torus
+from src.planner.smooth_angle_pairs import smooth_angle_pairs
 from ui.trajectory_plot import TrajectoryPlotWindow
+
+
 
 
 
@@ -79,27 +82,29 @@ class ArmPlannerGUI(QMainWindow):
             QMessageBox.warning(self, "End-effector trajectory", "Path inaccessible")
             return
 
-        # 提前计算末端轨迹
+        # 提取并整体平滑角度序列
+        theta1_list = [2 * pi * node[0] / self.M - pi for node in route]
+        theta2_list = [2 * pi * node[1] / self.M - pi for node in route]
+        theta1_smooth, theta2_smooth = smooth_angle_pairs(theta1_list, theta2_list, sigma=1.2)
+
+        # 提前计算末端轨迹，并存储轨迹点（供轨迹图和动画共用）
         ee_x, ee_y = [], []
-        for node in route:
-            theta1 = 2 * pi * node[0] / self.M - pi
-            theta2 = 2 * pi * node[1] / self.M - pi
-            arm.update_joints([theta1, theta2])
+        trajectory = list(zip(theta1_smooth, theta2_smooth))  # 所有平滑后的角度对
+        for t1, t2 in trajectory:
+            arm.update_joints([t1, t2])
             arm.update_points()
             ee = arm.end_effector
             ee_x.append(ee[0])
             ee_y.append(ee[1])
 
-        # 弹出轨迹窗口（在动画之前）
+        # 弹出轨迹窗口，使用真实平滑角度路径计算结果
         self.traj_window = TrajectoryPlotWindow(ee_x, ee_y, ex["obstacles"])
         self.traj_window.show()
 
-        # 播放动画
+        # 播放动画（用同一组角度）
         self.ax.clear()
-        for node in route:
-            theta1 = 2 * pi * node[0] / self.M - pi
-            theta2 = 2 * pi * node[1] / self.M - pi
-            arm.update_joints([theta1, theta2])
+        for t1, t2 in trajectory:
+            arm.update_joints([t1, t2])
             arm.draw(self.ax, ex["obstacles"])
             self.canvas.draw()
             QApplication.processEvents()
