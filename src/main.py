@@ -1,6 +1,7 @@
 # main.py
 
 import sys
+import time
 
 from math import pi
 from PyQt5.QtWidgets import (
@@ -97,9 +98,9 @@ class ArmPlannerGUI(QMainWindow):
             ee_x.append(ee[0])
             ee_y.append(ee[1])
 
-        # 弹出轨迹窗口，使用真实平滑角度路径计算结果
-        self.traj_window = TrajectoryPlotWindow(ee_x, ee_y, ex["obstacles"])
-        self.traj_window.show()
+        # # 弹出轨迹窗口，使用真实平滑角度路径计算结果
+        # self.traj_window = TrajectoryPlotWindow(ee_x, ee_y, ex["obstacles"])
+        # self.traj_window.show()
 
         # 播放动画（用同一组角度）
         self.ax.clear()
@@ -108,6 +109,11 @@ class ArmPlannerGUI(QMainWindow):
             arm.draw(self.ax, ex["obstacles"])
             self.canvas.draw()
             QApplication.processEvents()
+
+        # # 弹出轨迹窗口，使用真实平滑角度路径计算结果
+        time.sleep(5)
+        self.traj_window = TrajectoryPlotWindow(ee_x, ee_y, ex["obstacles"])
+        self.traj_window.show()
 
 
 if __name__ == "__main__":
