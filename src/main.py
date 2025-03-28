@@ -1,6 +1,8 @@
 # main.py
 
 import sys
+import time
+
 import numpy as np
 from math import pi
 from PyQt5.QtWidgets import (
@@ -90,9 +92,9 @@ class ArmPlannerGUI(QMainWindow):
             ee_x.append(ee[0])
             ee_y.append(ee[1])
 
-        # 弹出轨迹窗口（在动画之前）
-        self.traj_window = TrajectoryPlotWindow(ee_x, ee_y, ex["obstacles"])
-        self.traj_window.show()
+        # # 弹出轨迹窗口（在动画之前）
+        # self.traj_window = TrajectoryPlotWindow(ee_x, ee_y, ex["obstacles"])
+        # self.traj_window.show()
 
         # 播放动画
         self.ax.clear()
@@ -103,6 +105,11 @@ class ArmPlannerGUI(QMainWindow):
             arm.draw(self.ax, ex["obstacles"])
             self.canvas.draw()
             QApplication.processEvents()
+
+        # 弹出轨迹窗口（在动画之前）
+        time.sleep(3)
+        self.traj_window = TrajectoryPlotWindow(ee_x, ee_y, ex["obstacles"])
+        self.traj_window.show()
 
 
 if __name__ == "__main__":
