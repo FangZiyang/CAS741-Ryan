@@ -35,20 +35,8 @@ def detect_collision(line_seg, circle):
 
 
 def get_occupancy_grid(arm, obstacles, M=100):
-    """
-    生成一个 MxM 的二维网格，标记哪些关节角度组合下会发生碰撞。
-
-    参数：
-        arm: NLinkArm 机械臂对象
-        obstacles: 障碍物列表，每个为 [x, y, r]
-        M: 网格划分密度（越大越精细，计算也更慢）
-
-    返回：
-        一个大小为 MxM 的 numpy 数组，值为 0 表示可通行，1 表示碰撞区域
-    """
     grid = np.zeros((M, M), dtype=int)
 
-    # 将角度范围 [-pi, pi] 离散为 M 个值
     theta_list = [2 * np.pi * i / M - np.pi for i in range(M)]
 
     for i in range(M):
@@ -56,10 +44,14 @@ def get_occupancy_grid(arm, obstacles, M=100):
             theta1 = theta_list[i]
             theta2 = theta_list[j]
 
-            arm.update_joints([theta1, theta2])  # 更新当前关节角度
+            # 检查是否在角度限制范围内（不在范围内直接视作碰撞）
+            if arm.joint_limits and not arm.joint_limits.is_within_limits([theta1, theta2]):
+                grid[i][j] = 1
+                continue
+
+            arm.update_joints([theta1, theta2])
             points = arm.points
 
-            # 检查每段连杆是否与任意障碍物碰撞
             collision = False
             for k in range(len(points) - 1):
                 seg = [points[k], points[k + 1]]
@@ -67,6 +59,6 @@ def get_occupancy_grid(arm, obstacles, M=100):
                     collision = True
                     break
 
-            grid[i][j] = int(collision)  # 1 表示有碰撞
+            grid[i][j] = int(collision)
 
     return grid

@@ -1,4 +1,8 @@
 # examples.py
+import numpy as np
+
+from src.planner.joint_limits import JointLimits
+
 
 # examples.py
 
@@ -7,6 +11,8 @@ def get_all_examples():
         "Example 1": {
             "link_lengths": [1, 1],
             "joint_angles": [0, 0],
+            "joint_limits": JointLimits([(-np.pi/2, np.pi/2), (-np.pi, np.pi/2)]),
+            # "joint_limits": JointLimits([(0, np.pi/9), (0, np.pi/9)]),
             "obstacles": [[1.75, 0.75, 0.6], [0.55, 1.5, 0.5], [0, -1, 0.25]],
             "start": (10, 50),
             "goal": (58, 56),

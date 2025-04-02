@@ -73,7 +73,11 @@ class ArmPlannerGUI(QMainWindow):
         执行路径规划：先弹出轨迹图窗口，再播放动画
         """
         ex = self.examples[self.current_example_name]
-        arm = NLinkArm(ex["link_lengths"], ex["joint_angles"])
+        arm = NLinkArm(
+            ex["link_lengths"],
+            ex["joint_angles"],
+            joint_limits=ex.get("joint_limits")
+        )
         grid = get_occupancy_grid(arm, ex["obstacles"], self.M)
         route = astar_torus(grid, ex["start"], ex["goal"])
 
@@ -92,9 +96,6 @@ class ArmPlannerGUI(QMainWindow):
             ee_x.append(ee[0])
             ee_y.append(ee[1])
 
-        # # 弹出轨迹窗口（在动画之前）
-        # self.traj_window = TrajectoryPlotWindow(ee_x, ee_y, ex["obstacles"])
-        # self.traj_window.show()
 
         # 播放动画
         self.ax.clear()
