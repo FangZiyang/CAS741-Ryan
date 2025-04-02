@@ -1,5 +1,5 @@
 # main.py
-
+from ui.example_info_window import ExampleInfoWindow
 import sys
 import time
 
@@ -17,7 +17,6 @@ from planner.nlink_arm import NLinkArm
 from planner.collision import get_occupancy_grid
 from planner.astar_planner import astar_torus
 from ui.trajectory_plot import TrajectoryPlotWindow
-
 
 
 class ArmPlannerGUI(QMainWindow):
@@ -73,11 +72,20 @@ class ArmPlannerGUI(QMainWindow):
         执行路径规划：先弹出轨迹图窗口，再播放动画
         """
         ex = self.examples[self.current_example_name]
+        self.info_window = ExampleInfoWindow(self.current_example_name, ex)
+
+        # 👉 设置位置：让信息窗口出现在主窗口右侧偏移 20 像素
+        main_x = self.x()
+        main_y = self.y()
+        main_width = self.width()
+        self.info_window.move(main_x + main_width + 20, main_y)
+        self.info_window.show()
         arm = NLinkArm(
             ex["link_lengths"],
             ex["joint_angles"],
             joint_limits=ex.get("joint_limits")
         )
+
         grid = get_occupancy_grid(arm, ex["obstacles"], self.M)
         route = astar_torus(grid, ex["start"], ex["goal"])
 
@@ -96,19 +104,18 @@ class ArmPlannerGUI(QMainWindow):
             ee_x.append(ee[0])
             ee_y.append(ee[1])
 
-
         # 播放动画
         self.ax.clear()
         for node in route:
             theta1 = 2 * pi * node[0] / self.M - pi
             theta2 = 2 * pi * node[1] / self.M - pi
             arm.update_joints([theta1, theta2])
-            arm.draw(self.ax, ex["obstacles"])
+            arm.draw(self.ax, ex["obstacles"], ee_x, ee_y)
             self.canvas.draw()
             QApplication.processEvents()
 
         # 弹出轨迹窗口（在动画之前）
-        time.sleep(3)
+        time.sleep(2)
         self.traj_window = TrajectoryPlotWindow(ee_x, ee_y, ex["obstacles"])
         self.traj_window.show()
 

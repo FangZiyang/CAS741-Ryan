@@ -3,6 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from planner.joint_limits import JointLimits
+from matplotlib.patches import Rectangle, RegularPolygon
 
 
 
@@ -39,11 +40,49 @@ class NLinkArm:
 
         self.end_effector = np.array(self.points[self.n_links]).T
 
-    def draw(self, ax, obstacles=[]):
+    def draw(self, ax, obstacles=[],ee_x=None,ee_y=None):
         ax.clear()
+
         for obstacle in obstacles:
             circle = plt.Circle((obstacle[0], obstacle[1]), radius=0.5 * obstacle[2], fc='gray')
             ax.add_patch(circle)
+            # ✅ 起点（蓝色小正方形）
+            if ee_x and ee_y:
+                square_size = 0.08  # 控制正方形大小
+                square = Rectangle(
+                    (ee_x[0], ee_y[0]),
+                    square_size,
+                    square_size,
+                    color='blue',
+                    label='Start'
+                )
+                ax.add_patch(square)
+                ax.text(
+                    ee_x[0] + 0.05, ee_y[0] + 0.05,
+                    "Beginning",
+                    fontsize=10,
+                    color='blue'
+                )
+
+            # ✅ 终点（黄色五角星，用 RegularPolygon 来模拟五角星）
+            if ee_x and ee_y:
+                star_size = 0.14
+                star = RegularPolygon(
+                    (ee_x[-1], ee_y[-1]),
+                    numVertices=6,
+                    radius=star_size,
+                    orientation=np.pi / 6,
+                    color='gold',
+                    label='Goal'
+                )
+                ax.add_patch(star)
+                ax.text(
+                    ee_x[-1] + 0.05, ee_y[-1] + 0.05,
+                    "Ending",
+                    fontsize=10,
+                    color='goldenrod'
+                )
+
 
         for i in range(self.n_links):
             x = [self.points[i][0], self.points[i + 1][0]]
