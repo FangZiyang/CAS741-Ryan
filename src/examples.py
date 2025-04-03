@@ -10,18 +10,18 @@ def get_all_examples():
     return {
         "Example 1": {
             "link_lengths": [1, 1],
-            "joint_angles": [0, 0],
-            "joint_limits": JointLimits([(-np.pi, np.pi), (-np.pi, np.pi)]),
+            # "joint_angles": [0, 0],
+            "joint_limits": JointLimits([(-180, 180), (-180, 180)]),
             # "joint_limits": JointLimits([(0, np.pi/9), (0, np.pi/9)]),
             "obstacles": [[1.75, 0.75, 0.6], [0.55, 1.5, 0.5], [0, -1, 0.25]],
             "start": (10, 50),
             "goal": (58, 56),
         },
-        "Example 2": {
+        "Example 2(with tight angle limit[0, pi/4])": {
             "link_lengths": [1, 1],
             "joint_angles": [0, 0],
-            # "joint_limits": JointLimits([(-np.pi, np.pi), (-np.pi, np.pi)]),
-            "joint_limits": JointLimits([(0, np.pi/2), (0, np.pi/2)]),
+
+            "joint_limits": JointLimits([(0, np.pi/4), (0, np.pi/4)]),
             "obstacles": [[1.75, 0.75, 0.6], [0.55, 1.5, 0.5], [0, -1, 0.25]],
             "start": (10, 50),
             "goal": (58, 56),
@@ -54,7 +54,7 @@ def get_all_examples():
             "start": (10, 50),
             "goal": (58, 56),
         },
-        "Example 7": {
+        "Example 7(Input parameter error)": {
             "link_lengths": [1, 1, 1],
             "joint_angles": [0, 0],
             # "joint_limits": JointLimits([(-np.pi, np.pi), (-np.pi, np.pi)]),

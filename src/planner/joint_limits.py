@@ -1,4 +1,6 @@
 # planner/joint_limits.py
+import numpy as np
+
 
 class JointLimits:
     """
@@ -9,5 +11,6 @@ class JointLimits:
         self.angle_ranges = angle_ranges
 
     def is_within_limits(self, joint_angles):
-        return all(self.angle_ranges[i][0] <= joint_angles[i] <= self.angle_ranges[i][1]
-                   for i in range(len(joint_angles)))
+        joint_angles_deg = np.degrees(joint_angles)
+        return all(self.angle_ranges[i][0] <= joint_angles_deg[i] <= self.angle_ranges[i][1]
+               for i in range(len(joint_angles_deg)))

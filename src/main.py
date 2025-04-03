@@ -26,7 +26,7 @@ class ArmPlannerGUI(QMainWindow):
         self.setGeometry(100, 100, 900, 700)
         self.M = 100
         self.examples = get_all_examples()
-        self.current_example_name = "Example 1"
+        self.current_example_name = list(self.examples.keys())[0]
         self.init_ui()
 
     def init_ui(self):
@@ -63,8 +63,21 @@ class ArmPlannerGUI(QMainWindow):
         """
         self.ax.clear()
         ex = self.examples[self.current_example_name]
-        arm = NLinkArm(ex["link_lengths"], ex["joint_angles"])
-        arm.draw(self.ax, obstacles=ex["obstacles"])
+        try:
+            theta_list = [2 * np.pi * i / self.M - pi for i in range(self.M)]
+            theta_start = [theta_list[ex["start"][0]], theta_list[ex["start"][1]]]
+            # theta_start = np.radians(ex["start"])
+
+            arm = NLinkArm(
+                ex["link_lengths"],
+                theta_start,
+                joint_limits=ex.get("joint_limits")
+            )
+        except ValueError as e:
+            # ✨ 关键：用弹窗显示错误
+            QMessageBox.critical(self, "Initialization Error", str(e))
+            return
+        arm.draw(self.ax, obstacles=ex["obstacles"], goal_angles=ex["goal"])
         self.canvas.draw()
 
     def run_example(self):
@@ -80,9 +93,13 @@ class ArmPlannerGUI(QMainWindow):
         main_width = self.width()
         self.info_window.move(main_x + main_width + 20, main_y)
         self.info_window.show()
+        # 角度索引转真实弧度
+        # theta_list = [2 * np.pi * i / self.M - np.pi for i in range(self.M)]
+        # theta_start = [theta_list[ex["start"][0]], theta_list[ex["start"][1]]]
+        theta_start = np.radians(ex["start"])  # 转弧度
         arm = NLinkArm(
             ex["link_lengths"],
-            ex["joint_angles"],
+            theta_start,
             joint_limits=ex.get("joint_limits")
         )
 
