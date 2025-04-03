@@ -54,13 +54,13 @@ def get_all_examples():
             "start": (10, 50),
             "goal": (58, 56),
         },
-        "Example 7(Input parameter error)": {
-            "link_lengths": [1, 1, 1],
-            "joint_angles": [0, 0],
+        "Example 7(3 rangle)": {
+            "link_lengths": [1, 5, 1],
+            "joint_angles": [0, 0, 0],
             # "joint_limits": JointLimits([(-np.pi, np.pi), (-np.pi, np.pi)]),
             # "joint_limits": JointLimits([(0, np.pi/9), (0, np.pi/9)]),
-            "obstacles": [[1.75, 0.75, 0.6], [0.55, 1.5, 0.5], [0, -1, 0.25]],
+            "obstacles": [[1.75, 0.75, 0.6], [0, -1, 0.7]],
             "start": (10, 50, 0),
-            "goal": (58, 56, 0),
+            "goal": (58, 56, 30),
         },
     }

@@ -65,7 +65,7 @@ class ArmPlannerGUI(QMainWindow):
         ex = self.examples[self.current_example_name]
         try:
             theta_list = [2 * np.pi * i / self.M - pi for i in range(self.M)]
-            theta_start = [theta_list[ex["start"][0]], theta_list[ex["start"][1]]]
+            theta_start = [theta_list[idx] for idx in ex["start"]]
             # theta_start = np.radians(ex["start"])
 
             arm = NLinkArm(
