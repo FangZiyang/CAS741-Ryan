@@ -66,7 +66,6 @@ class ArmPlannerGUI(QMainWindow):
         try:
             theta_list = [2 * np.pi * i / self.M - pi for i in range(self.M)]
             theta_start = [theta_list[idx] for idx in ex["start"]]
-            # theta_start = np.radians(ex["start"])
 
             arm = NLinkArm(
                 ex["link_lengths"],
@@ -104,7 +103,7 @@ class ArmPlannerGUI(QMainWindow):
         )
 
         grid = get_occupancy_grid(arm, ex["obstacles"], self.M)
-        route = astar_torus(grid, ex["start"], ex["goal"])
+        route = astar_torus(grid, tuple(ex["start"]), tuple(ex["goal"]))
 
         if not route:
             QMessageBox.warning(self, "End-effector trajectory", "Path inaccessible")

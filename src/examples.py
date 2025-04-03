@@ -29,9 +29,10 @@ def get_all_examples():
         "Example 3": {
             "link_lengths": [0.5, 1.5],
             "joint_angles": [0, 0],
-            "obstacles": [[0.5, 0.5, 0.4], [-1.0, -0.5, 0.6]],
+            # "obstacles": [[0.5, 0.5, 0.4], [-1.0, -0.5, 0.6]],
+            "obstacles": [[0.5, 0.5, 0.4]],
             "start": (20, 20),
-            "goal": (75, 75),
+            "goal": (40, 40),
         },
         "Example 4": {
             "link_lengths": [1, 1],
@@ -54,7 +55,7 @@ def get_all_examples():
             "start": (10, 50),
             "goal": (58, 56),
         },
-        "Example 7(3 rangle)": {
+        "Example 7(3 arms)": {
             "link_lengths": [1, 5, 1],
             "joint_angles": [0, 0, 0],
             # "joint_limits": JointLimits([(-np.pi, np.pi), (-np.pi, np.pi)]),
