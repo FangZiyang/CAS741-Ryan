@@ -20,6 +20,7 @@
 \usepackage{afterpage}
 \usepackage{svg}
 
+
 \usepackage[round]{natbib}
 
 %\usepackage{refcheck}
@@ -149,6 +150,7 @@
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
 Feb 02 2025 & 1.0 & Notes\\
+April 5 2025 & 2.0 & Notes\\
 % Date 2 & 1.1 & Notes\\
 \bottomrule
 \end{tabularx}
@@ -172,20 +174,13 @@ description of the unit and the SI name.
 \renewcommand{\arraystretch}{1.2}
   \noindent \begin{tabular}{l l l} 
     \toprule		
-    \textbf{symbol} & \textbf{unit} & \textbf{SI}\\
+    \textbf{Symbol} & \textbf{Description} & \textbf{SI Unit}\\
     \midrule 
-    \si{\milli\metre} & length & millimetre \\
-    % \si{\kilogram} & mass & kilogram \\
-    \si{\second} & time & second \\
-    \( q \) & joint angle & radians \\
-    \(\dot{q}\) & joint velocity & rad/s \\
-    \(\ddot{q}\) & joint acceleration & rad/s² \\
-    % \si{\newton\metre} & torque & newton metre \\
+    \si{\metre} & length & metre (m) \\
+    \si{\second} & time & second (s) \\
+    \si{\radian} & angle & radian (rad) \\
     \bottomrule
   \end{tabular}
-  %	\caption{Provide a caption}
-%\end{table}
-
 
 
 \subsection{Table of Symbols}
@@ -197,21 +192,21 @@ The following table provides a summary of the symbols used throughout this docum
 \noindent \begin{longtable*}{l l p{12cm}} \toprule
 \textbf{symbol} & \textbf{unit} & \textbf{description}\\
 \midrule 
-\( L \) & \si{\milli\metre} & Link length of the robot arm \\
+\( L \) & \si{\metre} & Link length of the robot arm \\
 \( q \) & radians & Joint angle \\
 \( \dot{q} \) & rad/s & Joint angular velocity \\
 \( \ddot{q} \) & rad/s² & Joint angular acceleration \\
-\( x, y \) & \si{\milli\metre} & Cartesian coordinates of the end-effector \\
+\( x, y \) & \si{\metre} & Cartesian coordinates of the end-effector \\
 \( T \) & \si{\second} & Total time for motion execution \\
 \( t \) & \si{\second} & Time step \\
 \( \mathbf{q}_{\text{init}} \) & radians & Initial joint configuration \\
 \( \mathbf{q}_{\text{goal}} \) & radians & Goal joint configuration \\
-\( O_i \) & \si{\milli\metre} & Position of the \(i\)-th obstacle (circular) \\
-\( r_i \) & \si{\milli\metre} & Radius of the \(i\)-th obstacle \\
+\( O_i \) & \si{\metre} & Position of the \(i\)-th obstacle (circular) \\
+\( r_i \) & \si{\metre} & Radius of the \(i\)-th obstacle \\
 % \( M \) & - & Number of discrete joint positions in A* search grid \\
 \( \theta_i \) & radians & Discretized joint angle for A* search \\
 % \( \mathcal{G} \) & - & Occupancy grid (joint space) \\
-\( \mathbf{p}_i \) & \si{\milli\metre} & Position of the \(i\)-th joint \\
+\( \mathbf{p}_i \) & \si{\metre} & Position of the \(i\)-th joint \\
 
 \bottomrule
 \end{longtable*}
@@ -240,7 +235,6 @@ The following table provides a summary of the symbols used throughout this docum
   DOF & Degrees of Freedom \\
   EE & End-Effector \\
   % \progname{} & 2DPL\\
-  TM & Theoretical Model\\
   2D-RAPP & 2D Robot Arm Path Planning\\
   \bottomrule
 \end{tabular}\\
@@ -259,7 +253,8 @@ The primary purpose of this document is to record the requirements of 2D-RAPP. G
 
 This document serves as a starting point for subsequent development phases, including writing the design specification and the software verification and validation plan. The design document will show how the requirements are to be realized, including decisions on numerical algorithms, data structures, and programming frameworks. The verification and validation plan will outline the steps required to increase confidence in the software’s correctness, reliability, and performance. 
 
-Although this SRS follows a structured documentation approach, it does not impose any specific software development methodology. Regardless of whether a waterfall, agile, or iterative development process is followed, it remains useful to present the documentation in a way that maintains clarity and logical structure, as recommended by Parnas and Clements.
+Although this SRS follows a structured documentation approach, it does not impose any specific software development methodology. Regardless of whether a waterfall, agile, or iterative development process is followed, it remains useful to present the documentation in a way that maintains clarity and logical structure, as recommended by Parnas and Clements.\citet{SmithAndLai2005, SmithEtAl2007,
+SmithAndKoothoor2016}
 
 
 
@@ -270,7 +265,6 @@ The scope of the requirements includes path planning for a 2D robotic arm with N
 \subsection{Characteristics of Intended Reader} \label{sec_IntendedReader}
 Reviewers of this documentation should have a fundamental understanding of robotics kinematics at an undergraduate level, specifically covering forward kinematics, inverse kinematics, and path planning. Familiarity with graph-based search algorithms (such as A*) and numerical optimization techniques is also recommended.
 
-The users of 2D-RAPP (e.g., robotics researchers, engineers) may have varying levels of expertise, as explained in Section~\ref{SecUserCharacteristics}. However, those involved in reviewing, modifying, or maintaining this SRS should have a strong background in computational kinematics and algorithmic path planning.
 
 
 \subsection{Organization of Document}
@@ -307,16 +301,19 @@ The interaction between the user and the system is described as follows:
 \begin{itemize}
     \item Provide the input data to the system, including:
     \begin{itemize}
-        \item Initial joint angles (\(q_{\text{init}}\)) to specify the starting configuration of the robotic arm.
-        \item Goal position (\(x_{\text{goal}}, y_{\text{goal}}\)) to indicate the desired end-effector target.
-        \item Obstacle data, including radii (\(r_i\)) and positions (\(O_i = (x_i, y_i)\)).
+        \item \textbf{Link lengths} (\(L = [l_1, l_2, \dots, l_n]\)): a list of positive real numbers specifying the length of each robotic arm segment.
+        \item \textbf{Joint limits} (\(J = [(a_1, b_1), (a_2, b_2), \dots, (a_n, b_n)]\)): the allowable angle range for each joint.
+        \item \textbf{Obstacle data}: a list of obstacles defined by their center positions and radii: \(O_i = (x_i, y_i, r_i)\).
+        \item \textbf{Start configuration} (\(q_{\text{start}} \in \mathbb{R}^n\)): the initial joint angles of the robot in radians.
+        \item \textbf{Goal configuration} (\(q_{\text{goal}} \in \mathbb{R}^n\)): the target joint angles to be reached.
     \end{itemize}
-    \item Ensure the input data is accurate and in the required units.
+    \item Ensure the input data is accurate and in the required unit
+    
 \end{itemize}
 
 \subsubsection*{2D-RAPP Responsibilities}
 \begin{itemize}
-    \item Detect input errors, such as invalid data types or inconsistent units.
+    \item  Detect input errors, such as invalid data types, joint angle configurations outside of specified limits, or inconsistent angle units (e.g., degrees vs radians). Proper error messages are displayed via the GUI to guide user corrections.
     \item Verify that the inputs satisfy physical and software constraints.
     \item Compute a collision-free trajectory for the robotic arm, including:
     \begin{itemize}
@@ -335,11 +332,13 @@ This system context defines the roles and interactions between the user and the 
 
 
 \subsection{User Characteristics} \label{SecUserCharacteristics}
-The intended users of \progname{} are individuals with a background in robotics, computer science, and mechanical engineering. They are expected to have a fundamental understanding of kinematics, particularly inverse kinematics, and be familiar with basic path planning algorithms. 
+The intended users of \progname{} are individuals with a background in robotics, computer science, and mechanical engineering. They are expected to have at least undergraduate-level understanding of forward and inverse kinematics, as well as exposure to basic path planning algorithms such as A*, RRT, or Dijkstra.
+
 
 
 \subsection{System Constraints}
-There are no system constraints.
+The system uses A* search on a toroidal configuration space for path planning. This decision constrains the path planner to discrete grids and admissible heuristics, and may limit real-time scalability for high-dimensional arms. Other planning algorithms such as RRT or PRM could be integrated in future versions.
+
 
 
 \section{Specific System Description}
@@ -427,11 +426,11 @@ includes the following elements:
 
 \item[GS\refstepcounter{goalnum}\thegoalnum \label{GS_CollisionFreePath}:] Compute a collision-free trajectory in joint space from the start configuration to the goal configuration.
 
-\item[GS\refstepcounter{goalnum}\thegoalnum \label{GS_OptimizePath}:] Minimize the total path length while ensuring obstacle avoidance.
+\item[GS\refstepcounter{goalnum}\thegoalnum \label{GS_OptimizePath}:] Minimize the number of joint-space steps between start and goal configurations, each being a collision-free discrete configuration.
 
-\item[GS\refstepcounter{goalnum}\thegoalnum \label{GS_SmoothMotion}:] Generate a smooth and continuous motion trajectory for the robotic arm.
+% \item[GS\refstepcounter{goalnum}\thegoalnum \label{GS_SmoothMotion}:] Generate a smooth and continuous motion trajectory for the robotic arm.
 
-\item[GS\refstepcounter{goalnum}\thegoalnum \label{GS_PathSafety}:] Validate the safety of the planned path by verifying obstacle-free movement at each configuration.
+% \item[GS\refstepcounter{goalnum}\thegoalnum \label{GS_PathSafety}:] Validate the safety of the planned path by verifying obstacle-free movement at each configuration.
 
 \end{itemize}
 
@@ -489,7 +488,6 @@ This section focuses on the general equations and laws that \progname{} is based
 on. The theoretical models serve as fundamental principles governing the kinematic motion and path planning of the robotic arm. 
 
 ~\newline
-
 \noindent
 \deftheory
 % #2 refname of theory
@@ -498,42 +496,187 @@ on. The theoretical models serve as fundamental principles governing the kinemat
 {Forward Kinematics}
 % #4 equation
 {
-  $\mathbf{x} = f(\mathbf{q}) = \begin{bmatrix}
-  L_1 \cos(\theta_1) + L_2 \cos(\theta_1 + \theta_2) \\
-  L_1 \sin(\theta_1) + L_2 \sin(\theta_1 + \theta_2)
-  \end{bmatrix}$
+\[
+  \mathbf{x} = f(\mathbf{q}) = 
+  \begin{bmatrix}
+    \sum_{i=1}^{n} L_i \cos\left(\sum_{j=1}^{i}\theta_j\right) \\[6pt]
+    \sum_{i=1}^{n} L_i \sin\left(\sum_{j=1}^{i}\theta_j\right)
+  \end{bmatrix}
+\]
 }
 % #5 description
 {
-  \begin{itemize}
-    \item $\mathbf{q}$: Joint angles, where $\theta_1$ is the angle of the first joint and $\theta_2$ is the relative angle of the second joint.
-    \item $L_1$: Length of the first link (\si{\milli\metre}).
-    \item $L_2$: Length of the second link (\si{\milli\metre}).
-  \end{itemize}
+This equation describes the forward kinematics function $f$, mapping the joint angles $\mathbf{q}$ to the Cartesian position $\mathbf{x}$ of the robotic arm's end-effector for an $n$-link planar manipulator.
+
+\begin{itemize}
+    \item $n$: The number of links in the robotic arm.
+    \item $\mathbf{q} = [\theta_1, \theta_2, \dots, \theta_n]^T$: The vector of joint angles, where $\theta_i$ is the relative angle of joint $i$.
+    \item $\mathbf{x} = [x, y]^T$: Cartesian position of the end-effector (in \si{\metre}), computed relative to the arm's base at the origin.
+    \item $f$: Forward kinematics mapping function, converting joint angles ($\mathbf{q}$) into the end-effector position ($\mathbf{x}$).
+    \item $L_i$: Length of link $i$ (\si{\metre}), connecting joint $i$ to joint $(i+1)$.
+\end{itemize}
+
+This general formulation supports robotic arms with an arbitrary number of joints, enabling flexibility for various planar manipulator configurations.
 }
 % #6 Notes
 {
-  This forward kinematics model assumes:
-  \begin{itemize}
-    \item Rigid links: The links are assumed to be perfectly rigid and do not deform under load (\aref{A_LinkLengthsConstant}).
-    \item Fixed base: The base of the arm is considered stationary, located at the origin $(0, 0)$.
-    \item Ideal joints: The joints rotate without friction or other physical limitations.
-    \item Planar motion: The arm operates in a 2D plane, and there is no out-of-plane movement.
-  \end{itemize}
+This forward kinematics model assumes:
+\begin{itemize}
+    \item Rigid links: All links are perfectly rigid and do not deform under load (\aref{A_LinkLengthsConstant}).
+    \item Fixed base: The robotic arm base is stationary, positioned at the origin $(0, 0)$.
+    \item Planar motion: All arm movements are restricted to a 2D plane without out-of-plane motion.
+\end{itemize}
 
-  These assumptions ensure simplicity and accuracy for theoretical modeling. For real-world applications, additional factors such as joint compliance, link flexibility, and external forces may need to be considered.
 }
 % #7 Source
 {
-  \url{https://atsushisakai.github.io/PythonRobotics/modules/7_arm_navigation/planar_two_link_ik.html}
+Adapted from \url{https://atsushisakai.github.io/PythonRobotics/modules/7_arm_navigation/planar_two_link_ik.html}
 }
 % #8 Referenced by
 {
-  \dref{ROCT}
+\dref{GD_AStar_DiscreteJointSpace}
 }
 % #9 Preconditions
 {
 None
+}
+% #1 derivation - not applicable by default
+{}
+
+% second model
+\noindent
+\deftheory
+% #2 refname of theory
+{TM:SegmentCircleCollision}
+% #3 label
+{Collision Detection Between Line Segment and Circular Obstacle}
+% #4 equation
+{
+Let the endpoints of a link segment be $\mathbf{a}=[x_1, y_1]$ and $\mathbf{b}=[x_2, y_2]$, and the circular obstacle have center $\mathbf{c}=[c_x, c_y]$ with radius $r$. Define the closest point $\mathbf{p}$ on the segment to the circle center as:
+
+\[
+t = \frac{(\mathbf{c}-\mathbf{a})\cdot(\mathbf{b}-\mathbf{a})}{\|\mathbf{b}-\mathbf{a}\|^2}, \quad
+t' = \text{clip}(t, 0, 1), \quad
+\mathbf{p} = \mathbf{a}+ t'(\mathbf{b}-\mathbf{a})
+\]
+
+Then collision occurs if:
+\[
+\|\mathbf{p}-\mathbf{c}\|\le r
+\]
+}
+% #5 description
+{
+This theoretical model determines whether a robotic arm link, modeled as a line segment, intersects (collides) with a circular obstacle. It uses geometric projection to find the shortest distance from the circle center to the segment, checking if it is less than or equal to the obstacle's radius.
+
+\begin{itemize}
+    \item $\mathbf{a}, \mathbf{b}$: Endpoints of the line segment representing the robotic arm link (in Cartesian coordinates, \si{\metre}).
+    \item $\mathbf{c}$: Center of the circular obstacle (Cartesian coordinates, \si{\metre}).
+    \item $r$: Radius of the circular obstacle (\si{\metre}).
+    \item $t'$: Clipped scalar projection factor ensuring the closest point remains within the segment bounds.
+    \item $\mathbf{p}$: Closest point on the segment to the circle center.
+    \item $t'$: Clipped scalar projection factor ensuring the closest point remains within the segment bounds. Specifically, $t'$ is constrained to $[0, 1]$ such that
+    \[
+    t' = 
+    \begin{cases}
+        0 & \text{if } t < 0 \\
+        t & \text{if } 0 \leq t \leq 1 \\
+        1 & \text{if } t > 1
+    \end{cases}
+    \]
+\end{itemize}
+
+This method is computationally efficient and accurate for planar collision detection between line segments and circular obstacles.
+}
+% #6 Notes
+{
+This model assumes:
+
+\begin{itemize}
+    \item The arm links are perfectly rigid and represented as straight line segments (\aref{A_LinkLengthsConstant}).
+    \item Obstacles are modeled as perfect circles.
+    \item The robotic arm operates exclusively in a 2D plane without deformation.
+\end{itemize}
+}
+% #7 Source
+{
+Adapted from collision detection concepts in computational geometry: \\
+\url{https://www.geometrictools.com/Documentation/DistancePointLine.pdf}
+}
+% #8 Referenced by
+{
+\dref{GD_AStar_DiscreteJointSpace}
+}
+% #9 Preconditions
+{
+None
+}
+% #1 derivation - not applicable by default
+{}
+
+
+
+%% third model
+\noindent
+\deftheory
+% #2 refname of theory
+{TM:AStarJointSpace}
+% #3 label
+{A* Search Algorithm in Discretized Toroidal Joint Space}
+% #4 equation
+{
+The A* search algorithm finds the optimal path between start node $\mathbf{s}$ and goal node $\mathbf{g}$ in an $n$-dimensional discrete joint space of resolution $M$ per dimension. The evaluation function is defined as:
+
+\[
+f(\mathbf{n}) = g(\mathbf{n}) + h(\mathbf{n})
+\]
+
+where:
+
+\[
+g(\mathbf{n})=\text{cost from start to node } \mathbf{n}, \quad h(\mathbf{n})=\sum_{i=1}^{n} \min\left(|n_i-g_i|, M-|n_i-g_i|\right)
+\]
+
+}
+% #5 description
+{
+This theoretical model describes the A* search algorithm adapted to a toroidal (wrap-around) discretized joint configuration space for robotic arm path planning. The heuristic $h(n)$ used is the toroidal Manhattan distance, providing an admissible heuristic suitable for discrete, periodic search spaces.
+
+\begin{itemize}
+    \item $\mathbf{n}=[n_1, n_2, \dots, n_n]$: Current node indices in the discretized joint-space grid.
+    \item $\mathbf{s}$: Start configuration node indices.
+    \item $\mathbf{g}$: Goal configuration node indices.
+    \item $M$: Number of discrete intervals per joint dimension.
+    \item $g(\mathbf{n})$: Actual cost from the start to the node $\mathbf{n}$ (each step has uniform cost = 1).
+    \item $h(\mathbf{n})$: Heuristic estimated cost from node $\mathbf{n}$ to goal $\mathbf{g}$.
+    \item $f(\mathbf{n})$: Total estimated cost function guiding the search.
+\end{itemize}
+
+The algorithm iteratively explores neighboring nodes until the optimal path from $\mathbf{s}$ to $\mathbf{g}$ is found or all possibilities are exhausted.
+}
+% #6 Notes
+{
+This theoretical model assumes:
+
+\begin{itemize}
+    \item The joint configuration space is discretized into uniform intervals.
+    \item The space has a toroidal structure, allowing joints to wrap around from $-\pi$ to $\pi$.
+    \item Each step between neighboring configurations has an equal cost of 1.
+    \item The heuristic is admissible (never overestimates cost), ensuring optimality of the solution.
+\end{itemize}
+}
+% #7 Source
+{
+Adapted from standard A* algorithm definitions:\\
+\url{https://en.wikipedia.org/wiki/A*_search_algorithm}
+}
+% #8 Referenced by
+{
+  \dref{GD_AStar_DiscreteJointSpace}
+}
+% #9 Preconditions
+{
+The start and goal nodes must be within the defined grid dimensions.
 }
 % #1 derivation - not applicable by default
 {}
@@ -554,64 +697,71 @@ This section collects the laws and equations that will be used in building the i
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
 \hline
 \rowcolor[gray]{0.9}
-Number& GD\refstepcounter{defnum}\thedefnum \label{GD_FWD_Kinematics}\\
+Number & GD\refstepcounter{defnum}\thedefnum \label{GD_AStar_DiscreteJointSpace} \\
 \hline
-Label &\bf Forward Kinematics of a 2D Robotic Arm \\ 
+Label & \bf A* Heuristic in Discretized Toroidal Joint Space \\
 \hline
-SI Units&\si{\milli\metre}\\
+SI Units & Unitless (grid indices) \\
 \hline
-Equation&
+Equation &
 \[
-\begin{aligned}
-    x &= L_1 \cos(\theta_1) + L_2 \cos(\theta_1 + \theta_2) \\
-    y &= L_1 \sin(\theta_1) + L_2 \sin(\theta_1 + \theta_2)
-\end{aligned}
+h(\mathbf{n}) = \sum_{i=1}^{n} \min\left( |n_i - g_i|, M - |n_i - g_i| \right)
 \]
 \\
 \hline
 Description & 
-The forward kinematics equations describe the position of the end-effector in Cartesian coordinates given the joint angles and link lengths.
+This equation defines the toroidal Manhattan distance used as the heuristic function $h(\mathbf{n})$ in the A* algorithm for robotic arm joint-space planning.
+
 \\
-& $x, y$ are the Cartesian coordinates of the end-effector (\si{\milli\metre}).\\
-& $L_1, L_2$ are the lengths of the arm’s links (\si{\milli\metre}).\\
-& $\theta_1, \theta_2$ are the joint angles (radians).\\
+& $n$ is the number of joints (dimensions of the search space). \\
+& $\mathbf{n} = [n_1, n_2, \dots, n_n]$ is the current node index in the discretized joint space. \\
+& $\mathbf{g} = [g_1, g_2, \dots, g_n]$ is the goal node index. \\
+& $M$ is the number of discrete bins per joint (grid resolution). \\
+& The $\min$ term handles wrap-around behavior in toroidal space. For example, the distance from bin $0$ to bin $M-1$ is 1, not $M-1$. \\
+
 & Assumptions:
 \begin{itemize}
-    \item The links are rigid and have fixed lengths (\aref{A_LinkLengthsConstant}).
-    \item The joints rotate freely within the plane.
-    \item The base of the robotic arm is fixed.
+    \item The joint space is discretized uniformly into $M$ bins per joint.
+    \item The joint angle space is toroidal (wraps around at $-\pi$ and $\pi$).
+    \item The heuristic must be admissible and consistent for A* to be optimal.
 \end{itemize}
 \\
 \hline
-Source &--\\
+Source & Adapted from: \url{https://en.wikipedia.org/wiki/A*_search_algorithm} \\
 \hline
-% Ref.\ By & \dref{GD_Inverse_Kinematics}, \dref{IM_PathPlanning}\\
+Ref.\ By & \dref{TM:AStarJointSpace} \\
 \hline
 \end{tabular}
 \end{minipage}\\
 
-\subsubsection*{Detailed derivation of forward kinematics equations}
-The forward kinematics of a 2D robotic arm is derived by considering the arm as a series of rigid links connected by rotational joints. The position of the end-effector is computed as follows:
+\subsubsection*{Detailed derivation of A* heuristic in toroidal joint space}
+
+The A* algorithm requires a heuristic function $h(\mathbf{n})$ to estimate the cost from a current node $\mathbf{n}$ to the goal node $\mathbf{g}$. In a discretized $n$-dimensional joint space with $M$ bins per dimension (corresponding to uniformly sampled angles), we aim to define a heuristic that:
+
+\begin{itemize}
+    \item Is admissible (never overestimates true cost),
+    \item Is consistent (ensures optimal pathfinding),
+    \item Accounts for toroidal topology (wrap-around effect).
+\end{itemize}
 
 \begin{enumerate}
-    \item The first joint rotates by an angle $\theta_1$, positioning the second joint at:
+    \item In each joint dimension $i$, the shortest distance from current index $n_i$ to goal index $g_i$ must consider both clockwise and counter-clockwise directions due to wrapping. 
+    \item The forward (absolute) distance is $|n_i - g_i|$.
+    \item The wrap-around distance is $M - |n_i - g_i|$.
+    \item The effective shortest distance in that dimension is:
     \[
-    x_1 = L_1 \cos(\theta_1), \quad y_1 = L_1 \sin(\theta_1).
+    d_i = \min(|n_i - g_i|, M - |n_i - g_i|)
     \]
-    \item The second joint rotates by an angle $\theta_2$, contributing to the final position:
+    \item Summing over all $n$ joint dimensions gives the total heuristic:
     \[
-    x = x_1 + L_2 \cos(\theta_1 + \theta_2), \quad y = y_1 + L_2 \sin(\theta_1 + \theta_2).
-    \]
-    \item Substituting $x_1$ and $y_1$ results in the final equations:
-    \[
-    x = L_1 \cos(\theta_1) + L_2 \cos(\theta_1 + \theta_2),
-    \]
-    \[
-    y = L_1 \sin(\theta_1) + L_2 \sin(\theta_1 + \theta_2).
+    h(\mathbf{n}) = \sum_{i=1}^{n} d_i = \sum_{i=1}^{n} \min(|n_i - g_i|, M - |n_i - g_i|)
     \]
 \end{enumerate}
 
-These equations provide a direct mapping from joint space to Cartesian space, which is essential for path planning and trajectory control in robotic applications.
+This formulation respects the periodicity of angular joint space, making it ideal for pathfinding on robotic arms with revolute joints. It guarantees optimality and efficiency in A* search when used as the heuristic function.
+
+
+
 
 \subsubsection{Data Definitions}\label{sec_datadef}
 
@@ -623,46 +773,40 @@ This section defines and collects the essential data needed to build the instanc
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
 \hline
 \rowcolor[gray]{0.9}
-Number & DD\refstepcounter{datadefnum}\thedatadefnum \label{DD_FWD_Kinematics}\\
+Number & DD\refstepcounter{datadefnum}\thedatadefnum \label{DD_EndEffectorPosition}\\
 \hline
-Label & \bf Forward Kinematics Data Definition\\
+Label & \textbf{End-Effector Position Definition} \\
 \hline
-Symbol & $\mathbf{x} = (x, y)$\\
+Symbol & $\mathbf{x} = (x, y)$ \\
 \hline
-SI Units & \si{\milli\metre}\\
+SI Units & \si{\metre} \\
 \hline
 Equation &
 \[
-\begin{aligned}
-    x &= L_1 \cos(\theta_1) + L_2 \cos(\theta_1 + \theta_2) \\
-    y &= L_1 \sin(\theta_1) + L_2 \sin(\theta_1 + \theta_2)
-\end{aligned}
+x = \sum_{i=1}^{n} L_i \cos\left(\sum_{j=1}^{i} \theta_j \right), \quad
+y = \sum_{i=1}^{n} L_i \sin\left(\sum_{j=1}^{i} \theta_j \right)
 \]
 \\
 \hline
-Description & 
-Forward kinematics describes how the end-effector position in Cartesian coordinates $(x, y)$ is computed as a function of the joint angles $\theta_1, \theta_2$ and link lengths $L_1, L_2$. 
+Description &
+This definition gives the Cartesian coordinates $(x, y)$ of the end-effector, computed from the joint angles $\theta_i$ and link lengths $L_i$ of a planar $n$-link robotic manipulator.
 
 \begin{itemize}
-    \item $x, y$: Cartesian coordinates of the end-effector (\si{\milli\metre}).
-    \item $L_1, L_2$: Lengths of the robotic arm's links (\si{\milli\metre}).
-    \item $\theta_1, \theta_2$: Joint angles (radians).
+    \item $\theta_i$: Joint angle (radians)
+    \item $L_i$: Length of link $i$ (mm)
+    \item $\mathbf{x} = (x, y)$: Cartesian coordinates of the end-effector
 \end{itemize}
 
-This assumes:
-\begin{itemize}
-    \item The robotic arm operates in a 2D plane.
-    \item The links are rigid with fixed lengths (\aref{A_LinkLengthsConstant}).
-    \item The base of the robotic arm is fixed at $(0,0)$.
-\end{itemize}
+This data definition specifies how to calculate $\mathbf{x}$ and provides a consistent notation for use in instance models such as path planning and obstacle avoidance.
 \\
 \hline
-Source & Robotics textbook or relevant reference\\
+Source & Robotics textbook or GD:ForwardKinematics \\
 \hline
-Ref.\ By & \dref{GD_Inverse_Kinematics}, \dref{IM_PathPlanning}\\
+Ref. By & \dref{IM:TrajectoryGeneration}, \dref{IM:ObstacleAvoidance} \\
 \hline
 \end{tabular}
 \end{minipage}\\
+
 
 
 
@@ -678,26 +822,25 @@ This section defines the data types used in the robotic arm path planning (2D-RA
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
   \hline
   \rowcolor[gray]{0.9}
-  Type Name & Description\\
+  \textbf{Type Name} & \textbf{Formal Definition and Description} \\
   \hline
-  \texttt{Angle} & Represents joint angles of the robotic arm in radians. \\
+  \texttt{Angle} & $\theta \in [-\pi, \pi] \subset \mathbb{R}$ — Represents joint angles of the robotic arm in radians. \\
   \hline
-  \texttt{Length} & Represents physical lengths (e.g., arm links, obstacle radii) in millsmeters. \\
+  \texttt{Length} & $L \in \mathbb{R}_{\ge 0}$ — Represents physical lengths (e.g., arm links, obstacle radii) in millimetres. \\
   \hline
-  \texttt{Position} & A 2D Cartesian coordinate represented as $(x, y)$ in millsmeters. \\
+  \texttt{Position} & $\mathbf{x} = (x, y) \in \mathbb{R}^2$ — A 2D Cartesian coordinate in millimetres. \\
   \hline
-  \texttt{Velocity} & Represents joint angular velocity in radians per second. \\
+  \texttt{Velocity} & $\dot{\theta} \in \mathbb{R}$ — Joint angular velocity in radians per second. \\
   \hline
-  \texttt{Acceleration} & Represents joint angular acceleration in radians per second squared. \\
+  \texttt{Acceleration} & $\ddot{\theta} \in \mathbb{R}$ — Joint angular acceleration in radians per second squared. \\
   \hline
-  \texttt{Trajectory} & A sequence of joint angles describing the motion plan. \\
+  \texttt{Obstacle} & $O = (x, y, r)$ with $(x, y) \in \mathbb{R}^2$, $r \in \mathbb{R}_{>0}$ — Represents a circular obstacle. \\
   \hline
-  \texttt{Obstacle} & A structure containing an obstacle's center position $(x, y)$ and radius. \\
-  \hline
-  \texttt{Boolean} & A binary value (true/false) indicating feasibility of a path. \\
+  \texttt{Boolean} & $b \in \{\texttt{true}, \texttt{false}\}$ — A binary flag indicating feasibility of a path or result. \\
   \hline
 \end{tabular}
 \end{minipage}\\
+
 
 
 \subsubsection{Instance Models} \label{sec_instance}
@@ -708,157 +851,88 @@ The goal statements \ref{sec_Goal} are addressed by the following instance model
 
 ~\newline
 
-\noindent
-\deftheory
-% #2 refname of theory
-{IM:TrajectoryGeneration}
-% #3 label
-{Trajectory Generation}
-% #4 equation
-{
-  $\mathbf{q}(t) = \text{PathPlanner}(\mathbf{q}_{\text{init}}, \mathbf{q}_{\text{goal}}, O, r)$
-}
-% #5 description
-{
-  The trajectory generation model computes a smooth, collision-free sequence of joint angles $\mathbf{q}(t)$ 
-  (radians) to move the robotic arm from the initial configuration $\mathbf{q}_{\text{init}}$ to the goal 
-  configuration $\mathbf{q}_{\text{goal}}$. The function $\text{PathPlanner}$ considers obstacle locations 
-  $O_i$ and radii $r_i$ to avoid collisions.
 
-  The planned trajectory satisfies the following conditions:
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+  \hline
+  \rowcolor[gray]{0.9}
+  Number & IM\refstepcounter{instnum}\theinstnum \label{IM:ArmPathPlanning}\\
+  \hline
+  Label & \bf 2D Robotic Arm Path Planning \\
+  \hline
+  Input 
+  &
   \begin{itemize}
-    \item The path is kinematically feasible, considering joint limits and maximum velocities.
-    \item No path segment intersects any obstacle.
-    \item If no valid path exists, the system returns an empty trajectory and an infeasibility warning.
+    \item $\mathbf{q}_{\text{init}}, \mathbf{q}_{\text{goal}}$: Initial and goal joint configurations.
+    \item $O_i = (x_i, y_i, r_i)$: Circular obstacles in Cartesian space.
+    \item Joint limits (\aref{A_JointMotionContinuous}) and other constraints.
   \end{itemize}
-}
-% #6 Notes
-{
-This model assumes a 2D planar manipulator with revolute joints and no external disturbances (\aref{A_NoExternalDisturbances}).
-}
-% #7 Source
-{
-  \url{https://www.robotics.org/path_planning}
-}
-% #8 Referenced by
-{
-  \rref{R_Calculate}, \rref{R_Output}
-}
-% #9 Preconditions
-{
-  The start and goal configurations must be valid joint states within the robot’s joint limits.
-}
-% #1 derivation - not applicable by default
-{}
+  \\
+  \hline
+  Output 
+  &
+  A collision-free path (or empty if infeasible), represented as 
+  \[
+     \mathbf{Q}_{\text{path}} = [\mathbf{q}_1, \mathbf{q}_2, \dots, \mathbf{q}_N]
+  \]
+  each $\mathbf{q}_k$ a valid joint configuration. Optionally, a continuous trajectory $\mathbf{q}(t)$ can be generated through interpolation.
+  \\
+  \hline
+  Description
+  &
+  This instance model unifies path planning and collision avoidance for a 2D robotic arm with $n$ revolute joints.
 
-~\newline
+  \textbf{Key steps:}
+  \begin{enumerate}
+     \item \textbf{Discrete Search (A*):} Use the toroidal joint-space A* model (\tref{TM:AStarJointSpace}) to find a minimal-step path of valid configurations from $\mathbf{q}_{\text{init}}$ to $\mathbf{q}_{\text{goal}}$.
+     \item \textbf{Collision Detection:} Each candidate $\mathbf{q}$ is validated via segment-circle checks (\tref{TM:SegmentCircleCollision}), using forward kinematics (\tref{TM:FWDKinematics}) to map joint angles to link endpoints.
+     \item \textbf{Trajectory Generation (Optional):} If a discrete path is found, a continuous trajectory $\mathbf{q}(t)$ can be formed (e.g., spline interpolation) for smooth execution.
+  \end{enumerate}
 
-\noindent
-\deftheory
-% #2 refname of theory
-{IM:ObstacleAvoidance}
-% #3 label
-{Obstacle Avoidance}
-% #4 equation
-{
-  $ \min\limits_{i} \left\| \mathbf{x}(t) - O_i \right\| \geq r_i + \epsilon, \quad \forall t $
-}
-% #5 description
-{
-  This model ensures that the robotic arm does not collide with obstacles during motion. The distance 
-  between the end-effector position $\mathbf{x}(t)$ and each obstacle center $O_i$ must always be 
-  greater than the obstacle radius $r_i$ plus a safety margin $\epsilon$.
+  The path or trajectory must satisfy:
+  \begin{itemize}
+    \item No collisions with obstacles (\aref{A_ObstacleShapeCircular}).
+    \item Joint limits do not exceed physical constraints (\aref{A_JointMotionContinuous}).
+    \item If no valid path, return an infeasibility result.
+  \end{itemize}
 
-  This condition is checked at every time step of the planned trajectory. If violated, a new trajectory 
-  is generated, or an infeasibility warning is returned.
-}
-% #6 Notes
-{
-  This model assumes that obstacle positions remain static during execution (\aref{A_StaticObstacles}).
-}
-% #7 Source
-{
-  \url{https://www.robotics.org/collision_avoidance}
-}
-% #8 Referenced by
-{
+  This addresses the goal statements of computing a collision-free path 
+  (\gsref{GS_CollisionFreePath}) and minimizing the path length (via the A* step count) 
+  (\gsref{GS_OptimizePath}).
+  \\
+  \hline
+  Sources
+  &
+  \tref{TM:AStarJointSpace}, \tref{TM:SegmentCircleCollision}, \tref{TM:FWDKinematics}
+  \\
+  \hline
+  Ref.\ By 
+  &
   \rref{R_Calculate}, \rref{R_VerifyOutput}
-}
-% #9 Preconditions
-{
-  The obstacle positions and radii must be known before trajectory planning.
-}
-% #1 derivation - not applicable by default
-{}
+  \\
+  \hline
+\end{tabular}
+\end{minipage}\\
+
+~\newline
+
+\subsubsection*{Derivation of 2D Robotic Arm Path Planning}
+
+This instance model is derived by combining the following theoretical models and assumptions:
+
+\begin{itemize}
+    \item \textbf{Forward Kinematics} (\tref{TM:FWDKinematics}): Maps any joint configuration $\mathbf{q}$ to the Cartesian positions of the arm’s links, enabling collision checks.
+    \item \textbf{Collision Detection} (\tref{TM:SegmentCircleCollision}): Determines whether any link segment intersects a circular obstacle $O_i$.
+    \item \textbf{Toroidal A* Search} (\tref{TM:AStarJointSpace}): Provides a pathfinding strategy in a discretized joint-space grid with wrap-around angles, applying an admissible heuristic to ensure an optimal solution with minimal steps.
+\end{itemize}
+
+At each step, the A* algorithm proposes a neighboring joint configuration, which is validated for collisions using the segment-circle model. If feasible, the configuration is explored in the search process. The final sequence of configurations from $\mathbf{q}_{\text{init}}$ to $\mathbf{q}_{\text{goal}}$ constitutes the minimal-step, collision-free path. Optional trajectory generation interpolates these discrete points into a continuous function $\mathbf{q}(t)$, respecting joint limits (\aref{A_JointMotionContinuous}) and ensuring a smooth motion plan.
 
 
 ~\newline
 
-
-%~\newline
-
-\subsubsection*{Derivation of Trajectory Generation (IM:TrajectoryGeneration)}
-
-The trajectory generation model is derived from forward kinematics and inverse kinematics principles. 
-
-\begin{enumerate}
-    \item \textbf{Forward Kinematics:} The position of the end-effector $\mathbf{x}(t)$ is determined using:
-    \[
-    x = L_1 \cos(\theta_1) + L_2 \cos(\theta_1 + \theta_2)
-    \]
-    \[
-    y = L_1 \sin(\theta_1) + L_2 \sin(\theta_1 + \theta_2)
-    \]
-    This establishes the mapping from joint space $\mathbf{q}(t)$ to Cartesian space.
-
-    \item \textbf{Inverse Kinematics:} Given a desired goal position $\mathbf{x}_{\text{goal}} = (x_g, y_g)$, we solve for the required joint angles:
-    \[
-    \theta_2 = \cos^{-1} \left(\frac{x_g^2 + y_g^2 - L_1^2 - L_2^2}{2 L_1 L_2} \right)
-    \]
-    \[
-    \theta_1 = \tan^{-1} \left(\frac{y_g}{x_g} \right) - \tan^{-1} \left(\frac{L_2 \sin \theta_2}{L_1 + L_2 \cos \theta_2} \right)
-    \]
-    This establishes the mapping from Cartesian space to joint space.
-
-    \item \textbf{Path Planning:} A trajectory $\mathbf{q}(t)$ is generated using an interpolation method such as:
-    \begin{itemize}
-        \item Linear interpolation (for simple movements).
-        \item Polynomial interpolation (e.g., cubic splines) for smooth acceleration profiles.
-        \item Graph-based search algorithms (e.g., A* on a discretized joint space).
-    \end{itemize}
-
-    \item \textbf{Collision Avoidance:} Each planned trajectory segment is verified against obstacles using:
-    \[
-    \min\limits_{i} \left\| \mathbf{x}(t) - O_i \right\| \geq r_i + \epsilon, \quad \forall t
-    \]
-    If this constraint is violated, a new path is computed, or an infeasibility warning is returned.
-\end{enumerate}
-
-The derivation combines these principles to ensure a feasible, collision-free trajectory for the robotic arm.
-
-\subsubsection*{Derivation of Obstacle Avoidance (IM:ObstacleAvoidance)}
-
-Obstacle avoidance is derived from the Euclidean distance constraint:
-
-\begin{enumerate}
-    \item \textbf{Obstacle Representation:} Obstacles are modeled as circles with centers $O_i = (O_{i_x}, O_{i_y})$ and radii $r_i$.
-
-    \item \textbf{Collision Condition:} A collision occurs if:
-    \[
-    \left\| \mathbf{x}(t) - O_i \right\| < r_i
-    \]
-    where $\mathbf{x}(t)$ is the end-effector position.
-
-    \item \textbf{Safe Clearance Constraint:} To avoid collisions, the trajectory must satisfy:
-    \[
-    \left\| \mathbf{x}(t) - O_i \right\| \geq r_i + \epsilon, \quad \forall t
-    \]
-    where $\epsilon$ is a safety margin.
-
-    \item \textbf{Validation:} Each trajectory segment is checked at discrete time steps. If a collision is detected, the path planner reattempts a new trajectory.
-\end{enumerate}
-
-This derivation ensures that the robotic arm follows a valid path while maintaining a safe distance from obstacles.
 
 
 \subsubsection{Input Data Constraints} \label{sec_DataConstraints}    
@@ -914,36 +988,8 @@ The specification parameters in Table~\ref{TblInputVar} are listed in Table~\ref
 
 \subsubsection{Properties of a Correct Solution} \label{sec_CorrectSolution}
 
-\noindent
-A correct solution must exhibit the following properties to ensure robustness and feasibility in robotic arm path planning:
+As previously discussed, a correct trajectory must be collision-free, kinematically feasible, and respect joint and workspace constraints.
 
-\begin{itemize}
-    \item The generated trajectory must be \textbf{collision-free}, ensuring that the robotic arm does not intersect any obstacles.
-    \item The computed joint angles (\(\theta_1, \theta_2\)) must respect the physical limits of the robotic arm.
-    \item The path must be \textbf{kinematically feasible}, meaning it can be executed smoothly by the robotic system.
-    \item If the target position is unreachable due to obstacles or arm constraints, the system must return an empty trajectory and notify the user.
-\end{itemize}
-
-\noindent
-Additionally, output values must adhere to known physical constraints, summarized in Table~\ref{TblOutputVar}.
-
-\begin{table}[!h]
-\caption{Output Variables and Physical Constraints} \label{TblOutputVar}
-\renewcommand{\arraystretch}{1.2}
-\noindent \begin{longtable*}{l l} 
-  \toprule
-  \textbf{Var} & \textbf{Physical Constraints} \\
-  \midrule 
-  $\theta_1, \theta_2$ & $-\pi \leq \theta_1, \theta_2 \leq \pi$ (Joint limits) \\
-  $(x, y)$ & Within reachable workspace of arm \\
-  $\mathbf{q}_{\text{path}}$ & Must be collision-free with obstacles \\
-  $\mathbf{x}_{\text{goal}}$ & If unreachable, return empty trajectory \\
-  \bottomrule
-\end{longtable*}
-\end{table}
-
-\noindent
-These constraints ensure that the computed motion plan is valid, achievable, and safe for execution by the robotic arm.
 
 
 \section{Requirements}
@@ -957,42 +1003,54 @@ qualities that the software is expected to exhibit.
 \noindent \begin{itemize}
 
   \item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:]  
-    The system shall accept the following inputs from the user:
+    The system shall accept the following inputs from the user, collectively defined as the input set \( \mathcal{I} \):
+    \[
+      \mathcal{I} = \left\{ \mathbf{q}_{\text{init}}, \mathbf{x}_{\text{goal}}, \mathcal{O}, \mathbf{L} \right\}
+    \]
+    where:
     \begin{itemize}
-      \item Initial joint angles \( q_{\text{init}} = (\theta_1, \theta_2) \) in radians.
-      \item Goal position \( (x_{\text{goal}}, y_{\text{goal}}) \) in Cartesian coordinates (\si{\milli\metre}).
-      \item Obstacle positions \( O_i = (x_i, y_i) \) and radii \( r_i \) (\si{\milli\metre}).
-      \item Link lengths \( L_1, L_2 \) of the robotic arm (\si{\milli\metre}).
+      \item \( \mathbf{q}_{\text{init}} = (\theta_1, \dots, \theta_N) \): initial joint angles (radians).
+      \item \( \mathbf{x}_{\text{goal}} = (x, y) \): goal position in Cartesian coordinates (\si{\metre}).
+      \item \( \mathcal{O} = \{ (x_i, y_i, r_i) \mid i = 1,\dots,M \} \): obstacle positions and radii (\si{\metre}).
+      \item \( \mathbf{L} = (L_1, \dots, L_N) \): link lengths of the robotic arm (\si{\metre}).
     \end{itemize}
-  
+    \textbf{Trace to:} \iref{IM:ArmPathPlanning}
+
   \item[R\refstepcounter{reqnum}\thereqnum \label{R_OutputInputs}:]  
-    The system shall echo all input values to ensure correctness before computation.
-  
+    The system shall echo all elements in \( \mathcal{I} \) to confirm correctness before computation.  
+    
+
   \item[R\refstepcounter{reqnum}\thereqnum \label{R_Calculate}:]  
     The system shall perform the following calculations:
     \begin{itemize}
-      \item Compute the forward kinematics to determine the end-effector position.
-      \item Determine the collision-free path from \( q_{\text{init}} \) to the goal using A* search.
-      \item Generate the sequence of intermediate joint configurations \( q(t) \) for smooth motion.
+      \item Use forward kinematics (\tref{TM:FWDKinematics}) to compute end-effector positions from \( \mathbf{q} \).
+      \item Use A* search (\tref{TM:AStarJointSpace}) to generate a collision-free path in joint space from \( \mathbf{q}_{\text{init}} \) to the joint configuration corresponding to \( \mathbf{x}_{\text{goal}} \).
+      \item Construct a time-indexed path \( \mathbf{q}(t) \) through intermediate joint configurations for smooth execution.
     \end{itemize}
-  
+    
+
   \item[R\refstepcounter{reqnum}\thereqnum \label{R_VerifyOutput}:]  
     The system shall verify that:
     \begin{itemize}
-      \item The computed path avoids all obstacles.
-      \item The final joint configuration corresponds to the given goal position.
-      \item The output trajectory is continuous and feasible for the robotic arm.
+      \item The path \( \mathbf{q}(t) \) is collision-free with respect to \( \mathcal{O} \) (\tref{TM:SegmentCircleCollision}).
+      \item The final configuration \( \mathbf{q}_{\text{final}} \) maps via forward kinematics to the goal position \( \mathbf{x}_{\text{goal}} \) (\tref{TM:FWDKinematics}).
+      \item The trajectory is continuous, feasible, and respects all joint and link constraints.
     \end{itemize}
-  
+    
+
   \item[R\refstepcounter{reqnum}\thereqnum \label{R_Output}:]  
     The system shall output the following:
     \begin{itemize}
-      \item The computed path in joint space, represented as a sequence of joint angles \( q(t) \).
-      \item The Cartesian positions of the end-effector throughout the motion.
-      \item A visualization of the planned motion with the robotic arm and obstacles.
+      \item A discrete sequence \( \mathbf{q}(t_0), \mathbf{q}(t_1), \dots, \mathbf{q}(t_k) \) in joint space.
+      \item Corresponding Cartesian path \( \mathbf{x}(t) \) of the end-effector.
+      \item A visualization including the arm trajectory and obstacles.
     \end{itemize}
-  
-  \end{itemize}
+    
+
+\end{itemize}
+
+
+
   
   \subsection{Nonfunctional Requirements}
 
@@ -1001,8 +1059,21 @@ qualities that the software is expected to exhibit.
   \noindent \begin{itemize}
   
   \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]  
-    \textbf{Accuracy} \\
-    The system shall compute the robotic arm trajectory with an accuracy sufficient for motion planning in a dynamic environment. The precision of the joint angles shall be within \(0.01\) radians, and the calculated Cartesian positions of the end-effector shall have an error margin within \(0.1\) cm. The accuracy shall be validated through simulation and empirical testing.
+  \textbf{Accuracy} \\
+The system shall compute the robotic arm trajectory with an accuracy sufficient for motion planning in a 2D environment. The precision of the joint angles shall be within \(0.01\) radians, and the calculated Cartesian positions of the end-effector shall have an error margin within \(0.1\) cm. 
+
+Accuracy is verified through both analytical comparison and visual confirmation:
+
+\begin{itemize}
+  \item \textbf{Analytical oracle:} For each configuration along the planned trajectory \(\mathbf{q}(t)\), the system computes the expected end-effector position \(\mathbf{x}_{\text{expected}}(t)\) using the forward kinematics model (\tref{TM:FWDKinematics}). The output is deemed accurate if:
+  \[
+  \|\mathbf{x}_{\text{actual}}(t) - \mathbf{x}_{\text{expected}}(t)\| < 0.001~\text{m}
+  \]
+  \item \textbf{Visual oracle:} The GUI module displays the animated arm trajectory alongside obstacles. Users can visually inspect whether the motion respects the environment constraints and achieves the goal position with expected smoothness and precision.
+\end{itemize}
+
+See \href{https://github.com/FangZiyang/CAS741-Ryan/blob/main/docs/VnVPlan/VnVPlan.pdf}{V\&V plan} for test design and validation procedures.
+
   
   \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Maintainability}:]  
     \textbf{Maintainability} \\
@@ -1010,15 +1081,15 @@ qualities that the software is expected to exhibit.
 
   \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Verifiability}:]  
     \textbf{Verifiability} \\
-    The correctness of the system shall be tested with a complete verification and validation (V\&V) plan. The outputs shall be compared against theoretical models and experimental data.
+    The correctness of the system shall be tested with a complete verification and validation (V\&V) plan. \href{https://github.com/FangZiyang/CAS741-Ryan/blob/main/docs/VnVPlan/VnVPlan.pdf}{V\&V plan} The outputs shall be compared against theoretical models and experimental data.
   
   \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Understandability}:]  
     \textbf{Understandability} \\
-    The software shall follow a modular architecture with clear documentation, including a module guide and interface specification. Each function and class shall have inline comments explaining its purpose and usage.a
+    The software architecture shall be modular and self-descriptive. Each module shall include a clearly written interface specification and a corresponding documentation file. Every public function shall include docstrings that specify input/output types and purpose. Inline comments shall be added to explain non-obvious implementation logic. Understandability will be evaluated through peer review and code inspection checklists.
   
   \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Reusability}:]  
     \textbf{Reusability} \\
-    The system shall be designed with reusability in mind, allowing for easy adaptation to different robotic configurations. The kinematic and planning modules shall be abstracted so they can be reused in other robotic applications.
+    The system shall support reuse of key planning components (e.g., collision checking, A* search, forward kinematics) across different robotic manipulators. All configuration-dependent parameters (e.g., number of joints, link lengths) shall be externally specified in JSON or parameter files. Module interfaces shall not be hardcoded to any specific robot model, enabling reuse in future planar path-planning applications.
   
   \end{itemize}
   
@@ -1046,9 +1117,9 @@ qualities that the software is expected to exhibit.
   \item \textbf{Typical Values:}  
   The choice of typical values for input parameters is based on real-world robotic systems:
     \begin{itemize}
-      \item Link lengths (\si{\milli\metre}): $L_1 = 50$, $L_2 = 40$ 
+      \item Link lengths (\si{\metre}): $L_1 = 50$, $L_2 = 40$ 
       \item Joint angle range (\si{\radian}): $[-\pi, \pi]$
-      \item Obstacle radii (\si{\milli\metre}): $r_i \in [5, 15]$ 
+      \item Obstacle radii (\si{\metre}): $r_i \in [5, 15]$ 
     \end{itemize}
     These values ensure a balance between computational efficiency and practical usability.
   
@@ -1108,73 +1179,74 @@ general definitions, data definitions, instance models, and likely changes on
 the assumptions.
 
 
-\afterpage{
-\begin{landscape}
-  \begin{table}[h!]
-    \centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-\hline
-	& \aref{A_OnlyThermalEnergy}& \aref{A_hcoeff}& \aref{A_mixed}& \aref{A_tpcm}& \aref{A_const_density}& \aref{A_const_C}& \aref{A_Newt_coil}& \aref{A_tcoil}& \aref{A_tlcoil}& \aref{A_Newt_pcm}& \aref{A_charge}& \aref{A_InitTemp}& \aref{A_OpRangePCM}& \aref{A_OpRange}& \aref{A_htank}& \aref{A_int_heat}& \aref{A_vpcm}& \aref{A_PCM_state}& \aref{A_Pressure} \\
-\hline
-    \iref{IM_CollisionAvoidance} &  &  &  & X & X & X \\
-    \hline
-    \end{tabular}
-    \end{table}
-    
-\end{landscape}
-}
 
 \begin{table}[h!]
-\centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-\hline        
-	& \tref{T_COE}& \tref{T_SHE}& \tref{T_LHE}& \dref{NL}& \dref{ROCT} & \ddref{FluxCoil}& \ddref{FluxPCM} & \ddref{D_HOF}& \ddref{D_MF}& \iref{ewat}& \iref{epcm}& \iref{I_HWAT}& \iref{I_HPCM} \\
-\hline
-\tref{T_COE}     & & & & & & & & & & & & & \\ \hline
-\tref{T_SHE}     & & & X& & & & & & & & & & \\ \hline
-\tref{T_LHE}     & & & & & & & & & & & & & \\ \hline
-\dref{NL}        & & & & & & & & & & & & & \\ \hline
-\dref{ROCT}      & X& & & & & & & & & & & & \\ \hline
-\ddref{FluxCoil} & & & & X& & & & & & & & & \\ \hline
-\ddref{FluxPCM}  & & & & X& & & & & & & & & \\ \hline
-\ddref{D_HOF}    & & & & & & & & & & & & & \\ \hline
-\ddref{D_MF}     & & & & & & & & X& & & & & \\ \hline
-\iref{ewat}      & & & & & X& X& X& & & & X& & \\ \hline
-\iref{epcm}      & & & & & X& & X& & X& X& & & X \\ \hline
-\iref{I_HWAT}    & & X& & & & & & & & & & & \\ \hline
-\iref{I_HPCM}    & & X& X& & & & X& X& X& & X& & \\
-\hline
-\end{tabular}
-\caption{Traceability Matrix Showing the Connections Between Items of Different Sections}
-\label{Table:trace}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+  \hline        
+  & \hyperref[TM:FWDKinematics]{TM1}
+  & \hyperref[TM:SegmentCircleCollision]{TM2}
+  & \hyperref[TM:AStarJointSpace]{TM3}
+  & \hyperref[GD_AStar_DiscreteJointSpace]{GD1}
+  & \hyperref[DD_EndEffectorPosition]{DD1}
+  & \hyperref[IM:ArmPathPlanning]{IM1} \\
+  \hline
+  \hyperref[TM:SegmentCircleCollision]{TM2} & & & & & & \\ \hline
+  \hyperref[TM:FWDKinematics]{TM1}         & & & X & & & \\ \hline
+  \hyperref[TM:SegmentCircleCollision]{TM2} & & & & & & \\ \hline
+  \hyperref[TM:AStarJointSpace]{TM3}       & & & & & & \\ \hline
+  \hyperref[GD_AStar_DiscreteJointSpace]{GD1} & X & & & & & \\ \hline
+  \hyperref[DD_EndEffectorPosition]{DD1}   & & & & X & & \\ \hline
+  \hyperref[IM:ArmPathPlanning]{IM1}       & & & & X & & \\ \hline
+  \end{tabular}
+  \caption{Traceability Matrix Showing the Connections Between Items of Different Sections}
+  \label{Table:trace}
 \end{table}
 
+
+
 \begin{table}[h!]
-\centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|}
-\hline
-	& \iref{ewat}& \iref{epcm}& \iref{I_HWAT}& \iref{I_HPCM}& \ref{sec_DataConstraints}& \rref{R_RawInputs}& \rref{R_MassInputs} \\
-\hline
-\iref{ewat}            & & X& & & & X& X \\ \hline
-\iref{epcm}            & X& & & X& & X& X \\ \hline
-\iref{I_HWAT}          & & & & & & X& X \\ \hline
-\iref{I_HPCM}          & & X& & & & X& X \\ \hline
-\rref{R_RawInputs}     & & & & & & & \\ \hline
-\rref{R_MassInputs}    & & & & & & X& \\ \hline
-\rref{R_CheckInputs}   & & & & & X& & \\ \hline
-\rref{R_OutputInputs}  & X& X& & & & X& X \\ \hline
-\rref{R_TempWater}     & X& & & & & & \\ \hline 
-\rref{R_TempPCM}       & & X& & & & & \\ \hline
-\rref{R_EnergyWater}   & & & X& & & & \\ \hline
-\rref{R_EnergyPCM}     & & & & X& & & \\ \hline
-\rref{R_VerifyOutput}  & & & X& X& & & \\ \hline
-\rref{R_timeMeltBegin} & & X& & & & & \\ \hline
-\rref{R_timeMeltEnd}   & & X& & & & & \\ 
-\hline
-\end{tabular}
-\caption{Traceability Matrix Showing the Connections Between Requirements and Instance Models}
-\label{Table:R_trace}
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|c|c|}
+  \hline
+  & \hyperref[IM:ArmPathPlanning]{IM1} 
+  & \hyperref[sec_DataConstraints]{DC} 
+  & \rref{R_Inputs} 
+  & \rref{R_OutputInputs} 
+  & \rref{R_Calculate} 
+  & \rref{R_VerifyOutput} 
+  & \rref{R_Output} \\
+  \hline
+  
+  \hyperref[IM:ArmPathPlanning]{IM1} & 
+       & X &   &   &   & X & X \\ 
+  \hline
+
+  \rref{R_Inputs} & 
+       &   &   &   &   &   &   \\ 
+  \hline
+
+  \rref{R_OutputInputs} & 
+       &   &   &   &   & X &   \\ 
+  \hline
+
+  \rref{R_Calculate} & 
+       &   &   &   & X &   &   \\ 
+  \hline
+
+  \rref{R_VerifyOutput} & 
+       X &   &   &   &   &   &   \\ 
+  \hline
+
+  \rref{R_Output} & 
+       X & X &   &   &   & X & X \\ 
+  \hline
+  \end{tabular}
+  \caption{Traceability Matrix Showing the Connections Between Requirements and Instance Models}
+  \label{Table:R_trace}
 \end{table}
+
+  
 
 The purpose of the traceability graphs is also to provide easy references on
 what has to be additionally modified if a certain component is changed.  The
@@ -1221,22 +1293,35 @@ The following table defines symbolic constants introduced in the document for ma
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
-\textbf{Symbol} & \textbf{Description} & \textbf{Value} \\
+\textbf{Symbol} & \textbf{Description}  \\
 \hline
-$L_1$ & Length of first arm link (\si{\milli\metre}) & 50 \\
-$L_2$ & Length of second arm link (\si{\milli\metre}) & 40 \\
-$\theta_{\min}$ & Minimum joint angle (\si{\degree}) & $-180$ \\
-$\theta_{\max}$ & Maximum joint angle (\si{\degree}) & $180$ \\
-$\Delta q$ & Discretization step for A* search (radians) & $0.1$ \\
-$\text{FRACTION}$ & Fraction of original development time for maintainability & $0.1$ \\
+$L_1$ & Length of first arm link (\si{\metre})  \\
+$L_2$ & Length of second arm link (\si{\metre}) \\
+$\theta_{\min}$ & Minimum joint angle (\si{\degree})  \\
+$\theta_{\max}$ & Maximum joint angle (\si{\degree}) \\
+$\Delta q$ & Discretization step for A* search (radians)  \\
+$\text{FRACTION}$ & Fraction of original development time for maintainability\\
 \hline
 \end{tabular}
 \caption{Values of Auxiliary Constants}
 \label{Table:AuxiliaryConstants}
 \end{table}
 
-% \nocite{*}
-% \input{../Reflection.tex}
+\newpage
 
-% \input{../SRS_Reflection.tex}
+\bibliographystyle {plainnat}
+\bibliography {../../refs/References}
+
+\newpage
+
+\newpage{}
+\section*{Appendix --- Reflection}
+
+\wss{Not required for CAS 741}
+
+The information in this section will be used to evaluate the team members on the
+graduate attribute of Lifelong Learning.  
+\input{../Reflection.tex}
+
+\input{../SRS_Reflection.tex}
 \end{document}
