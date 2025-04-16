@@ -4,7 +4,6 @@
 \usepackage{tabularx}
 \usepackage{hyperref}
 \usepackage{amsmath}
-\usepackage{amssymb}
 \hypersetup{
     colorlinks,
     citecolor=blue,
@@ -33,7 +32,6 @@
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
 Feb 24 & 1.0 & Notes\\
-April 15  & 2.0 & Notes\\
 \bottomrule
 \end{tabularx}
 
@@ -55,28 +53,15 @@ April 15  & 2.0 & Notes\\
 
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{l l} 
-    \toprule		
-    \textbf{symbol} & \textbf{description}\\
-    \midrule 
-    A & Assumption\\
-    DD & Data Definition\\
-    GD & General Definition\\
-    GS & Goal Statement\\
-    IM & Instance Model\\
-    LC & Likely Change\\
-    PS & Physical System Description\\
-    R & Requirement\\
-    SRS & Software Requirements Specification\\
-    TM & Theoretical Model\\
-    IK & Inverse Kinematics \\
-    FK & Forward Kinematics \\
-    A* & A-star Pathfinding Algorithm \\
-    DOF & Degrees of Freedom \\
-    EE & End-Effector \\
-    % \progname{} & 2DPL\\
-    2D-RAPP & 2D Robot Arm Path Planning\\
-    \bottomrule
-  \end{tabular}\\
+  \toprule		
+  \textbf{Symbol} & \textbf{Description}\\
+  \midrule 
+  $q$ & Joint angle (rad) \\  
+  $\dot{q}$ & Joint angular velocity (rad/s) \\  
+  $\ddot{q}$ & Joint angular acceleration (rad/s$^2$) \\  
+  $L$ & Link length (mm) \\  
+  \bottomrule
+\end{tabular}\\
 
 
 \newpage
@@ -110,10 +95,8 @@ The software under test is a \textbf{2D Robot Arm Path-Planning System} that com
 The primary objective of this Verification and Validation (V\&V) plan is to ensure the correctness, reliability, and efficiency of the 2D Robot Arm Path-Planning System. This system computes collision-free trajectories for a robotic manipulator navigating around circular obstacles. The specific objectives are:
 
 \begin{itemize}
-    \item \textbf{Ensure system-level correctness and visualization integrity}: Confirm that the system initializes properly, and visualizes planned paths as expected. The system's UI and plotting components will be manually inspected to ensure correct rendering of obstacles and trajectories.
-
-    \item \textbf{Validate the effectiveness of A* path planning in joint space}:Verify that the "A* Algorithm" finds valid paths when they exist and alerts when a goal is unreachable.
-
+    \item \textbf{Build confidence in software correctness}: Ensure that the planned paths are collision-free and feasible in joint space.
+    \item \textbf{Validate the effectiveness of A* path planning}: Verify that the system correctly finds a valid trajectory between the initial and goal configurations.
     \item \textbf{Ensure robustness of collision detection}: Confirm that obstacle avoidance is correctly implemented and that no invalid paths are generated.
     \item \textbf{Assess computational efficiency}: Measure execution time and memory usage to ensure the system performs well under different obstacle configurations.
 \end{itemize}
@@ -133,16 +116,17 @@ This plan prioritizes correctness, efficiency, and collision-free navigation, ac
 \textbf{Extras:}
 \begin{itemize}
     \item A brief user manual for researchers/engineers.
+    \item Potential code walkthroughs and extended design documentation, as time and resources permit.
 \end{itemize}
 
 \subsection{Relevant Documentation}
 \begin{itemize}
   \item \textbf{Software Requirements Specification} (SRS) :
-  This defines the required functionalities for the 2D robot arm path planner, including input constraints, output specifications, and performance requirements.\citep{SRS2025}
-  \item \textbf{Other Project Documents} (MG~\citep{MG2025}, MIS~\citep{MIS2025}, etc.):
+  This defines the required functionalities for the 2D robot arm path planner, including input constraints, output specifications, and performance requirements.\cite{SRS}
+  \item \textbf{Other Project Documents} (MG, MIS, etc.):
   These documents describe the design and detailed modules of the system. They are relevant for deriving unit tests and ensuring that design decisions align with requirements.
   \item \textbf{Code Reference}:
-  An example is the A* toroidal grid code for obstacle navigation, which will be referenced or adapted for verifying path-planning correctness.(\href{https://github.com/FangZiyang/CAS741-Ryan/blob/main/src/planner/astar_planner.py}{code link}).
+  An example is the A* toroidal grid code for obstacle navigation, which will be referenced or adapted for verifying path-planning correctness.
 \end{itemize}
 
 
@@ -167,7 +151,7 @@ The following personnel will be involved in the verification and validation of t
 To ensure the SRS is complete, correct, and consistent, we will use the following verification methods:
 
 \begin{itemize}
-    \item \textbf{Supervisor Review}: Dr. Spencer Smith will review the SRS for completeness and clarity.Feedback and suggestions were documented in GitHub Issue. ~\href{https://github.com/FangZiyang/CAS741-Ryan/issues/2}{GitHub Issue example}.
+    \item \textbf{Supervisor Review}: Dr. Spencer Smith will review the SRS for completeness and clarity. A structured checklist will be provided to guide feedback.
     \item \textbf{Domain Expert Review}: Alaap Grandhi will review the SRS to ensure technical accuracy and feasibility.
     \item \textbf{Issue Tracker}: Feedback from reviews will be logged as GitHub issues, and necessary modifications will be made accordingly.
     \item \textbf{Peer Feedback}: Classmates will provide additional feedback to identify any unclear or missing requirements.
@@ -176,7 +160,7 @@ To ensure the SRS is complete, correct, and consistent, we will use the followin
 
 \subsection{Design Verification Plan}
 \begin{itemize}
-  \item \textbf{Classmate / Peer Design Review}: We will have scheduled walkthrough sessions where classmates provide feedback on the design documents (MG~\citep{MG2025}, MIS~\citep{MIS2025}).
+  \item \textbf{Classmate / Peer Design Review}: We will have scheduled walkthrough sessions where classmates provide feedback on the design documents (MG, MIS).
   \item \textbf{Design Checklists}: We will ensure that each requirement in the SRS is addressed at the design level. Checklists will cover topics like modularity, clarity, and traceability to requirements.
 \end{itemize}
 
@@ -191,9 +175,9 @@ To ensure the SRS is complete, correct, and consistent, we will use the followin
 \subsection{Implementation Verification Plan}
 
 \begin{itemize}
-  \item \textbf{Unit Tests}: We will write unit tests for each major component, automated by a suitable framework (\texttt{pytest} for Python).
-  \item \textbf{Static Analysis}: Use a linter (\texttt{flake8}), possibly additional tools like \texttt{pylint} or \texttt{mypy}, to verify code standards and catch potential errors.
-  \item \textbf{Code Walkthroughs}: During the final presentation, we demonstrated the software’s execution using example scenarios, walking through key modules such as path planning and collision detection, and explaining how they work together to generate a valid trajectory.
+  \item \textbf{Unit Tests}: We will write unit tests for each major component, automated by a suitable framework (e.g., \texttt{pytest} for Python).
+  \item \textbf{Static Analysis}: Use a linter (e.g., \texttt{flake8}), possibly additional tools like \texttt{pylint} or \texttt{mypy}, to verify code standards and catch potential errors.
+  \item \textbf{Code Walkthroughs}: During final presentations or peer sessions, we will review code segments dealing with core algorithms (IK solver, collision detection, path planning).
 \end{itemize}
 
 \subsection{Automated Testing and Verification Tools}
@@ -235,103 +219,75 @@ This section ensures that the system can generate valid and collision-free paths
 
 \begin{enumerate}
 
-    \item \textbf{Test ID: T1 -- Basic Collision-Free Path Planning}  
+\item \textbf{Test ID: T1 -- Basic Collision-Free Path Planning}  
 
-    \textbf{Control:} Automatic  
-    
-    \textbf{Initial State:}  
-    \begin{itemize}
-        \item A 2-joint planar robotic arm with link lengths [1, 1] (meters).
-        \item Three circular obstacles placed at coordinates:
-            \begin{itemize}
-                \item (1.75, 0.75) with radius 0.6 m
-                \item (0.55, 1.5) with radius 0.5 m
-                \item (0, -1) with radius 0.25 m
-            \end{itemize}
-        \item Initial joint configuration: \( q_{\text{init}} = [10^\circ, 50^\circ] \)
-        \item Goal joint configuration: \( q_{\text{goal}} = [58^\circ, 56^\circ] \)
-    \end{itemize}
-    
-    \textbf{Input:}  
-    \begin{itemize}
-        \item Discretized joint indices: start = (10, 50), goal = (58, 56)
-        \item Link lengths = [1, 1] m
-        \item Obstacles = \texttt{[[1.75, 0.75, 0.6], [0.55, 1.5, 0.5], [0, -1, 0.25]]}
-        \item Joint limits = \([-180^\circ, 180^\circ]\) for each joint
-    \end{itemize}
-    
-    \textbf{Output:}  
-    \begin{itemize}
-        \item A sequence of joint angle vectors \( q(t) \in \mathbb{R}^2 \) from start to goal
-        \item Each intermediate configuration is free of collision (validated by segment-circle intersection test)
-        \item The end-effector trajectory avoids all obstacles
-    \end{itemize}
-    
-    \textbf{Test Case Derivation:}  
-    \begin{itemize}
-        \item Uses \texttt{Example 1} from the dataset.
-        \item Validates that the A* algorithm on the toroidal grid finds a solution (non-empty path).
-        \item Checks that all configurations in the returned path pass collision detection using \texttt{detect\_collision()}.
-    \end{itemize}
-    
-    \textbf{How Test Will Be Performed:}  
-    \begin{itemize}
-        \item Load Example 1 data into the system.
-        \item Generate a 100x100 occupancy grid using \texttt{get\_occupancy\_grid()}.
-        \item Run \texttt{astar\_torus()} with the given start and goal.
-        \item For each node in the path:
-            \begin{itemize}
-                \item Convert indices to radians
-                \item Apply joint angles to update arm configuration
-                \item Check for collisions
-            \end{itemize}
-        \item Log whether path is found, path length, and collision-free status.
-    \end{itemize}
-    
+\textbf{Control:} Automatic  
 
-    \item \textbf{Test ID: T2 -- Path Planning with Multiple Obstacles}  
+\textbf{Initial State:}  
+\begin{itemize}
+    \item A robotic arm with \( n \) joints and defined link lengths.
+    \item A workspace containing circular obstacles.
+    \item An initial joint configuration and a valid goal position.
+\end{itemize}
 
-    \textbf{Control:} Automatic  
-    
-    \textbf{Initial State:}  
-    \begin{itemize}
-        \item A 2-link planar robotic arm with link lengths [1, 1].
-        \item Initial joint angles \( q_{\text{init}} = (40^\circ, 40^\circ) \).
-        \item Goal joint angles \( q_{\text{goal}} = (60^\circ, 60^\circ) \).
-        \item Joint limits: \([-180^\circ, 180^\circ]\) for both joints.
-        \item Three circular obstacles: 
-            \begin{itemize}
-                \item Obstacle 1: center at (1.0, 1.0), radius 0.6
-                \item Obstacle 2: center at (-1.2, 0.3), radius 0.3
-                \item Obstacle 3: center at (0.0, -1.0), radius 0.5
-            \end{itemize}
-    \end{itemize}
-    
-    \textbf{Input:}  
-    \begin{itemize}
-        \item Discretized joint space of size \( M = 100 \).
-        \item Obstacle configuration and initial/goal joint angles as above.
-    \end{itemize}
-    
-    \textbf{Output:}  
-    \begin{itemize}
-        \item A feasible joint trajectory \( q(t) \in \mathbb{R}^2 \) avoiding all obstacles.
-        \item No intersection between any arm segment and obstacles at all time steps.
-    \end{itemize}
-    
-    \textbf{Test Case Derivation:}  
-    \begin{itemize}
-        \item Demonstrates the algorithm's capability in environments with tight spaces and multiple obstacle clusters.
-        \item Confirms the planner generates alternative collision-free routes when the direct path is blocked.
-    \end{itemize}
-    
-    \textbf{How Test Will Be Performed:}  
-    \begin{itemize}
-        \item Use Example 4 from the implemented test suite in `examples.py`.
-        \item Run the planner to compute a trajectory from start to goal.
-        \item Visually verify the trajectory with obstacle overlay using the GUI animation.
-        \item Ensure no error or collision flags are raised during planning.
-    \end{itemize}
+\textbf{Input:}  
+\begin{itemize}
+    \item Initial joint angles \( q_{\text{init}} \).
+    \item Goal position \( (x_{\text{goal}}, y_{\text{goal}}) \).
+    \item Known obstacle locations and radii.
+\end{itemize}
+
+\textbf{Output:}  
+\begin{itemize}
+    \item A valid sequence of joint angles \( q(t) \) ensuring obstacle avoidance.
+    \item No intersection between the robotic arm and any obstacle.
+\end{itemize}
+
+\textbf{Test Case Derivation:}  
+\begin{itemize}
+    \item Ensures that the system correctly computes a valid path from the initial to the goal state.
+    \item Verifies that no link in the arm collides with obstacles in the workspace.
+\end{itemize}
+
+\textbf{How Test Will Be Performed:}  
+\begin{itemize}
+    \item Run the path-planning algorithm in a predefined test environment.
+    \item Verify that the generated path respects collision constraints.
+    \item Compare computed paths with analytical or manually validated paths.
+    \item Log computational time and efficiency statistics.
+\end{itemize}
+
+\item \textbf{Test ID: T2 -- Path Planning with Multiple Obstacles}  
+
+\textbf{Control:} Automatic  
+
+\textbf{Initial State:}  
+\begin{itemize}
+    \item Same as T1, but with multiple circular obstacles forming narrow pathways.
+\end{itemize}
+
+\textbf{Input:}  
+\begin{itemize}
+    \item A more complex environment with multiple obstacles blocking direct paths.
+\end{itemize}
+
+\textbf{Output:}  
+\begin{itemize}
+    \item The planned trajectory successfully avoids all obstacles.
+    \item The trajectory remains kinematically feasible.
+\end{itemize}
+
+\textbf{Test Case Derivation:}  
+\begin{itemize}
+    \item Ensures that the system can find feasible paths in more constrained environments.
+    \item Verifies that the algorithm correctly generates alternative paths around obstacles.
+\end{itemize}
+
+\textbf{How Test Will Be Performed:}  
+\begin{itemize}
+    \item Introduce additional obstacles in varying configurations.
+    \item Validate computed trajectories using visualization tools.
+\end{itemize}
 
 \end{enumerate}
 
@@ -418,35 +374,30 @@ These tests ensure that the system computes paths within acceptable time limits 
 
 \begin{enumerate}
 
-    \item \textbf{Test ID: N1 -- Path Planning Performance Under High Obstacle Density}  
+\item \textbf{Test ID: N1}  
 
-    \textbf{Type:} Performance, Automatic  
-    
-    \textbf{Initial State:}  
-    \begin{itemize}
-        \item A 2-link robotic arm with link lengths [1, 1] and joint limits of \([-180^\circ, 180^\circ]\) for each joint.
-    \end{itemize}
-    
-    \textbf{Input:}  
-    \begin{itemize}
-        \item A joint space discretization of \( M = 100 \).
-        \item 20 circular obstacles randomly placed within a 2m x 2m workspace.
-    \end{itemize}
-    
-    \textbf{Expected Output:}  
-    \begin{itemize}
-        \item Average path planning time per query (measured in seconds).
-        \item Maximum and average memory usage during grid generation and A* search.
-    \end{itemize}
-    
-    \textbf{How Test Will Be Performed:}  
-    \begin{itemize}
-        \item Use Python’s \texttt{time} and \texttt{memory\_profiler} modules to collect runtime and memory data.
+\textbf{Type:} Performance, Automatic  
 
-        \item Compare against baseline target: path planning should finish in under 10 second.
+\textbf{Initial State:} None  
 
-    \end{itemize}
-    
+\textbf{Input:}  
+\begin{itemize}
+    \item A large number of obstacles (e.g., 10+)  
+    \item Randomized goal positions  
+\end{itemize}
+
+\textbf{Expected Output:}  
+\begin{itemize}
+    \item Execution time statistics  
+    \item Peak memory usage report  
+\end{itemize}
+
+\textbf{How Test Will Be Performed:}  
+\begin{itemize}
+    \item Profile the system while computing paths  
+    \item Measure time-to-solution for varying complexity levels  
+    \item Compare against baseline performance requirements  
+\end{itemize}
 
 \item \textbf{Test ID: N2}  
 
@@ -456,7 +407,7 @@ These tests ensure that the system computes paths within acceptable time limits 
 
 \textbf{Input:}  
 \begin{itemize}
-    \item Increasing number of degrees of freedom (DOF) in the robotic arm (from 2-DOF to 6-DOF)  
+    \item Increasing number of degrees of freedom (DOF) in the robotic arm (e.g., from 2-DOF to 6-DOF)  
 \end{itemize}
 
 \textbf{Expected Output:}  
@@ -467,15 +418,9 @@ These tests ensure that the system computes paths within acceptable time limits 
 
 \textbf{How Test Will Be Performed:}  
 \begin{itemize}
-    \item Modify the number of joints in the robotic arm (2–6 DOF).
-    \item For each DOF level, run the planner on a fixed obstacle set and log:
-    \begin{itemize}
-        \item Execution time.
-        \item Path success or failure.
-    \end{itemize}
-    \item Analyze whether the planner remains efficient and reliable at higher DOFs.
+    \item Measure computation time for different arm configurations  
+    \item Evaluate feasibility of solutions at high DOF levels  
 \end{itemize}
-
 
 \end{enumerate}
 
