@@ -47,7 +47,8 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-2025 March 19 & 1.0 & Notes\\
+March 19 2025 & 1.0 & Notes\\
+April 05 2025 & 2.0 & Notes\\
 \bottomrule
 \end{tabularx}
 
@@ -64,16 +65,23 @@ This section records information for easy reference.
   \toprule		
   \textbf{symbol} & \textbf{description}\\
   \midrule 
-  AC & Anticipated Change\\
-  DAG & Directed Acyclic Graph \\
-  M & Module \\
-  MG & Module Guide \\
-  OS & Operating System \\
+  A & Assumption\\
+  DD & Data Definition\\
+  GD & General Definition\\
+  GS & Goal Statement\\
+  IM & Instance Model\\
+  LC & Likely Change\\
+  PS & Physical System Description\\
   R & Requirement\\
-  SC & Scientific Computing \\
-  \progname & Explanation of program name\\
-  UC & Unlikely Change \\
   SRS & Software Requirements Specification\\
+  TM & Theoretical Model\\
+  IK & Inverse Kinematics \\
+  FK & Forward Kinematics \\
+  A* & A-star Pathfinding Algorithm \\
+  DOF & Degrees of Freedom \\
+  EE & End-Effector \\
+  % \progname{} & 2DPL\\
+  2D-RAPP & 2D Robot Arm Path Planning\\
   \bottomrule
 \end{tabular}\\
 
@@ -213,6 +221,7 @@ actually be implemented.
 \item [\refstepcounter{mnum} \mthemnum \label{mHH9}:] Configuration Management Module
 \item [\refstepcounter{mnum} \mthemnum \label{mHH10}:] Logging and Debugging Module
 \item [\refstepcounter{mnum} \mthemnum \label{mHH11}:] Control Module
+\item [\refstepcounter{mnum} \mthemnum \label{mHH12}:] Data Tpyes Module
 \end{description}
 
 
@@ -230,9 +239,10 @@ actually be implemented.
   & Output Verification Module \\ 
   & Inverse Kinematics Solver Module \\ 
   & Configuration Management Module \\ 
-  & Control Module\\
   & Path Planning Module \\ 
   & Collision Detection Module \\ 
+  & Controll Module\\
+  & Data Types Module\\
   \midrule
   \multirow{1}{0.3\textwidth}{\textbf{Software Decision}} 
   & Plotting Module \\ 
@@ -410,6 +420,18 @@ to be implemented.
 
 \item[Type of Module:] Abstract Object \end{description}
 
+\subsubsection{Data Types Module (\mref{mHH12})}
+
+\begin{description}
+  \item[Secrets:] The internal representations and definitions of abstract data types (ADTs) such as \texttt{Config}, \texttt{Path}, \texttt{ObstacleT}, \texttt{Obstacles}, and \texttt{RobotParams}, including how joint limits, link lengths, and geometric primitives are encoded.
+
+  \item[Services:] Provides shared type definitions for all modules. These include representations of robot joint configurations, obstacle shapes, kinematic parameters, and motion paths. All modules depend on these definitions for consistent data exchange and interface specification.
+
+  \item[Implemented By:] 2D Robot Arm Path Planner
+
+  \item[Type of Module:] Pure Template
+\end{description}
+
 
 \section{Traceability Matrix} \label{SecTM}
 
@@ -424,11 +446,11 @@ requirements and between the modules and the anticipated changes.
   \toprule
   \textbf{Requirement} & \textbf{Modules} \\
   \midrule
-  R1 & \mref{mHH2}, \mref{mHH9} \\
-  R2 & \mref{mHH2}, \mref{mHH3} \\
-  R3 & \mref{mHH5}, \mref{mHH6}, \mref{mHH7} \\
-  R4 & \mref{mHH4}, \mref{mHH6}, \mref{mHH7} \\
-  R5 & \mref{mHH3}, \mref{mHH8}, \mref{mHH10} \\
+  R1 & \mref{mHH2}, \mref{mHH9}, \mref{mHH11}, \mref{mHH12} \\
+  R2 & \mref{mHH2}, \mref{mHH3}, \mref{mHH11}, \mref{mHH12} \\
+  R3 & \mref{mHH5}, \mref{mHH6}, \mref{mHH7}, \mref{mHH11}, \mref{mHH12} \\
+  R4 & \mref{mHH4}, \mref{mHH6}, \mref{mHH7}, \mref{mHH11}, \mref{mHH12} \\
+  R5 & \mref{mHH3}, \mref{mHH8}, \mref{mHH10},\mref{mHH11}, \mref{mHH12} \\
   \bottomrule
   \end{tabular}
   \caption{Trace Between Requirements and Modules}
@@ -443,16 +465,16 @@ requirements and between the modules and the anticipated changes.
   \textbf{AC} & \textbf{Modules}\\
   \midrule
   \acref{ac1} & \mref{mHH1}\\
-  \acref{ac2} & \mref{mHH2}\\
-  \acref{ac3} & \mref{mHH2}, \mref{mHH9}\\
-  \acref{ac4} & \mref{mHH2}, \mref{mHH9}\\
-  \acref{ac5} & \mref{mHH3}\\
-  \acref{ac6} & \mref{mHH4}\\
-  \acref{ac7} & \mref{mHH6}, \mref{mHH5}\\
-  \acref{ac8} & \mref{mHH7}\\
-  \acref{ac9} & \mref{mHH5}, \mref{mHH10}\\
-  \acref{ac10} & \mref{mHH5}\\
-  \acref{ac11} & \mref{mHH7}\\
+  \acref{ac2} & \mref{mHH2} , \mref{mHH12}\\
+  \acref{ac3} & \mref{mHH2}, \mref{mHH9}, \mref{mHH12}\\
+  \acref{ac4} & \mref{mHH2}, \mref{mHH9}, \mref{mHH12}\\
+  \acref{ac5} & \mref{mHH3}, \mref{mHH12}\\
+  \acref{ac6} & \mref{mHH4}, \mref{mHH12}\\
+  \acref{ac7} & \mref{mHH6}, \mref{mHH5}, \mref{mHH12}\\
+  \acref{ac8} & \mref{mHH7}, \mref{mHH12}\\
+  \acref{ac9} & \mref{mHH5}, \mref{mHH10}, \mref{mHH11}\\
+  \acref{ac10} & \mref{mHH5}, \mref{mHH11}, \mref{mHH12}\\
+  \acref{ac11} & \mref{mHH7}, \mref{mHH11}\\
   \acref{ac12} & \mref{mHH8}\\
   \bottomrule
   \end{tabular}
