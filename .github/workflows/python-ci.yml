@@ -31,7 +31,6 @@ jobs:
       
 
       - name: Install package (editable)
-        if: exists('.')
         run: |
           pip install -e .
       
