@@ -19,10 +19,10 @@ class MockArm:
             angle_sum = sum(self.joint_angles[:i])
             self.points[i][0] = self.points[i - 1][0] + self.link_lengths[
                 i - 1
-            ] * np.cos(angle_sum)
+                ] * np.cos(angle_sum)
             self.points[i][1] = self.points[i - 1][1] + self.link_lengths[
                 i - 1
-            ] * np.sin(angle_sum)
+                ] * np.sin(angle_sum)
 
 
 def test_detect_collision():
@@ -66,6 +66,20 @@ def test_get_occupancy_grid():
     grid = get_occupancy_grid(arm, obstacles, grid_size)
     assert grid is not None
     assert grid.shape == (grid_size, grid_size)
+    # Force update to a colliding configuration
+    arm.update_joints([np.pi / 2, 0])
+    seg = [arm.points[0], arm.points[1]]
+    assert detect_collision(seg, obstacles[0])
+
+
+def test_get_occupancy_grid_collision_case():
+    # Set up an arm that collides in one position
+    arm = MockArm([1, 1])
+    obstacles = [[1, 0, 0.5]]  # Center on the arm's path
+    grid = get_occupancy_grid(arm, obstacles, 5)
+
+    # Assert at least one grid cell is marked as collision
+    assert np.any(grid == 1)
 
 
 class MockJointLimits:
