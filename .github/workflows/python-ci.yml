@@ -39,7 +39,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd src
-          pytest tests --cov=planner --cov-report=term-missing --cov-report=xml
+          PYTHONPATH=$(pwd) pytest tests --cov=planner --cov-report=term-missing --cov-report=xml
 
 
       - name: Upload coverage to Codecov
