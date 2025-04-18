@@ -1,111 +1,146 @@
 # 2D Robotic Arm Path Planning System
 
-Developer: Ryan
+**Developer:** Ryan Fang  
+**Project Start Date:** January 17, 2024
 
-Project Start Date: January 17, 2024
+This project provides a graphical system for **2D robotic arm path planning**, generating obstacle-free trajectories for robotic arms with multiple links using the A* algorithm. Users can visualize arm trajectories, manage obstacles, and define custom test cases through YAML configuration files.
 
-This project is a system for 2D robotic arm path planning, capable of generating obstacle-avoiding paths for multi-link robotic arms.
+---
 
-The folders and files for this project are as follows:
+## Project Structure
 
-- planner - Core path planning algorithms and robotic arm models
-- tests - Test cases
-- ui - User interface components
-- examples.py - Example configurations
-- main.py - Main program entry point
+- **planner** – Core path-planning logic (kinematics, collision detection, pathfinding)
+- **tests** – Unit and integration tests for verifying system functionality
+- **ui** – Graphical user interface components
+- **examples.yml** – Predefined scenario configurations
+- **main.py** – Application entry point
+
+---
 
 ## Installation
 
-To install this project, follow these steps:
+Clone the repository, create a virtual environment, and install dependencies:
 
-1. Clone the repository to your local machine
-2. Create and activate a virtual environment (recommended)
-3. Install dependencies:
 ```bash
+git clone https://github.com/FangZiyang/CAS741-Ryan.git
+cd CAS741-Ryan
+python -m venv env
+source env/bin/activate # On Windows use: .\env\Scripts\activate
 pip install -r requirements.txt
 ```
 
+---
+
 ## Usage
 
-### Running the Application
+### Launching the Application
 
-To start the application, use the following command:
+Run the main application interface:
+
 ```bash
 python main.py
 ```
 
-This will open a graphical interface where you can:
-- Select predefined example scenarios
-- Visualize the robotic arm and obstacles
-- Run the path planning algorithm
-- View planning results
+You will see the startup visualization:
 
-### Running the Test Suite
+![Startup](./images/1.jpg)
 
-To run the test suite, use the following command:
+---
+
+## Interface Overview
+
+The GUI provides the following functionality:
+
+- **View Environment Configuration:** Displays parameters of the robotic arm, joint limits, obstacles, and initial conditions.
+
+![Configuration Info](./images/2.jpg)
+
+- **Trajectory Visualization:** Shows the path calculated for the robotic arm, clearly indicating the start and goal positions.
+
+![Trajectory Visualization](./images/3.jpg)
+
+- **Scenario Selection:** Choose predefined test scenarios from the dropdown menu:
+
+![Example selection](./images/4.jpg)
+
+---
+
+## Predefined Examples
+
+Several scenarios are included by default. They illustrate common, edge-case, and complex path-planning situations:
+
+| Scenario                | Description                                        | Expected Result        |
+|-------------------------|----------------------------------------------------|------------------------|
+| **Example 1**           | Standard obstacle avoidance                        | Success                |
+| **Example 2**           | Joint limits violation at initial position         | Fail    (Joint limit)  |
+| **Example 3**           | Standard obstacle avoidance                        | Success                |
+| **Example 4**           | Collision at initial position                      | Fail    (Collision)    |
+| **Example 5 & 6**       | Obstacle avoidance (from legacy scripts)           | Success                |
+| **Example 7**           | Multi-joint arm obstacle avoidance                 | Success                |
+
+---
+
+## Creating Custom Examples
+
+To define your own examples, modify the `examples.yml` file. Here’s a sample configuration:
+
+```yaml
+Example 1:
+  link_lengths: [1, 1]
+  joint_limits: [[-180, 180], [-180, 180]]
+  obstacles:
+    - [1.75, 0.75, 0.6]
+    - [0.55, 1.5, 0.5]
+    - [0, -1, 0.25]
+  start: [10, 50]
+  goal: [58, 56]
+```
+
+You can add additional examples following this structure.
+
+---
+
+## Testing
+
+Run all unit tests:
+
 ```bash
 pytest tests/ -v
 ```
 
-This will execute all test cases and generate a test report:
+Run tests with coverage:
 
-```
-============================= test session starts ==============================
-platform win32 -- Python 3.9.6, pytest-8.3.5, pluggy-1.5.0 -- C:\Users\Ryan\env\Scripts\python.exe
-cachedir: .pytest_cache
-rootdir: E:\course\CAS741-Ryan\src
-configfile: pytest.ini
-plugins: emoji-0.2.0, md-0.2.0, cov-6.1.1
-collected 15 items
-
-tests/test_astar_planner.py::test_astar_basic PASSED                    [  6%]
-tests/test_astar_planner.py::test_astar_with_obstacles PASSED          [ 13%]
-tests/test_astar_planner.py::test_astar_no_path PASSED                 [ 20%]
-tests/test_collision.py::test_detect_collision PASSED                   [ 26%]
-tests/test_collision.py::test_get_occupancy_grid PASSED                [ 33%]
-tests/test_collision.py::test_get_occupancy_grid_with_limits PASSED    [ 40%]
-tests/test_examples.py::test_get_all_examples PASSED                   [ 46%]
-tests/test_joint_limits.py::test_joint_limits_basic PASSED             [ 53%]
-tests/test_joint_limits.py::test_joint_limits_validation PASSED        [ 60%]
-tests/test_nlink_arm.py::test_arm_initialization PASSED                [ 66%]
-tests/test_nlink_arm.py::test_arm_update_joints PASSED                 [ 73%]
-tests/test_nlink_arm.py::test_arm_forward_kinematics PASSED           [ 80%]
-tests/test_nlink_arm.py::test_arm_inverse_kinematics PASSED           [ 86%]
-tests/test_nlink_arm.py::test_arm_collision_detection PASSED          [ 93%]
-tests/test_nlink_arm.py::test_arm_path_planning PASSED                [100%]
-
-============================== 15 passed in 5.23s ==============================
-```
-
-You can also run specific tests by specifying the test file name:
 ```bash
-pytest tests/test_nlink_arm.py -v
+pytest tests/ --cov=planner --cov-report=term-missing
 ```
 
-### Using Examples
+### Static Code Checking
+Code quality is enforced using `flake8`:
 
-The project includes multiple predefined example scenarios that you can select from the dropdown menu in the application. Each example has different robotic arm configurations and obstacle settings.
+```bash
+flake8 planner tests --max-line-length=100 --ignore=E203,W503
+```
 
-To add new examples, you can edit the `examples.py` file and add new configurations.
+---
 
-## Project Structure
+## Continuous Integration (CI)
 
-### Core Components
+This project employs **GitHub Actions** for automated testing and linting:
 
-- `planner/nlink_arm.py` - Implements the multi-link robotic arm model and kinematics calculations
-- `planner/collision.py` - Implements collision detection and occupancy grid generation
-- `planner/astar_planner.py` - Implements the A* path planning algorithm
-- `planner/joint_limits.py` - Implements joint limit functionality
+- All commits trigger automated unit tests.
+- Python code style is checked using `flake8`.
+- Coverage reports are automatically generated.
 
-### User Interface
+CI workflows are configured under `.github/workflows`.
 
-- `ui/example_info_window.py` - Example information window
-- `ui/trajectory_plot.py` - Trajectory plotting window
+---
 
 ## Contributing
 
-Issues and pull requests are welcome to improve this project.
+Your contributions (issues, pull requests, improvements) are warmly welcomed!
+
+---
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License**. See `LICENSE` file for details.
