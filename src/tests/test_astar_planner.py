@@ -64,7 +64,7 @@ def test_astar_torus_no_path():
     goal_node = (4, 4)
 
     path = astar_torus(grid, start_node, goal_node)
-    assert path is None
+    assert path == []
 
 
 def test_astar_torus_wrap_around():
