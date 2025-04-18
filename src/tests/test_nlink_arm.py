@@ -23,7 +23,7 @@ def test_draw_method_runs():
     plt.close(fig)
 
 
-def test_joint_limits_passed_in_constructor():
+def test_joint_limits_passed_in_constructor1():
     link_lengths = [1.0, 1.0]
     joint_angles = [0.0, 0.0]
     limits = JointLimits([(-1.0, -0.9), (-1.0, -0.9)])
@@ -31,7 +31,7 @@ def test_joint_limits_passed_in_constructor():
         NLinkArm(link_lengths, joint_angles, limits)
 
 
-def test_joint_limits_passed_in_constructor():
+def test_joint_limits_passed_in_constructor2():
     link_lengths = [1.0, 1.0]
     joint_angles = [0.0, 0.0]
     limits = JointLimits([(-1.0, -0.9), (-1.0, -0.9)])
