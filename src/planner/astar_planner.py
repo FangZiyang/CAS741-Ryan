@@ -15,12 +15,8 @@ def astar_torus(grid, start_node, goal_node):
     distance_map[start_node] = 0
 
     while True:
-        current_node = np.unravel_index(
-            np.argmin(explored_heuristic_map),
-            grid.shape
-        )
-        if (current_node == goal_node or
-                np.isinf(explored_heuristic_map[current_node])):
+        current_node = np.unravel_index(np.argmin(explored_heuristic_map), grid.shape)
+        if current_node == goal_node or np.isinf(explored_heuristic_map[current_node]):
             break
 
         explored_heuristic_map[current_node] = np.inf
@@ -62,12 +58,12 @@ def calc_heuristic_map(grid, goal_node):
         raise ValueError(msg)
 
     heuristic_map = np.zeros_like(grid, dtype=float)
-    it = np.nditer(grid, flags=['multi_index'])
+    it = np.nditer(grid, flags=["multi_index"])
     while not it.finished:
         heuristic_map[it.multi_index] = sum(
             min(
                 abs(it.multi_index[i] - goal_node[i]),
-                grid.shape[i] - abs(it.multi_index[i] - goal_node[i])
+                grid.shape[i] - abs(it.multi_index[i] - goal_node[i]),
             )
             for i in range(dims)
         )

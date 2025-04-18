@@ -7,6 +7,7 @@ class JointLimits:
     Joint angle limits
     angles: [(min_angle1, max_angle1), (min_angle2, max_angle2)]
     """
+
     def __init__(self, angle_ranges):
         self.angle_ranges = angle_ranges
 

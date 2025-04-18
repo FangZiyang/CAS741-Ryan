@@ -16,13 +16,13 @@ def detect_collision(line_seg, circle):
     """
     a = np.array(line_seg[0])  # Start point
     b = np.array(line_seg[1])  # End point
-    c = np.array(circle[:2])   # Circle center
-    r = circle[2]              # Radius
+    c = np.array(circle[:2])  # Circle center
+    r = circle[2]  # Radius
 
     if r <= 0:  # Handle zero or negative radius
         return False
 
-    ab = b - a                 # Line segment vector
+    ab = b - a  # Line segment vector
     ab_norm = np.linalg.norm(ab)  # Line segment length
 
     if ab_norm == 0:
