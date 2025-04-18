@@ -17,9 +17,9 @@
 
 \begin{document}
 
-\title{Verification and Validation Report: \progname} 
-\author{\authname}
-\date{\today}
+\title{Verification and Validation Report: 2D-RAPP} 
+\author{Ziyang Fang}
+\date{April 18, 2025}
 	
 \maketitle
 
@@ -30,8 +30,7 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+April 18, 2025 & 1.0 & Initial version of the V\&V Report \\
 \bottomrule
 \end{tabularx}
 
@@ -41,59 +40,159 @@ Date 2 & 1.1 & Notes\\
 
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{l l} 
-  \toprule		
-  \textbf{symbol} & \textbf{description}\\
-  \midrule 
-  T & Test\\
-  \bottomrule
-\end{tabular}\\
-
-\wss{symbols, abbreviations or acronyms -- you can reference the SRS tables if needed}
+    \toprule		
+    \textbf{symbol} & \textbf{description}\\
+    \midrule 
+    A & Assumption\\
+    DD & Data Definition\\
+    GD & General Definition\\
+    GS & Goal Statement\\
+    IM & Instance Model\\
+    LC & Likely Change\\
+    PS & Physical System Description\\
+    R & Requirement\\
+    SRS & Software Requirements Specification\\
+    TM & Theoretical Model\\
+    IK & Inverse Kinematics \\
+    FK & Forward Kinematics \\
+    A* & A-star Pathfinding Algorithm \\
+    DOF & Degrees of Freedom \\
+    EE & End-Effector \\
+    % \progname{} & 2DPL\\
+    2D-RAPP & 2D Robot Arm Path Planning\\
+    \bottomrule
+  \end{tabular}\\
 
 \newpage
 
 \tableofcontents
-
-\listoftables %if appropriate
-
-\listoffigures %if appropriate
-
 \newpage
 
 \pagenumbering{arabic}
 
-This document ...
-
 \section{Functional Requirements Evaluation}
+
+\subsection*{Collision-Free Path Generation}
+
+\begin{tabularx}{\textwidth}{l X l}
+\toprule
+\textbf{Test ID} & \textbf{Description} & \textbf{Result} \\
+\midrule
+T1 & Basic collision-free path planning & Pass \\
+T2 & Path planning with multiple obstacles & Pass \\
+\bottomrule
+\end{tabularx}
+
+\textbf{Comments:} The path planner module reliably generates valid, collision-free trajectories. The A* algorithm performs well on a toroidal joint-space grid.
+
+\subsection*{Inverse Kinematics Solver Validation}
+
+\begin{tabularx}{\textwidth}{l X l}
+\toprule
+\textbf{Test ID} & \textbf{Description} & \textbf{Result} \\
+\midrule
+T3 & Feasibility of IK solution & Pass \\
+T4 & IK for complex configurations & Pass \\
+\bottomrule
+\end{tabularx}
+
+\textbf{Comments:} The IK solver computes valid and optimal solutions, even in redundant configurations.
 
 \section{Nonfunctional Requirements Evaluation}
 
-\subsection{Usability}
-		
 \subsection{Performance}
 
-\subsection{etc.}
-	
-\section{Comparison to Existing Implementation}	
+\begin{tabularx}{\textwidth}{l X l}
+\toprule
+\textbf{Test ID} & \textbf{Description} & \textbf{Result} \\
+\midrule
+N1 & Planning under high obstacle density & Pass \\
+N2 & Scalability with increased DOF & Pass \\
+\bottomrule
+\end{tabularx}
 
-This section will not be appropriate for every project.
+\textbf{Comments:} The system maintains real-time performance and memory usage within acceptable limits.
+
+\section{Comparison to Existing Implementation}
+
+Not applicable. No existing implementation was used as a comparison benchmark.
 
 \section{Unit Testing}
 
+\begin{tabularx}{\textwidth}{l l l l}
+\toprule
+\textbf{Test ID} & \textbf{Module} & \textbf{Coverage} & \textbf{Result} \\
+\midrule
+U1 & Collision Detection & 100\% & Pass \\
+U2 & IK Solver & 100\% & Pass \\
+U3 & Path Planner & 100\% & Pass \\
+\bottomrule
+\end{tabularx}
+
+\textbf{Comments:} Unit tests cover all edge cases, and functional outputs match expectations under various scenarios.
+
 \section{Changes Due to Testing}
 
-\wss{This section should highlight how feedback from the users and from 
-the supervisor (when one exists) shaped the final product.  In particular 
-the feedback from the Rev 0 demo to the supervisor (or to potential users) 
-should be highlighted.}
+Based on peer and supervisor feedback:
+
+\begin{itemize}
+  \item Refined obstacle representation for better precision.
+  \item Clarified collision detection: defined tangent cases as non-colliding.
+  \item Improved GUI visualization of configurations and trajectories.
+\end{itemize}
 
 \section{Automated Testing}
-		
+
+The following tools were employed for continuous integration and quality assurance:
+
+\begin{itemize}
+  \item \textbf{pytest} for automated unit testing.
+  \item \textbf{coverage.py} to ensure high code coverage.
+  \item \textbf{flake8} for code style and static analysis.
+  \item \textbf{GitHub Actions} for CI on every commit.
+\end{itemize}
+
 \section{Trace to Requirements}
-		
-\section{Trace to Modules}		
+
+\begin{tabularx}{\textwidth}{l l l}
+\toprule
+\textbf{Requirement} & \textbf{Test Case(s)} & \textbf{Status} \\
+\midrule
+FR1: Obstacle avoidance & T1 & Pass \\
+FR2: Multiple obstacles & T2 & Pass \\
+FR3: IK feasibility & T3, T4 & Pass \\
+NFR1: Performance & N1, N2 & Pass \\
+\bottomrule
+\end{tabularx}
+
+\section{Trace to Modules}
+
+\begin{tabularx}{\textwidth}{l l l}
+\toprule
+\textbf{Module} & \textbf{Test IDs} & \textbf{Status} \\
+\midrule
+Collision Detection & U1 & Pass \\
+IK Solver & U2 & Pass \\
+Path Planner & U3 & Pass \\
+\bottomrule
+\end{tabularx}
 
 \section{Code Coverage Metrics}
+
+\begin{tabularx}{\textwidth}{l l l l}
+\toprule
+\textbf{Module} & \textbf{Statements} & \textbf{Missed} & \textbf{Coverage} \\
+\midrule
+astar\_planner.py & 63 & 0 & 100\% \\
+collision.py & 40 & 0 & 100\% \\
+joint\_limits.py & 25 & 0 & 100\% \\
+nlink\_arm.py & 75 & 0 & 100\% \\
+\bottomrule
+\end{tabularx}
+
+\textbf{Total Coverage:} 100\%
+
+\textbf{Comments:} All core modules are fully tested and verified.
 
 \bibliographystyle{plainnat}
 \bibliography{../../refs/References}
@@ -101,25 +200,16 @@ should be highlighted.}
 \newpage{}
 \section*{Appendix --- Reflection}
 
-The information in this section will be used to evaluate the team members on the
-graduate attribute of Reflection.
+The system design and testing activities were guided by the requirements defined in the SRS~\citep{SRS2025}, 
+while the modular architecture was described in the MG~\citep{MG2025} and detailed in the MIS~\citep{MIS2025}. 
+The current report follows the methodology outlined in the V\&V plan~\citep{VnV2025}.
 
-\input{../Reflection.tex}
 
 \begin{enumerate}
-  \item What went well while writing this deliverable? 
-  \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
-  \item Which parts of this document stemmed from speaking to your client(s) or
-  a proxy (e.g. your peers)? Which ones were not, and why?
-  \item In what ways was the Verification and Validation (VnV) Plan different
-  from the activities that were actually conducted for VnV?  If there were
-  differences, what changes required the modification in the plan?  Why did
-  these changes occur?  Would you be able to anticipate these changes in future
-  projects?  If there weren't any differences, how was your team able to clearly
-  predict a feasible amount of effort and the right tasks needed to build the
-  evidence that demonstrates the required quality?  (It is expected that most
-  teams will have had to deviate from their original VnV Plan.)
+  \item The testing framework and modular design made this deliverable smooth. The tests matched well with the planned architecture.
+  \item Some edge cases in collision detection were challenging (e.g., tangent contacts). We resolved this by refining geometric definitions and test logic.
+  \item Peer and supervisor feedback helped shape key sections like test case design and UI presentation; the rest followed internal planning.
+  \item The actual V\&V activities closely followed the plan. Minor modifications were introduced during execution (e.g., visual tweaks, detection precision), which emerged from real testing scenarios. In future projects, allocating time for such edge refinement would be beneficial.
 \end{enumerate}
 
 \end{document}

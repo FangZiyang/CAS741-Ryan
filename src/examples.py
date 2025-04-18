@@ -1,7 +1,7 @@
 import yaml
 import numpy as np
 from pathlib import Path
-from src.planner.joint_limits import JointLimits
+from planner.joint_limits import JointLimits
 
 
 def get_all_examples(yaml_file="examples.yml"):
