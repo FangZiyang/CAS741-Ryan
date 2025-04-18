@@ -19,10 +19,10 @@ class MockArm:
             angle_sum = sum(self.joint_angles[:i])
             self.points[i][0] = self.points[i - 1][0] + self.link_lengths[
                 i - 1
-                ] * np.cos(angle_sum)
+            ] * np.cos(angle_sum)
             self.points[i][1] = self.points[i - 1][1] + self.link_lengths[
                 i - 1
-                ] * np.sin(angle_sum)
+            ] * np.sin(angle_sum)
 
 
 def test_detect_collision():
