@@ -36,13 +36,13 @@ class ArmPlannerGUI(QMainWindow):
         layout.addWidget(self.canvas)
         self.ax = self.canvas.figure.subplots()
 
-        # 示例选择下拉框
+        # Example selection dropdown
         self.example_selector = QComboBox()
         self.example_selector.addItems(self.examples.keys())
         self.example_selector.currentTextChanged.connect(self.select_example)
         layout.addWidget(self.example_selector)
 
-        # 运行按钮
+        # Run button
         self.run_button = QPushButton("Run Path Planning")
         self.run_button.clicked.connect(self.run_example)
         layout.addWidget(self.run_button)
@@ -59,7 +59,7 @@ class ArmPlannerGUI(QMainWindow):
 
     def visualize_static(self):
         """
-        显示当前机械臂初始姿态和障碍物
+        Display current robotic arm initial pose and obstacles
         """
         self.ax.clear()
         ex = self.examples[self.current_example_name]
@@ -73,7 +73,7 @@ class ArmPlannerGUI(QMainWindow):
                 joint_limits=ex.get("joint_limits")
             )
         except ValueError as e:
-            # ✨ 关键：用弹窗显示错误
+            # Key: Show error in popup dialog
             QMessageBox.critical(self, "Initialization Error", str(e))
             return
         arm.draw(self.ax, obstacles=ex["obstacles"], goal_angles=ex["goal"])
@@ -81,21 +81,19 @@ class ArmPlannerGUI(QMainWindow):
 
     def run_example(self):
         """
-        执行路径规划：先弹出轨迹图窗口，再播放动画
+        Execute path planning: show trajectory plot window first, then play animation
         """
         ex = self.examples[self.current_example_name]
         self.info_window = ExampleInfoWindow(self.current_example_name, ex)
 
-        # 👉 设置位置：让信息窗口出现在主窗口右侧偏移 20 像素
+        # Position: Place info window 20 pixels to the right of main window
         main_x = self.x()
         main_y = self.y()
         main_width = self.width()
         self.info_window.move(main_x + main_width + 20, main_y)
         self.info_window.show()
-        # 角度索引转真实弧度
-        # theta_list = [2 * np.pi * i / self.M - np.pi for i in range(self.M)]
-        # theta_start = [theta_list[ex["start"][0]], theta_list[ex["start"][1]]]
-        theta_start = np.radians(ex["start"])  # 转弧度
+
+        theta_start = np.radians(ex["start"])  # Convert to radians
         arm = NLinkArm(
             ex["link_lengths"],
             theta_start,
@@ -109,7 +107,7 @@ class ArmPlannerGUI(QMainWindow):
             QMessageBox.warning(self, "End-effector trajectory", "Path inaccessible")
             return
 
-        # 提前计算末端轨迹
+        # Calculate end-effector trajectory in advance
         ee_x, ee_y = [], []
         for node in route:
             theta1 = 2 * pi * node[0] / self.M - pi
@@ -120,7 +118,7 @@ class ArmPlannerGUI(QMainWindow):
             ee_x.append(ee[0])
             ee_y.append(ee[1])
 
-        # 播放动画
+        # Play animation
         self.ax.clear()
         for node in route:
             theta1 = 2 * pi * node[0] / self.M - pi
@@ -130,7 +128,7 @@ class ArmPlannerGUI(QMainWindow):
             self.canvas.draw()
             QApplication.processEvents()
 
-        # 弹出轨迹窗口（在动画之前）
+        # Show trajectory window (before animation)
         time.sleep(2)
         self.traj_window = TrajectoryPlotWindow(ee_x, ee_y, ex["obstacles"])
         self.traj_window.show()

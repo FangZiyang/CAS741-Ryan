@@ -2,61 +2,62 @@
 
 import numpy as np
 
+
 def detect_collision(line_seg, circle):
     """
-    判断一条线段（连杆）是否与圆形障碍物发生碰撞。
+    Detect collision between a line segment and a circular obstacle.
 
-    参数：
-        line_seg: 线段的两个端点 [[x1, y1], [x2, y2]]
-        circle: 圆形障碍物的中心和半径 [cx, cy, r]
+    Parameters:
+        line_seg: Two endpoints of the line segment [[x1, y1], [x2, y2]]
+        circle: Center and radius of the circular obstacle [cx, cy, r]
 
-    返回：
-        True：碰撞；False：无碰撞
+    Returns:
+        True: collision detected; False: no collision
     """
-    a = np.array(line_seg[0])  # 线段起点
-    b = np.array(line_seg[1])  # 线段终点
-    c = np.array(circle[:2])   # 圆心
-    r = circle[2]              # 半径
+    a = np.array(line_seg[0])  # Start point
+    b = np.array(line_seg[1])  # End point
+    c = np.array(circle[:2])   # Circle center
+    r = circle[2]              # Radius
 
-    if r <= 0:  # 处理零半径或负半径的情况
+    if r <= 0:  # Handle zero or negative radius
         return False
 
-    ab = b - a                 # 线段向量
-    ab_norm = np.linalg.norm(ab)  # 线段长度
+    ab = b - a                 # Line segment vector
+    ab_norm = np.linalg.norm(ab)  # Line segment length
 
     if ab_norm == 0:
-        # 起终点相同的点，直接判断是否在圆内
-        return np.linalg.norm(a - c) < r  # 使用严格小于
+        # If start and end points are the same, check if point is inside circle
+        return np.linalg.norm(a - c) < r  # Use strict inequality
 
-    # 投影公式计算最近点
+    # Calculate closest point using projection
     t = np.dot(c - a, ab) / (ab_norm * ab_norm)
-    t = np.clip(t, 0, 1)  # 限制在 [0, 1] 范围内（在线段内部）
+    t = np.clip(t, 0, 1)  # Restrict to [0, 1] range (within line segment)
     closest = a + t * ab
 
-    # 判断最近点是否在圆内
+    # Check if closest point is inside circle
     dist = np.linalg.norm(closest - c)
-    return dist < r  # 使用严格小于，不考虑切点
+    return dist < r  # Use strict inequality, ignore tangent points
 
 
 def get_occupancy_grid(arm, obstacles, M=100):
-    dims = arm.n_links  # N维
+    dims = arm.n_links  # N dimensions
     grid_shape = tuple([M] * dims)
     grid = np.zeros(grid_shape, dtype=int)
 
-    # 遍历所有关节组合：
+    # Iterate through all joint combinations
     for idx in np.ndindex(grid.shape):
-        # 转换为对应的关节角度：
+        # Convert to corresponding joint angles
         angles = [2 * np.pi * idx[i] / M - np.pi for i in range(dims)]
 
-        # 检查角度限制
+        # Check angle limits
         if arm.joint_limits and not arm.joint_limits.is_within_limits(angles):
             grid[idx] = 1
             continue
 
-        # 更新机械臂姿态
+        # Update arm pose
         arm.update_joints(angles)
 
-        # 碰撞检查
+        # Collision check
         collision = False
         points = arm.points
         for k in range(len(points) - 1):

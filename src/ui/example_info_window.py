@@ -13,11 +13,11 @@ class ExampleInfoWindow(QWidget):
         self.text_box = QTextEdit()
         self.text_box.setReadOnly(True)
 
-        # 处理不能序列化的对象，比如 JointLimits
+        # Handle non-serializable objects like JointLimits
         serializable_data = {}
         for k, v in example_data.items():
             if hasattr(v, "__class__") and v.__class__.__name__ == "JointLimits":
-                # 以可读格式显示关节限制
+                # Display joint limits in readable format
                 serializable_data[k] = v.angle_ranges
             else:
                 serializable_data[k] = v
