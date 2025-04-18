@@ -1,6 +1,4 @@
 import pytest
-import numpy as np
-import os
 from examples import get_all_examples
 
 

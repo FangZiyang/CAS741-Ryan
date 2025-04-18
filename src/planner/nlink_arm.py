@@ -2,7 +2,6 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from planner.joint_limits import JointLimits
 from matplotlib.patches import Rectangle, RegularPolygon
 
 

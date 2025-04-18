@@ -1,4 +1,3 @@
-import pytest
 import numpy as np
 from planner.joint_limits import JointLimits
 

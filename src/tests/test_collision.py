@@ -1,4 +1,3 @@
-import pytest
 import numpy as np
 from planner.collision import detect_collision, get_occupancy_grid
 
