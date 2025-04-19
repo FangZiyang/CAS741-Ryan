@@ -30,11 +30,12 @@ Follow these steps to install and set up the project:
 git clone https://github.com/FangZiyang/CAS741-Ryan.git
 cd CAS741-Ryan
 python -m venv env
-source env/bin/activate  # Windows: .\env\Scripts\activate
-pip install -r src/requirements.txt
+# On Windows use: .\env\Scripts\activate
+source env/bin/activate
+cd src
+pip install -r requirements.txt
 ```
 
----
 
 ## Application Usage
 
@@ -43,7 +44,6 @@ pip install -r src/requirements.txt
 Start the main graphical interface:
 
 ```bash
-cd src
 python main.py
 ```
 
@@ -51,7 +51,6 @@ On startup, you should see a visualization similar to the following:
 
 ![Startup](../../../images/1.jpg)
 
----
 
 ### Interface Components
 
@@ -75,7 +74,6 @@ Predefined scenarios can be chosen easily through the dropdown menu:
 
 ![Scenario Selection](../../../images/4.jpg)
 
----
 
 ## Using Examples
 
@@ -92,7 +90,6 @@ The system includes predefined test scenarios. These scenarios help demonstrate 
 | **Examples 5 & 6** | Legacy scripts (standard avoidance)    | Success        |
 | **Example 7** | Multi-joint arm obstacle avoidance           | Success        |
 
----
 
 ### Creating Custom Examples
 
@@ -110,7 +107,6 @@ Example Custom:
 
 You can add additional scenarios by copying and modifying this structure.
 
----
 
 ## Running Tests
 
@@ -131,7 +127,6 @@ pytest tests/ --cov=planner --cov-report=term-missing
 
 This provides detailed insights into code coverage.
 
----
 
 ## Code Quality
 
@@ -143,7 +138,6 @@ flake8 planner tests --max-line-length=100 --ignore=E203,W503
 
 This helps maintain readable, clean, and maintainable code.
 
----
 
 ## Continuous Integration
 
@@ -155,7 +149,6 @@ This project uses **GitHub Actions** for continuous integration (CI):
 
 CI workflows are managed in the `.github/workflows` directory.
 
----
 
 ## Contributing
 
