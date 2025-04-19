@@ -175,20 +175,13 @@ Path‑Planning
         \hspace*{1.8em}\;obstacles, robot parameters)
   \item \textbf{Collision Detection Module} (verifies that candidate paths are collision–free)
   \item \textbf{Output Format Module} (formats the sequence of configurations for visualisation)
+  \item \textbf{Data‑Types Module} 
 \end{itemize}
 
 %---------------------------------------------------------------------
 \subsection{Syntax}
 %.....................................................................
-\subsubsection{Exported Types}
-\begin{description}
-  \item[\texttt{ObstacleT}]  $\equiv \langle c : \mathbb{R}^2,\, r : \mathbb{R}\rangle$
-  \item[\texttt{Obstacles}] $\equiv$ sequence of \texttt{ObstacleT}
-  \item[\texttt{RobotParams}] $\equiv \langle L :$ sequence of $\mathbb{R},\; 
-        {\it jointLim} :$ sequence of $\langle\ell : \mathbb{R},\, u : \mathbb{R}\rangle\rangle$
-  \item[\texttt{Config}] $\equiv \mathbb{R}^n$ \hfill (vector of joint angles)
-  \item[\texttt{Path}]   $\equiv$ sequence of \texttt{Config}
-\end{description}
+
 
 %.....................................................................
 \subsubsection{Exported Constants}
@@ -227,16 +220,17 @@ None.
 %.....................................................................
 \subsubsection{Access Routine Semantics}
 
-\paragraph{\texttt{planPath}}
+\paragraph{\texttt{planPath(start, goal, obstacles, robotParams)}}
 \begin{itemize}
-  \item \textbf{transition:} Returns a collision‑free \emph{feasible}\footnote{The module does not guarantee optimality; any valid path is acceptable.} path $p = \langle q_0,\dots,q_m\rangle$ s.t.
-        \begin{align*}
-          q_0 &= \textit{start}\\
-          q_m &= \textit{goal}\\
-          \forall i \in [0,m-1] &: \neg\texttt{checkCollision}(q_i,\textit{obstacles},\textit{robotParams})
-        \end{align*}
-  \item \textbf{output:} $p$ on success.
-  \item \textbf{exception:} \texttt{PathNotFound} raised if no feasible path exists within \texttt{MAX\_ITER}.
+  \item \textbf{output:} A feasible path $p = \langle q_0,\dots,q_m\rangle$ such that:
+    \begin{itemize}
+      \item $q_0 = start$
+      \item $q_m = goal$
+      \item $\forall i \in [0, m-1]$: $q_{i+1} \in succ(q_i)$ and \\ $\neg$checkCollision$(q_i,\textit{obstacles},\textit{robotParams})$
+      \item The path is generated using A* with cost function: \\
+        $f(q_i) = gCost(q_0, q_i) + hCost(q_i)$
+    \end{itemize}
+  \item \textbf{exception:} \texttt{PathNotFound} if no feasible path is found within \texttt{MAX\_ITER}.
 \end{itemize}
 
 %.....................................................................
@@ -255,6 +249,8 @@ None.
 %=====================================================================
 % 7  MIS of Collision‑Detection Module
 %=====================================================================
+
+
 \section{MIS of Collision‑Detection Module}
 \label{mod:collision}
 
@@ -281,13 +277,12 @@ Collision‑Detection
 \begin{center}
 \renewcommand{\arraystretch}{1.35}
 \begin{tabular}{p{4.1cm} p{5.3cm} p{3.4cm} p{3.1cm}}
-\toprule
-\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\ \midrule
-\texttt{checkCollision} & \texttt{Config} $\times$ \texttt{Obstacles} $\times$ \texttt{RobotParams} & boolean & \texttt{InvalidConfig}\\
-\texttt{checkPathCollision} & \texttt{Path} $\times$ \texttt{Obstacles} $\times$ \texttt{RobotParams} & boolean & \texttt{InvalidPath}\\
-
-\bottomrule
-\end{tabular}
+  \toprule
+  \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\ \midrule
+  \texttt{checkCollision} & \texttt{Config} $\times$ \texttt{Obstacles} $\times$ \texttt{RobotParams} & boolean & \texttt{InvalidConfig}\\
+  \bottomrule
+  \end{tabular}
+  
 \end{center}
 
 %---------------------------------------------------------------------
@@ -298,17 +293,14 @@ None.
 
 %.....................................................................
 \subsubsection{Assumptions}
-\begin{itemize}
-  \item Each obstacle is a circle $\langle c,r\rangle$ in $\mathbb{R}^2$.
-  \item Links are straight segments between joint positions produced by planar forward kinematics.
-\end{itemize}
+None
 
 %.....................................................................
 \subsubsection{Access Routine Semantics}
 
 \paragraph{\texttt{checkCollision}}
 \begin{itemize}
-  \item \textbf{transition:} Let $P=\langle p_0,\dots,p_n\rangle$ be the joint positions obtained from \texttt{forwardKinematics}$(config,robotParams)$.  
+  \item \textbf{description:} Let $P=\langle p_0,\dots,p_n\rangle$ be the joint positions obtained from \texttt{forwardKinematics}$(config,robotParams)$.  
         A link $\overline{p_{i-1}p_i}$ collides with obstacle $O=\langle c,r\rangle$ iff
         \[
           d(\overline{p_{i-1}p_i},c) \le r
@@ -320,18 +312,19 @@ None.
   \item \textbf{exception:} \texttt{InvalidConfig} if joint limits are violated.
 \end{itemize}
 
-\paragraph{\texttt{checkPathCollision}}
-\begin{itemize}
-  \item \textbf{transition:} Returns \texttt{true} iff
-        $\exists q\in\textit{path}:\texttt{checkCollision}(q,\textit{obstacles},\textit{robotParams})$
-  \item \textbf{output:} boolean as above.
-  \item \textbf{exception:} \texttt{InvalidPath} if \textit{path} is empty or contains an \texttt{InvalidConfig}.
-\end{itemize}
+% \paragraph{\texttt{checkPathCollision}}
+% \begin{itemize}
+%   \item \textbf{description:} Returns \texttt{true} iff
+%         $\exists q\in\textit{path}:\texttt{checkCollision}(q,\textit{obstacles},\textit{robotParams})$
+%   \item \textbf{output:} boolean as above.
+%   \item \textbf{exception:} \texttt{InvalidPath} if \textit{path} is empty or contains an \texttt{InvalidConfig}.
+% \end{itemize}
 
 %.....................................................................
 \subsubsection{Local Functions}
 \begin{description}
-  \item[\texttt{forwardKinematics}] $\!:\! \texttt{Config} \texttt{times} \texttt{RobotParams} \rightarrow$ sequence of $\mathbb{R}^2$
+  \item[\texttt{checkPathCollision}] returns \texttt{true} if any configuration in the path collides with an obstacle.
+  \item[\texttt{forwardKinematics}] $\!:\! \texttt{Config} \times \texttt{RobotParams} \rightarrow$ sequence of $\mathbb{R}^2$
 \end{description}
 
 \newpage
@@ -379,7 +372,7 @@ None.
 
 \subsubsection{Access‑Routine Semantics}
 
-\paragraph{\texttt{solveIK}}
+\paragraph{\texttt{solveIK}(Point, RobotParams)}
 \begin{itemize}
   \item \textbf{output:} A finite sequence $S=\langle q_0,\dots,q_k\rangle$ of joint configurations such that
         $\|FK(q_i)-\textit{target}\|\le \varepsilon$ for every $q_i\in S$.
@@ -387,10 +380,6 @@ None.
         \texttt{MAX\_ITER} without satisfying the tolerance.
 \end{itemize}
 
-\subsubsection{Local Functions}
-\begin{description}
-  \item[\texttt{jacobian}$(q)$] returns $J(q)=\partial FK/\partial q$.
-\end{description}
 
 %=====================================================================
 % 10  MIS of Output‑Verification Module
@@ -435,10 +424,10 @@ The supplied path has already been discretised into configurations of type \text
 
 \paragraph{\texttt{verifyPath}}
 \begin{itemize}
-  \item \textbf{transition:}
+  \item \textbf{description:}
         \begin{enumerate}
           \item Check joint‑limit and self‑collision constraints for every $q\in\texttt{path}$.
-          \item Call \texttt{checkPathCollision} from the Collision‑Detection Module.
+          \item Call \texttt{checkCollision} from the Collision‑Detection Module.
         \end{enumerate}
   \item \textbf{exception:}
         \begin{itemize}
@@ -493,7 +482,7 @@ The graphics back‑end supports real‑time rendering.
 
 \paragraph{\texttt{plotPath}}
 \begin{itemize}
-  \item \textbf{transition:} Clears \textit{win} and draws:
+  \item \textbf{description:} Clears \textit{win} and draws:
         way‑points (circles), continuous trajectory (poly‑line),
         labels for start/goal.
   \item \textbf{exception:} \texttt{PlotErr} if \texttt{path} is empty.
@@ -501,13 +490,12 @@ The graphics back‑end supports real‑time rendering.
 
 \paragraph{\texttt{plotMetrics}}
 \begin{itemize}
-  \item \textbf{transition:} Replaces the contents of \textit{win} with a bar‑
+  \item \textbf{description:} Replaces the contents of \textit{win} with a bar‑
         or line‑chart of the supplied performance metrics.
   \item \textbf{exception:} \texttt{PlotErr} if the table is ill‑formed.
 \end{itemize}
 
-(Local helper routines such as \texttt{drawTrajectory} are omitted because
-they are not exported and add no specification value.)
+
 
 %=====================================================================
 % 12  MIS of Control Module
@@ -555,7 +543,7 @@ All subordinate modules are already initialised.
         \begin{enumerate}
           \item $(\textit{init},\textit{goal},rParam,obs)\;=\;$\textbf{Input‑Parameters::}\texttt{getAll}()
           \item $p_0=\;$\textbf{Path‑Planning::}\texttt{planPath}$(\textit{init},\textit{goal},obs,rParam)$
-          \item \textbf{Collision‑Detection::}\texttt{checkPathCollision}$(p_0,obs,rParam)$
+          \item \textbf{Collision‑Detection::}\texttt{checkCollision}$(p_0,obs,rParam)$
           \item $p=\;$\textbf{Output‑Verification::}\texttt{verifyPath}$(p_0,obs,rParam)$
           \item \textbf{Plotting::}\texttt{plotPath}$(p)$
         \end{enumerate}
@@ -644,6 +632,90 @@ None.
 
 
 \newpage
+
+%=====================================================================
+% 5  MIS of Input‑Parameters Module
+%=====================================================================
+\section{MIS of Input‑Parameters Module}
+\label{mod:input}
+
+%---------------------------------------------------------------------
+\subsection{Module}
+Input‑Parameters
+
+%---------------------------------------------------------------------
+\subsection{Uses}
+\begin{itemize}
+  \item \textbf{Data‑Types Module} (for \texttt{Config}, \texttt{RobotParams}, \texttt{Obstacles})
+\end{itemize}
+
+%---------------------------------------------------------------------
+\subsection{Syntax}
+\subsubsection{Exported Types}
+None.  All returned values use types defined in the Data‑Types module.
+
+\subsubsection{Exported Constants}
+None.
+
+\subsubsection{Exported Access Programs}
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{p{3.2cm} p{5.8cm} p{3.4cm} p{3cm}}
+\toprule
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\ \midrule
+\texttt{getAll} & --- & \texttt{Config} $\times$ \texttt{Config} $\times$ \texttt{RobotParams} $\times$ \texttt{Obstacles} & \texttt{ParamErr}\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%---------------------------------------------------------------------
+\subsection{Semantics}
+\subsubsection{State Variables}
+\begin{itemize}
+  \item \textit{start} : \texttt{Config} \hfill (initial joint configuration)
+  \item \textit{goal} : \texttt{Config} \hfill (target joint configuration)
+  \item \textit{rParam} : \texttt{RobotParams} \hfill (link lengths, joint limits)
+  \item \textit{obs} : \texttt{Obstacles} \hfill (environment obstacles)
+\end{itemize}
+
+\subsubsection{Assumptions}
+\begin{itemize}
+  \item All four parameters are either:
+    \begin{enumerate}
+      \item successfully parsed from a user‑supplied configuration file, or
+      \item provided interactively through a GUI/CLI before the first call to
+            \texttt{getAll}.
+    \end{enumerate}
+  \item Basic validity checks (dimension consistency, non‑negative link
+        lengths, joint limits with $\ell < u$, etc.) have already succeeded.
+\end{itemize}
+
+\subsubsection{Access‑Routine Semantics}
+
+\paragraph{\texttt{getAll()}}
+\begin{itemize}
+  \item \textbf{output:} the tuple
+        $(\textit{start},\textit{goal},\textit{rParam},\textit{obs})$.
+  \item \textbf{exception:} \texttt{ParamErr}  
+        \begin{itemize}
+          \item if any of the four internal variables is \emph{undefined}, or
+          \item if a post‑validation step detects that the parameters are
+                mutually inconsistent (e.g.\ mismatch between the length of
+                \textit{start} and the number of links in \textit{rParam}).
+        \end{itemize}
+\end{itemize}
+
+%---------------------------------------------------------------------
+\subsubsection{Local Functions}
+\begin{description}
+  \item[\texttt{parseFile}$(f)$] reads JSON/CSV input file $f$ and initialises
+        \textit{start}, \textit{goal}, \textit{rParam}, \textit{obs}.
+  \item[\texttt{validate}$(s, g, r, o)$] returns \texttt{true} iff the four
+        arguments satisfy dimension and range constraints.
+\end{description}
+
+\newpage
+
 
 
 \bibliographystyle {plainnat}
