@@ -26,6 +26,7 @@ git clone https://github.com/FangZiyang/CAS741-Ryan.git
 cd CAS741-Ryan
 python -m venv env
 source env/bin/activate # On Windows use: .\env\Scripts\activate
+cd src
 pip install -r requirements.txt
 ```
 
