@@ -1,11 +1,9 @@
 # 2D Robotic Arm Path Planning System
 
-**Developer:** Ryan Fang  
-**Project Start Date:** January 17, 2024
 
 This project provides a graphical system for **2D robotic arm path planning**, generating obstacle-free trajectories for robotic arms with multiple links using the A* algorithm. Users can visualize arm trajectories, manage obstacles, and define custom test cases through YAML configuration files.
 
----
+
 
 ## Project Structure
 
@@ -15,7 +13,7 @@ This project provides a graphical system for **2D robotic arm path planning**, g
 - **examples.yml** – Predefined scenario configurations
 - **main.py** – Application entry point
 
----
+
 
 ## Installation
 
@@ -25,12 +23,13 @@ Clone the repository, create a virtual environment, and install dependencies:
 git clone https://github.com/FangZiyang/CAS741-Ryan.git
 cd CAS741-Ryan
 python -m venv env
-source env/bin/activate # On Windows use: .\env\Scripts\activate
+# On Windows use: .\env\Scripts\activate
+source env/bin/activate
 cd src
 pip install -r requirements.txt
 ```
 
----
+
 
 ## Usage
 
@@ -46,7 +45,7 @@ You will see the startup visualization:
 
 ![Startup](./images/1.jpg)
 
----
+
 
 ## Interface Overview
 
@@ -64,7 +63,7 @@ The GUI provides the following functionality:
 
 ![Example selection](./images/4.jpg)
 
----
+
 
 ## Predefined Examples
 
@@ -79,7 +78,7 @@ Several scenarios are included by default. They illustrate common, edge-case, an
 | **Example 5 & 6**       | Obstacle avoidance (from legacy scripts)           | Success                |
 | **Example 7**           | Multi-joint arm obstacle avoidance                 | Success                |
 
----
+
 
 ## Creating Custom Examples
 
@@ -99,7 +98,7 @@ Example 1:
 
 You can add additional examples following this structure.
 
----
+
 
 ## Testing
 
@@ -122,7 +121,7 @@ Code quality is enforced using `flake8`:
 flake8 planner tests --max-line-length=100 --ignore=E203,W503
 ```
 
----
+
 
 ## Continuous Integration (CI)
 
@@ -134,13 +133,54 @@ This project employs **GitHub Actions** for automated testing and linting:
 
 CI workflows are configured under `.github/workflows`.
 
----
+
+## Uninstallation
+
+If you installed this project using a **virtual environment**, uninstallation is simple:
+
+### Remove the Virtual Environment
+
+The entire environment—including all installed dependencies—is stored inside the `env/` folder. To uninstall:
+
+<details>
+<summary>Windows</summary>
+
+```bash
+rmdir /s /q env
+```
+
+</details>
+
+<details>
+<summary>macOS / Linux</summary>
+
+```bash
+rm -rf env
+```
+
+</details>
+
+This will completely remove the environment and all packages (e.g., `matplotlib`, `PyQt5`, etc.) without affecting your system Python.
+
+
+
+### Optional: Delete the Project
+
+If you no longer need the project itself:
+
+```bash
+rm -rf CAS741-Ryan  # or use rmdir /s /q CAS741-Ryan on Windows
+```
+
+
+
+
 
 ## Contributing
 
 Your contributions (issues, pull requests, improvements) are warmly welcomed!
 
----
+
 
 ## License
 
