@@ -1,0 +1,828 @@
+\documentclass[12pt, titlepage]{article}
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL VnVPlan_old_version.tex   Wed Feb 26 18:01:35 2025
+%DIF ADD VnVPlan.tex               Wed Apr 16 16:47:23 2025
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage{amsmath}
+%DIF 7a7
+\usepackage{amssymb} %DIF > 
+%DIF -------
+\hypersetup{
+    colorlinks,
+    citecolor=blue,
+    filecolor=black,
+    linkcolor=red,
+    urlcolor=blue
+}
+\usepackage[round]{natbib}
+
+\input{../Comments}
+\input{../Common}
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFaddtex}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdeltex}[1]{{\protect\color{red}\sout{#1}}} %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+\providecommand{\DIFmodbegin}{} %DIF PREAMBLE
+\providecommand{\DIFmodend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+%DIF HYPERREF PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}} %DIF PREAMBLE
+%DIF AMSMATHULEM PREAMBLE %DIF PREAMBLE
+\makeatletter %DIF PREAMBLE
+\let\sout@orig\sout %DIF PREAMBLE
+\renewcommand{\sout}[1]{\ifmmode\text{\sout@orig{\ensuremath{#1}}}\else\sout@orig{#1}\fi} %DIF PREAMBLE
+\makeatother %DIF PREAMBLE
+%DIF COLORLISTINGS PREAMBLE %DIF PREAMBLE
+\RequirePackage{listings} %DIF PREAMBLE
+\RequirePackage{color} %DIF PREAMBLE
+\lstdefinelanguage{DIFcode}{ %DIF PREAMBLE
+%DIF DIFCODE_UNDERLINE %DIF PREAMBLE
+  moredelim=[il][\color{red}\sout]{\%DIF\ <\ }, %DIF PREAMBLE
+  moredelim=[il][\color{blue}\uwave]{\%DIF\ >\ } %DIF PREAMBLE
+} %DIF PREAMBLE
+\lstdefinestyle{DIFverbatimstyle}{ %DIF PREAMBLE
+	language=DIFcode, %DIF PREAMBLE
+	basicstyle=\ttfamily, %DIF PREAMBLE
+	columns=fullflexible, %DIF PREAMBLE
+	keepspaces=true %DIF PREAMBLE
+} %DIF PREAMBLE
+\lstnewenvironment{DIFverbatim}{\lstset{style=DIFverbatimstyle}}{} %DIF PREAMBLE
+\lstnewenvironment{DIFverbatim*}{\lstset{style=DIFverbatimstyle,showspaces=true}}{} %DIF PREAMBLE
+\lstset{extendedchars=\true,inputencoding=utf8}
+
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+
+\title{System Verification and Validation Plan for \progname{}} 
+\author{\authname}
+\date{\today}
+
+\maketitle
+
+\pagenumbering{roman}
+
+\section*{Revision History}
+
+\begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
+\toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
+\midrule
+Feb 24 & 1.0 & Notes\\
+\DIFaddbegin \DIFadd{April 15  }& \DIFadd{2.0 }& \DIFadd{Notes}\\
+\DIFaddend \bottomrule
+\end{tabularx}
+
+
+
+\newpage
+
+\tableofcontents
+
+\listoftables
+\wss{Remove this section if it isn't needed}
+
+\listoffigures
+\wss{Remove this section if it isn't needed}
+
+\newpage
+
+\section{Symbols, Abbreviations, and Acronyms}
+
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{l l} 
+    \toprule		
+    \textbf{\DIFdelbegin \DIFdel{Symbol}\DIFdelend \DIFaddbegin \DIFadd{symbol}\DIFaddend } & \textbf{\DIFdelbegin \DIFdel{Description}\DIFdelend \DIFaddbegin \DIFadd{description}\DIFaddend }\\
+    \midrule 
+    \DIFdelbegin \DIFdel{$q$ }\DIFdelend \DIFaddbegin \DIFadd{A }\DIFaddend & \DIFdelbegin \DIFdel{Joint angle (rad) }\DIFdelend \DIFaddbegin \DIFadd{Assumption}\DIFaddend \\
+    \DIFdelbegin \DIFdel{$\dot{q}$ }\DIFdelend \DIFaddbegin \DIFadd{DD }\DIFaddend & \DIFdelbegin \DIFdel{Joint angular velocity (rad/s) }\DIFdelend \DIFaddbegin \DIFadd{Data Definition}\DIFaddend \\
+    \DIFdelbegin \DIFdel{$\ddot{q}$ }\DIFdelend \DIFaddbegin \DIFadd{GD }\DIFaddend & \DIFdelbegin \DIFdel{Joint angular acceleration (rad/s$^2$) }\DIFdelend \DIFaddbegin \DIFadd{General Definition}\DIFaddend \\
+    \DIFdelbegin \DIFdel{$L$ }\DIFdelend \DIFaddbegin \DIFadd{GS }\DIFaddend & \DIFdelbegin \DIFdel{Link length (mm) }\DIFdelend \DIFaddbegin \DIFadd{Goal Statement}\DIFaddend \\
+    \DIFaddbegin \DIFadd{IM }& \DIFadd{Instance Model}\\
+    \DIFadd{LC }& \DIFadd{Likely Change}\\
+    \DIFadd{PS }& \DIFadd{Physical System Description}\\
+    \DIFadd{R }& \DIFadd{Requirement}\\
+    \DIFadd{SRS }& \DIFadd{Software Requirements Specification}\\
+    \DIFadd{TM }& \DIFadd{Theoretical Model}\\
+    \DIFadd{IK }& \DIFadd{Inverse Kinematics }\\
+    \DIFadd{FK }& \DIFadd{Forward Kinematics }\\
+    \DIFadd{A* }& \DIFadd{A-star Pathfinding Algorithm }\\
+    \DIFadd{DOF }& \DIFadd{Degrees of Freedom }\\
+    \DIFadd{EE }& \DIFadd{End-Effector }\\
+    %DIF >  \progname{} & 2DPL\\
+    \DIFadd{2D-RAPP }& \DIFadd{2D Robot Arm Path Planning}\\
+    \DIFaddend \bottomrule
+  \end{tabular}\\
+
+
+\newpage
+
+\pagenumbering{arabic}
+
+This document describes the Verification and Validation (V\&V) plan for our software system, which focuses on collision-free path planning for a 2D robotic manipulator in an environment with circular obstacles. The system generates a valid trajectory from a given start configuration to a goal configuration while ensuring that the robotic arm does not collide with obstacles. The verification and validation process aims to assess the correctness, efficiency, and robustness of the path-planning algorithm and collision detection mechanism.
+The document outlines our approach, objectives, and the tests to be performed to ensure that the system meets the specified requirements. A roadmap of the plan is as follows:
+\begin{itemize}
+  \item Section 1 covers general information about the software, its purpose, and the primary V\&V objectives.
+  \item Section 2 provides details on the V\&V plan, the team, and the methods and tools used.
+  \item Section 3 describes the system-level tests for both functional and nonfunctional requirements.
+  \item Section 4 focuses on unit-level testing, including scope, test coverage, and traceability to modules.
+\end{itemize}
+
+\section{General Information}
+
+\subsection{Summary}
+The software under test is a \textbf{2D Robot Arm Path-Planning System} that computes collision-free trajectories for a robotic manipulator with circular obstacles. The system:
+\begin{itemize}
+    \item Discretizes the robot’s joint space and represents possible configurations on a toroidal grid.
+    \item Uses the A* algorithm to compute a valid trajectory from the start configuration to the goal configuration in joint space.
+    \item Detects and avoids collisions by checking intersections between the robotic arm links and circular obstacles.
+\end{itemize}
+
+
+
+
+\subsection{Objectives}
+
+The primary objective of this Verification and Validation (V\&V) plan is to ensure the correctness, reliability, and efficiency of the 2D Robot Arm Path-Planning System. This system computes collision-free trajectories for a robotic manipulator navigating around circular obstacles. The specific objectives are:
+
+\begin{itemize}
+    \item \textbf{\DIFdelbegin \DIFdel{Build confidence in software }\DIFdelend \DIFaddbegin \DIFadd{Ensure system-level }\DIFaddend correctness \DIFaddbegin \DIFadd{and visualization integrity}\DIFaddend }: \DIFdelbegin \DIFdel{Ensure that the planned paths are collision-free and feasible in joint space.
+}\DIFdelend \DIFaddbegin \DIFadd{Confirm that the system initializes properly, and visualizes planned paths as expected. The system's UI and plotting components will be manually inspected to ensure correct rendering of obstacles and trajectories.
+}
+
+    \DIFaddend \item \textbf{Validate the effectiveness of A* path planning \DIFaddbegin \DIFadd{in joint space}\DIFaddend }:Verify that the \DIFdelbegin \DIFdel{system correctly finds a valid trajectory between the initial and goal configurations.
+}\DIFdelend \DIFaddbegin \DIFadd{"A* Algorithm" finds valid paths when they exist and alerts when a goal is unreachable.
+}
+
+    \DIFaddend \item \textbf{Ensure robustness of collision detection}: Confirm that obstacle avoidance is correctly implemented and that no invalid paths are generated.
+    \item \textbf{Assess computational efficiency}: Measure execution time and memory usage to ensure the system performs well under different obstacle configurations.
+\end{itemize}
+
+\textbf{Out of Scope:}
+\begin{itemize}
+    \item \textbf{Usability Testing}: The system is evaluated based on correctness and performance, not user experience or interface design.
+    \item \textbf{Real-world Hardware Validation}: The plan verifies software functionality but does not include hardware implementation or physical robot testing.
+    \item \textbf{External Library Verification}: The system assumes that third-party numerical and optimization libraries (e.g., NumPy) are already tested by their providers.
+\end{itemize}
+
+This plan prioritizes correctness, efficiency, and collision-free navigation, acknowledging that usability and physical testing are beyond the current project scope.
+
+
+\subsection{Challenge Level and Extras}
+\textbf{Challenge Level:} General (per agreement with the course instructor).
+\textbf{Extras:}
+\begin{itemize}
+    \item A brief user manual for researchers/engineers.
+\DIFdelbegin %DIFDELCMD < \item %%%
+\item%DIFAUXCMD
+\DIFdel{Potential code walkthroughs and extended design documentation, as time and resources permit.
+}\DIFdelend \end{itemize}
+
+\subsection{Relevant Documentation}
+\begin{itemize}
+  \item \textbf{Software Requirements Specification} (SRS) :
+  This defines the required functionalities for the 2D robot arm path planner, including input constraints, output specifications, and performance requirements.\DIFdelbegin \DIFdel{\mbox{%DIFAUXCMD
+\cite{SRS}
+  }\hskip0pt%DIFAUXCMD
+}\DIFdelend \DIFaddbegin \DIFadd{\mbox{%DIFAUXCMD
+\citep{SRS2025}
+  }\hskip0pt%DIFAUXCMD
+}\DIFaddend \item \textbf{Other Project Documents} (MG\DIFaddbegin \DIFadd{~\mbox{%DIFAUXCMD
+\citep{MG2025}}\hskip0pt%DIFAUXCMD
+, MIS~\mbox{%DIFAUXCMD
+\citep{MIS2025}}\hskip0pt%DIFAUXCMD
+}\DIFaddend , \DIFdelbegin \DIFdel{MIS, }\DIFdelend etc.):
+  These documents describe the design and detailed modules of the system. They are relevant for deriving unit tests and ensuring that design decisions align with requirements.
+  \item \textbf{Code Reference}:
+  An example is the A* toroidal grid code for obstacle navigation, which will be referenced or adapted for verifying path-planning correctness.\DIFaddbegin \DIFadd{(}\href{https://github.com/FangZiyang/CAS741-Ryan/blob/main/src/planner/astar_planner.py}{\DIFadd{code link}}\DIFadd{).
+}\DIFaddend \end{itemize}
+
+
+
+
+\section{Plan}
+
+This section outlines the multiple stages of the verification and validation (V\&V) process. First, the V\&V team is introduced. Then, verification plans for the SRS, design, V\&V plan, and implementation are described. Finally, automated testing and verification tools are briefly discussed.
+
+\subsection{Verification and Validation Team}
+
+The following personnel will be involved in the verification and validation of the 2D Robot Arm Path Planning system:
+
+\begin{itemize}
+    \item \textbf{Ziyang Fang}: The author of the program. Responsible for the creation of the V\&V plan, implementation of the tests, and analysis of results.
+    \item \textbf{Dr. Spencer Smith}: The project supervisor. Responsible for reviewing the V\&V plan, test cases, and overall validation of the system.
+    \item \textbf{Alaap Grandhi}: The domain expert. Responsible for reviewing the V\&V plan, ensuring scientific correctness, and verifying test coverage.
+\end{itemize}
+
+\subsection{SRS Verification Plan}
+
+To ensure the SRS is complete, correct, and consistent, we will use the following verification methods:
+
+\begin{itemize}
+    \item \textbf{Supervisor Review}: Dr. Spencer Smith will review the SRS for completeness and clarity.\DIFdelbegin \DIFdel{A structured checklist will be provided to guide feedback. }\DIFdelend \DIFaddbegin \DIFadd{Feedback and suggestions were documented in GitHub Issue. ~}\href{https://github.com/FangZiyang/CAS741-Ryan/issues/2}{\DIFadd{GitHub Issue example}}\DIFadd{.
+    }\DIFaddend \item \textbf{Domain Expert Review}: Alaap Grandhi will review the SRS to ensure technical accuracy and feasibility.
+    \item \textbf{Issue Tracker}: Feedback from reviews will be logged as GitHub issues, and necessary modifications will be made accordingly.
+    \item \textbf{Peer Feedback}: Classmates will provide additional feedback to identify any unclear or missing requirements.
+\end{itemize}
+
+
+\subsection{Design Verification Plan}
+\begin{itemize}
+  \item \textbf{Classmate / Peer Design Review}: We will have scheduled walkthrough sessions where classmates provide feedback on the design documents (MG\DIFdelbegin \DIFdel{, MIS}\DIFdelend \DIFaddbegin \DIFadd{~\mbox{%DIFAUXCMD
+\citep{MG2025}}\hskip0pt%DIFAUXCMD
+, MIS~\mbox{%DIFAUXCMD
+\citep{MIS2025}}\hskip0pt%DIFAUXCMD
+}\DIFaddend ).
+  \item \textbf{Design Checklists}: We will ensure that each requirement in the SRS is addressed at the design level. Checklists will cover topics like modularity, clarity, and traceability to requirements.
+\end{itemize}
+
+
+\subsection{Verification and Validation Plan Verification Plan}
+
+\begin{itemize}
+  \item \textbf{Internal Review}: The same team members will review this V\&V plan for completeness and feasibility.
+  \item \textbf{Mutation of Plan}: Introduce hypothetical changes (mutations) to test if the plan remains robust and comprehensive.
+\end{itemize}
+
+\subsection{Implementation Verification Plan}
+
+\begin{itemize}
+  \item \textbf{Unit Tests}: We will write unit tests for each major component, automated by a suitable framework (\DIFdelbegin \DIFdel{e.g., }\DIFdelend \texttt{pytest} for Python).
+  \item \textbf{Static Analysis}: Use a linter (\DIFdelbegin \DIFdel{e.g., }\DIFdelend \texttt{flake8}), possibly additional tools like \texttt{pylint} or \texttt{mypy}, to verify code standards and catch potential errors.
+  \item \textbf{Code Walkthroughs}: During \DIFdelbegin \DIFdel{final presentations or peer sessions, we will review code segments dealing with core algorithms (IK solver, }\DIFdelend \DIFaddbegin \DIFadd{the final presentation, we demonstrated the software’s execution using example scenarios, walking through key modules such as path planning and }\DIFaddend collision detection, \DIFdelbegin \DIFdel{path planning)}\DIFdelend \DIFaddbegin \DIFadd{and explaining how they work together to generate a valid trajectory}\DIFaddend .
+\end{itemize}
+
+\subsection{Automated Testing and Verification Tools}
+
+\begin{itemize}
+  \item \textbf{Continuous Integration (CI)}: GitHub Actions is used to run automated test suites on every pull request and commit to ensure code reliability.
+  \item \textbf{Unit Testing Framework}: The project uses \texttt{pytest} for unit testing, which provides powerful fixtures and easy test case management.
+  \item \textbf{Coverage Analysis}: The tool \texttt{coverage.py} is used to measure code coverage, ensuring critical components are well-tested.
+  \item \textbf{Static Code Analysis}: \texttt{flake8} is used to check for style violations and potential errors in Python code.
+  \item \textbf{Type Checking}: \texttt{mypy} is used to enforce type annotations and detect type inconsistencies.
+  \item \textbf{Performance Profiling}: \texttt{cProfile} is used for runtime performance analysis to identify bottlenecks in critical functions.
+  \item \textbf{Memory Profiling}: \texttt{memory-profiler} helps track memory usage during execution to detect leaks and optimize performance.
+  \item \textbf{Automated Dependency Management}: \texttt{pip-tools} is used to manage dependencies and ensure a stable development environment.
+\end{itemize}
+
+
+
+\subsection{Software Validation Plan}
+
+\begin{itemize}
+  \item \textbf{Supervisor/Stakeholder Review}: If an external stakeholder is available, we will present a demo (Rev 0) to validate the requirements match real-world needs.
+  \item \textbf{Comparison with Known Benchmarks}: Use small or known scenarios to validate the solution’s correctness against expected paths/angles.
+\end{itemize}
+
+\section{System Tests}
+
+System-level tests will address functional requirements (such as collision avoidance and path planning success) and nonfunctional requirements (such as performance and accuracy). These tests will be conducted after individual modules pass unit tests to ensure the entire system functions as expected.
+\subsection{Tests for Functional Requirements}
+
+This section defines tests for key functional areas of the \textbf{2D Robot Arm Path Planning System}. The goal is to ensure that the system correctly computes collision-free paths and generates feasible inverse kinematics (IK) solutions using a \textbf{distance-geometric representation}. 
+
+The test cases are derived from the functional requirements specified in the \href{https://github.com/FangZiyang/CAS741-Ryan/blob/main/docs/SRS/SRS.pdf}{Software Requirements Specification (SRS)}. 
+
+\subsubsection{Path Planning and Obstacle Avoidance}
+
+This section ensures that the system can generate valid and collision-free paths from the start to the goal configuration under different environmental constraints.
+
+\paragraph{Collision-Free Path Generation}
+
+\begin{enumerate}
+
+    \item \textbf{Test ID: T1 -- Basic Collision-Free Path Planning}  
+
+    \textbf{Control:} Automatic  
+
+    \textbf{Initial State:}  
+    \begin{itemize}
+        \item A \DIFaddbegin \DIFadd{2-joint planar }\DIFaddend robotic arm with \DIFdelbegin \DIFdel{\( n \) joints and defined link lengths }\DIFdelend \DIFaddbegin \DIFadd{link lengths }[\DIFadd{1, 1}] \DIFadd{(meters)}\DIFaddend .
+        \item \DIFdelbegin \DIFdel{A workspace containing circular obstacles .
+    }\DIFdelend \DIFaddbegin \DIFadd{Three circular obstacles placed at coordinates:
+            }\begin{itemize}
+                \DIFaddend \item \DIFdelbegin \DIFdel{An initial joint configurationand a valid goal position.
+}\DIFdelend \DIFaddbegin \DIFadd{(1.75, 0.75) with radius 0.6 m
+                }\item \DIFadd{(0.55, 1.5) with radius 0.5 m
+                }\item \DIFadd{(0, -1) with radius 0.25 m
+            }\DIFaddend \end{itemize}
+        \DIFaddbegin \item \DIFadd{Initial joint configuration: \( q_{\text{init}} = [10^\circ, 50^\circ] \)
+        }\item \DIFadd{Goal joint configuration: \( q_{\text{goal}} = [58^\circ, 56^\circ] \)
+    }\end{itemize}
+    \DIFaddend 
+
+    \textbf{Input:}  
+    \begin{itemize}
+        \item \DIFdelbegin \DIFdel{Initial joint angles \( q_{\text{init}} \).
+    }\DIFdelend \DIFaddbegin \DIFadd{Discretized joint indices: start = (10, 50), goal = (58, 56)
+        }\DIFaddend \item \DIFdelbegin \DIFdel{Goal position \( (x_{\text{goal}}, y_{\text{goal}}) \).
+    }\DIFdelend \DIFaddbegin \DIFadd{Link lengths = }[\DIFadd{1, 1}] \DIFadd{m
+        }\DIFaddend \item \DIFdelbegin \DIFdel{Known obstacle locations and radii.
+}\DIFdelend \DIFaddbegin \DIFadd{Obstacles = }\texttt{[[\DIFadd{1.75, 0.75, 0.6}]\DIFadd{, }[\DIFadd{0.55, 1.5, 0.5}]\DIFadd{, }[\DIFadd{0, -1, 0.25}]]}
+        \item \DIFadd{Joint limits = \([-180^\circ, 180^\circ]\) for each joint
+    }\DIFaddend \end{itemize}
+
+    \textbf{Output:}  
+    \begin{itemize}
+        \item A \DIFdelbegin \DIFdel{valid }\DIFdelend sequence of joint \DIFdelbegin \DIFdel{angles \( q(t) \) ensuring obstacle avoidance.
+    }\DIFdelend \DIFaddbegin \DIFadd{angle vectors \( q(t) \in \mathbb{R}^2 \) from start to goal
+        }\DIFaddend \item \DIFdelbegin \DIFdel{No intersection between the robotic arm and any obstacle.
+}\DIFdelend \DIFaddbegin \DIFadd{Each intermediate configuration is free of collision (validated by segment-circle intersection test)
+        }\item \DIFadd{The end-effector trajectory avoids all obstacles
+    }\DIFaddend \end{itemize}
+
+    \textbf{Test Case Derivation:}  
+    \begin{itemize}
+        \item \DIFdelbegin \DIFdel{Ensures that the system correctly computes a valid pathfrom the initial to the goal state}\DIFdelend \DIFaddbegin \DIFadd{Uses }\texttt{\DIFadd{Example 1}} \DIFadd{from the dataset.
+        }\item \DIFadd{Validates that the A* algorithm on the toroidal grid finds a solution (non-empty path)}\DIFaddend .
+        \item \DIFdelbegin \DIFdel{Verifies that no link in the arm collides with obstacles in the workspace}\DIFdelend \DIFaddbegin \DIFadd{Checks that all configurations in the returned path pass collision detection using }\texttt{\DIFadd{detect\_collision()}}\DIFaddend .
+    \end{itemize}
+
+    \textbf{How Test Will Be Performed:}  
+    \begin{itemize}
+        \item \DIFdelbegin \DIFdel{Run the path-planning algorithm in a predefined test environment}\DIFdelend \DIFaddbegin \DIFadd{Load Example 1 data into the system}\DIFaddend .
+        \item \DIFdelbegin \DIFdel{Verify that the generated path respects collision constraints}\DIFdelend \DIFaddbegin \DIFadd{Generate a 100x100 occupancy grid using }\texttt{\DIFadd{get\_occupancy\_grid()}}\DIFaddend .
+        \item \DIFdelbegin \DIFdel{Compare computed paths with analytical or manually validated paths}\DIFdelend \DIFaddbegin \DIFadd{Run }\texttt{\DIFadd{astar\_torus()}} \DIFadd{with the given start and goal}\DIFaddend .
+        \item \DIFdelbegin \DIFdel{Log computational time and efficiency statistics}\DIFdelend \DIFaddbegin \DIFadd{For each node in the path:
+            }\begin{itemize}
+                \item \DIFadd{Convert indices to radians
+                }\item \DIFadd{Apply joint angles to update arm configuration
+                }\item \DIFadd{Check for collisions
+            }\end{itemize}
+        \item \DIFadd{Log whether path is found, path length, and collision-free status}\DIFaddend .
+    \end{itemize}
+
+
+    \item \textbf{Test ID: T2 -- Path Planning with Multiple Obstacles}  
+
+    \textbf{Control:} Automatic  
+
+    \textbf{Initial State:}  
+    \begin{itemize}
+        \item \DIFdelbegin \DIFdel{Same as T1, but with multiple circular obstaclesforming narrow pathways.
+}\DIFdelend \DIFaddbegin \DIFadd{A 2-link planar robotic arm with link lengths }[\DIFadd{1, 1}]\DIFadd{.
+        }\item \DIFadd{Initial joint angles \( q_{\text{init}} = (40^\circ, 40^\circ) \).
+        }\item \DIFadd{Goal joint angles \( q_{\text{goal}} = (60^\circ, 60^\circ) \).
+        }\item \DIFadd{Joint limits: \([-180^\circ, 180^\circ]\) for both joints.
+        }\item \DIFadd{Three circular obstacles: 
+            }\begin{itemize}
+                \item \DIFadd{Obstacle 1: center at (1.0, 1.0), radius 0.6
+                }\item \DIFadd{Obstacle 2: center at (-1.2, 0.3), radius 0.3
+                }\item \DIFadd{Obstacle 3: center at (0.0, -1.0), radius 0.5
+            }\DIFaddend \end{itemize}
+    \DIFaddbegin \end{itemize}
+    \DIFaddend 
+
+    \textbf{Input:}  
+    \begin{itemize}
+        \item \DIFdelbegin \DIFdel{A more complex environment with multiple obstacles blocking direct paths.
+        }\DIFdelend \DIFaddbegin \DIFadd{Discretized joint space of size \( M = 100 \).
+        }\item \DIFadd{Obstacle configuration and initial/goal joint angles as above.
+    }\DIFaddend \end{itemize}
+
+    \textbf{Output:}  
+    \begin{itemize}
+        \item \DIFdelbegin \DIFdel{The planned trajectory successfully avoids }\DIFdelend \DIFaddbegin \DIFadd{A feasible joint trajectory \( q(t) \in \mathbb{R}^2 \) avoiding }\DIFaddend all obstacles.
+        \item \DIFdelbegin \DIFdel{The trajectory remains kinematically feasible}\DIFdelend \DIFaddbegin \DIFadd{No intersection between any arm segment and obstacles at all time steps}\DIFaddend .
+    \end{itemize}
+
+    \textbf{Test Case Derivation:}  
+    \begin{itemize}
+        \item \DIFdelbegin \DIFdel{Ensures that the system can find feasible paths in more constrained environments }\DIFdelend \DIFaddbegin \DIFadd{Demonstrates the algorithm's capability in environments with tight spaces and multiple obstacle clusters}\DIFaddend .
+        \item \DIFdelbegin \DIFdel{Verifies that the algorithm correctly generates alternative paths around obstacles}\DIFdelend \DIFaddbegin \DIFadd{Confirms the planner generates alternative collision-free routes when the direct path is blocked}\DIFaddend .
+    \end{itemize}
+
+    \textbf{How Test Will Be Performed:}  
+    \begin{itemize}
+        \item \DIFdelbegin \DIFdel{Introduce additional obstacles in varying configurations.}\DIFdelend \DIFaddbegin \DIFadd{Use Example 4 from the implemented test suite in `examples.py`.
+        }\DIFaddend \item \DIFdelbegin \DIFdel{Validate computed trajectories using visualization tools.
+        }\DIFdelend \DIFaddbegin \DIFadd{Run the planner to compute a trajectory from start to goal.
+        }\item \DIFadd{Visually verify the trajectory with obstacle overlay using the GUI animation.
+        }\item \DIFadd{Ensure no error or collision flags are raised during planning.
+    }\DIFaddend \end{itemize}
+
+\end{enumerate}
+
+\subsubsection{Inverse Kinematics (IK) Solver Validation}
+
+This section verifies that the system's inverse kinematics solver correctly computes feasible joint configurations for a given end-effector position.
+
+\paragraph{Feasibility of IK Solutions}
+
+\begin{enumerate}
+
+\item \textbf{Test ID: T3 -- Basic IK Feasibility}  
+
+\textbf{Control:} Automatic  
+
+\textbf{Initial State:}  
+\begin{itemize}
+    \item A robotic arm with \( n \) joints and known link lengths.
+\end{itemize}
+
+\textbf{Input:}  
+\begin{itemize}
+    \item A reachable target position \( (x_{\text{goal}}, y_{\text{goal}}) \).
+\end{itemize}
+
+\textbf{Output:}  
+\begin{itemize}
+    \item A valid set of joint angles \( (q_1, q_2, ..., q_n) \) that achieve the goal position.
+\end{itemize}
+
+\textbf{Test Case Derivation:}  
+\begin{itemize}
+    \item Ensures that inverse kinematics computations return correct and feasible joint angles.
+    \item Verifies that the end-effector reaches the expected position.
+\end{itemize}
+
+\textbf{How Test Will Be Performed:}  
+\begin{itemize}
+    \item Compute joint angles using the distance-based graph method.
+    \item Validate against forward kinematics results.
+    \item Check if solutions respect joint limits and geometric constraints.
+\end{itemize}
+
+\item \textbf{Test ID: T4 -- IK for Complex Configurations}  
+
+\textbf{Control:} Automatic  
+
+\textbf{Initial State:}  
+\begin{itemize}
+    \item A robotic arm with \( n \) joints and predefined joint constraints.
+\end{itemize}
+
+\textbf{Input:}  
+\begin{itemize}
+    \item A target position that may have multiple valid joint configurations.
+\end{itemize}
+
+\textbf{Output:}  
+\begin{itemize}
+    \item The solver returns multiple possible configurations.
+    \item The solver prioritizes the most optimal (e.g., minimal joint movement).
+\end{itemize}
+
+\textbf{Test Case Derivation:}  
+\begin{itemize}
+    \item Ensures that the solver can handle redundancy in joint configurations.
+    \item Verifies that the system can optimize movement efficiency.
+\end{itemize}
+
+\textbf{How Test Will Be Performed:}  
+\begin{itemize}
+    \item Run multiple test cases with different initial configurations.
+    \item Compare the generated solutions and their efficiency.
+\end{itemize}
+
+\end{enumerate}
+
+
+\subsection{Tests for Nonfunctional Requirements}
+
+\subsubsection{Performance and Computational Efficiency}
+
+These tests ensure that the system computes paths within acceptable time limits and does not exceed memory constraints. \textbf{Reference: SRS Section on Accuracy and Performance.}
+
+\begin{enumerate}
+
+    \item \textbf{Test ID: N1 \DIFaddbegin \DIFadd{-- Path Planning Performance Under High Obstacle Density}\DIFaddend }  
+
+    \textbf{Type:} Performance, Automatic  
+
+    \textbf{Initial State:}  
+    \DIFdelbegin \DIFdel{None  
+}\DIFdelend \DIFaddbegin \begin{itemize}
+        \item \DIFadd{A 2-link robotic arm with link lengths }[\DIFadd{1, 1}] \DIFadd{and joint limits of \([-180^\circ, 180^\circ]\) for each joint.
+    }\end{itemize}
+    \DIFaddend 
+
+    \textbf{Input:}  
+    \begin{itemize}
+        \item A \DIFdelbegin \DIFdel{large number of obstacles (e.g., 10+)  
+    }\DIFdelend \DIFaddbegin \DIFadd{joint space discretization of \( M = 100 \).
+        }\DIFaddend \item \DIFdelbegin \DIFdel{Randomized goal positions  
+}\DIFdelend \DIFaddbegin \DIFadd{20 circular obstacles randomly placed within a 2m x 2m workspace.
+    }\DIFaddend \end{itemize}
+
+    \textbf{Expected Output:}  
+    \begin{itemize}
+        \item \DIFdelbegin \DIFdel{Execution time statistics  
+    }\DIFdelend \DIFaddbegin \DIFadd{Average path planning time per query (measured in seconds).
+        }\DIFaddend \item \DIFdelbegin \DIFdel{Peak memory usage report  
+}\DIFdelend \DIFaddbegin \DIFadd{Maximum and average memory usage during grid generation and A* search.
+    }\DIFaddend \end{itemize}
+
+    \textbf{How Test Will Be Performed:}  
+    \begin{itemize}
+        \item \DIFdelbegin \DIFdel{Profile the system while computing paths  
+    }\DIFdelend \DIFaddbegin \DIFadd{Use Python’s }\texttt{\DIFadd{time}} \DIFadd{and }\texttt{\DIFadd{memory\_profiler}} \DIFadd{modules to collect runtime and memory data.
+}
+
+        \DIFaddend \item \DIFdelbegin \DIFdel{Measure time-to-solution for varying complexity levels  
+    }%DIFDELCMD < \item %%%
+\item%DIFAUXCMD
+\DIFdelend Compare against baseline \DIFdelbegin \DIFdel{performance requirements  
+}\DIFdelend \DIFaddbegin \DIFadd{target: path planning should finish in under 10 second.
+}
+
+    \DIFaddend \end{itemize}
+
+
+\item \textbf{Test ID: N2}  
+
+\textbf{Type:} Scalability, Automatic  
+
+\textbf{Initial State:} None  
+
+\textbf{Input:}  
+\begin{itemize}
+    \item Increasing number of degrees of freedom (DOF) in the robotic arm (\DIFdelbegin \DIFdel{e.g., }\DIFdelend from 2-DOF to 6-DOF)  
+\end{itemize}
+
+\textbf{Expected Output:}  
+\begin{itemize}
+    \item System performance degradation analysis  
+    \item Success rate of path planning for different DOF levels  
+\end{itemize}
+
+\textbf{How Test Will Be Performed:}  
+\begin{itemize}
+    \item \DIFdelbegin \DIFdel{Measure computation time for different arm configurations  
+    }\DIFdelend \DIFaddbegin \DIFadd{Modify the number of joints in the robotic arm (2–6 DOF).
+    }\DIFaddend \item \DIFdelbegin \DIFdel{Evaluate feasibility of solutions at high DOF levels  
+}\DIFdelend \DIFaddbegin \DIFadd{For each DOF level, run the planner on a fixed obstacle set and log:
+    }\begin{itemize}
+        \item \DIFadd{Execution time.
+        }\item \DIFadd{Path success or failure.
+    }\end{itemize}
+    \item \DIFadd{Analyze whether the planner remains efficient and reliable at higher DOFs.
+}\DIFaddend \end{itemize}
+
+
+\end{enumerate}
+
+\subsection{Traceability Between Test Cases and Requirements}
+
+The traceability matrix below maps test cases to the corresponding requirements from the SRS to ensure complete coverage.
+
+\begin{table}[h!]
+  \centering
+  \caption{Traceability Matrix for System Tests}
+  \begin{tabular}{l l l}
+  \toprule
+  \textbf{Requirement} & \textbf{Test Case(s)} & \textbf{Comments} \\
+  \midrule
+  FR1: Single Obstacle Avoidance & T1 & Ensures safe navigation around obstacles \\
+  FR2: Multiple Obstacles & T2 & Tests complex environment handling \\
+  FR3: Solve Feasible IK & T3 & Verifies correct IK computations \\
+  NFR1: Accuracy & N1 & Validates end-effector positioning accuracy \\
+  NFR2: Performance & N2 & Ensures computational efficiency \\
+  \bottomrule
+  \end{tabular}
+\end{table}
+
+
+\section{Unit Test Description}
+
+Unit testing will occur once the detailed designs are finalized (see the \textbf{Module Interface Specification (MIS)}). This section outlines the general approach to module-level testing, ensuring that core functionalities perform correctly and efficiently.
+
+\subsection{Unit Testing Scope}
+
+All modules described in the \textbf{MIS} are in-scope for unit testing, except for any third-party libraries. The following modules have been identified as the highest priority:
+
+\begin{itemize}
+    \item \textbf{Inverse Kinematics (IK) Solver} -- Computes joint angles for a given target position.
+    \item \textbf{Collision Detection Module} -- Ensures that paths do not intersect obstacles.
+    \item \textbf{Path Planner Module} -- Generates valid paths based on obstacles and goal configurations.
+\end{itemize}
+
+External libraries for mathematical operations (e.g., matrix solvers) are assumed to be tested by their providers and are excluded from unit testing.
+
+\subsection{Unit Testing Strategy}
+
+The testing strategy follows a combination of:
+\begin{itemize}
+    \item \textbf{Black-box testing:} Verifying correct outputs given specific inputs.
+    \item \textbf{White-box testing:} Checking internal logic using test coverage tools.
+    \item \textbf{Edge-case testing:} Ensuring robustness for boundary conditions.
+    \item \textbf{Automated testing:} Using scripted tests for reproducibility via continuous integration (CI) with GitHub Actions.
+\end{itemize}
+
+Unit tests will be developed in Python, following the \textbf{pytest} framework, with assertions to check correctness.
+
+
+\subsection{Tests for Functional Requirements}
+
+\subsubsection{Collision Detection Module Tests}
+
+\begin{enumerate}
+\item \textbf{Test ID: U1 -- Basic Collision Detection}  
+
+\textbf{Type:} Functional, Automatic  
+
+\textbf{Initial State:} Environment with at least one circular obstacle  
+
+\textbf{Input:}  
+\begin{itemize}
+    \item A line segment representing a robot arm link.
+    \item An obstacle defined by center position and radius.
+\end{itemize}
+
+\textbf{Expected Output:}  
+\begin{itemize}
+    \item Boolean indicating whether a collision occurs.
+\end{itemize}
+
+\textbf{Test Case Derivation:}  
+\begin{itemize}
+    \item Ensures correct detection under different cases:
+    \begin{itemize}
+        \item No collision (link does not intersect obstacle)
+        \item Tangential collision (link touches the obstacle's boundary)
+        \item Full overlap (link completely inside the obstacle)
+    \end{itemize}
+\end{itemize}
+
+\textbf{How Test Will Be Performed:}  
+\begin{itemize}
+    \item Simulate known geometries.
+    \item Compare algorithm outputs with analytical results.
+\end{itemize}
+
+\end{enumerate}
+
+---
+
+\subsubsection{IK Solver Module Tests}
+
+\begin{enumerate}
+\item \textbf{Test ID: U2 -- IK Feasibility Check}  
+
+\textbf{Type:} Functional, Automatic  
+
+\textbf{Initial State:} 2-link robotic arm with fixed link lengths  
+
+\textbf{Input:}  
+\begin{itemize}
+    \item A target position in Cartesian coordinates.
+\end{itemize}
+
+\textbf{Expected Output:}  
+\begin{itemize}
+    \item A set of joint angles that place the end-effector at the target.
+\end{itemize}
+
+\textbf{Test Case Derivation:}  
+\begin{itemize}
+    \item Verifies correctness under different conditions:
+    \begin{itemize}
+        \item Target reachable within workspace.
+        \item Target at singularity points (fully extended or folded).
+        \item Target unreachable (should return failure).
+    \end{itemize}
+\end{itemize}
+
+\textbf{How Test Will Be Performed:}  
+\begin{itemize}
+    \item Compute joint angles using the IK solver.
+    \item Compare results against analytical solutions.
+    \item Verify feasibility of the computed joint angles.
+\end{itemize}
+
+\end{enumerate}
+
+
+\subsubsection{Path Planner Module Tests}
+
+\begin{enumerate}
+
+\item \textbf{Test ID: U3 -- Path Generation in Obstacle-Free Environment}  
+
+\textbf{Type:} Functional, Automatic  
+
+\textbf{Initial State:} Defined workspace with no obstacles  
+
+\textbf{Input:}  
+\begin{itemize}
+    \item Start and goal positions.
+\end{itemize}
+
+\textbf{Expected Output:}  
+\begin{itemize}
+    \item A direct path connecting start and goal.
+\end{itemize}
+
+\textbf{Test Case Derivation:}  
+\begin{itemize}
+    \item Ensures path planning works correctly when there are no obstacles.
+\end{itemize}
+
+\textbf{How Test Will Be Performed:}  
+\begin{itemize}
+    \item Run the path-planning function.
+    \item Check whether the generated path follows a direct trajectory.
+\end{itemize}
+\end{enumerate}
+
+
+\subsection{Tests for Nonfunctional Requirements}
+
+\subsubsection{Performance and Computational Efficiency}
+
+\begin{enumerate}
+
+\item \textbf{Test ID: N1 -- Performance Under Heavy Obstacle Load}  
+
+\textbf{Type:} Performance, Automatic  
+
+\textbf{Initial State:}  
+\begin{itemize}
+    \item A workspace with no obstacles (baseline).
+\end{itemize}
+
+\textbf{Input:}  
+\begin{itemize}
+    \item A varying number of obstacles (e.g., 10, 50, 100).
+\end{itemize}
+
+\textbf{Expected Output:}  
+\begin{itemize}
+    \item A table summarizing execution time for different obstacle densities.
+\end{itemize}
+
+\textbf{Test Case Derivation:}  
+\begin{itemize}
+    \item Ensures system performs within acceptable runtime limits even in complex environments.
+\end{itemize}
+
+\textbf{How Test Will Be Performed:}  
+\begin{itemize}
+    \item Profile the system using \texttt{cProfile}.
+    \item Measure time-to-solution for varying complexity levels.
+\end{itemize}
+
+\end{enumerate}
+
+
+
+\subsection{Traceability Between Test Cases and Modules}
+
+\begin{table}[h]
+    \centering
+    \caption{Traceability Matrix between Modules and Tests}
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    \textbf{Test ID} & \textbf{Module} & \textbf{Requirement Covered} & \textbf{Reference} \\
+    \hline
+    U1 & Collision Detection & Ensures collision-free motion & \href{SRS.pdf#section.4.2.3}{SRS Section 4.2.3}, \href{SRS.pdf#section.4.2.4}{4.2.4} \\
+    U2 & IK Solver & Computes valid joint angles & \href{SRS.pdf#section.4.3.2}{SRS Section 4.3.2} \\
+    U3 & Path Planner & Generates valid paths & \href{SRS.pdf#section.4.3.3}{SRS Section 4.3.3}, \href{SRS.pdf#section.4.3.4}{4.3.4} \\
+    N1 & Performance & Ensures efficient execution & \href{SRS.pdf#section.5.1}{SRS Section 5.1} \\
+    \hline
+    \end{tabular}
+    \end{table}
+
+
+
+
+\textbf{Summary:} This document outlines unit test cases for the key modules in the 2D Robot Arm Path Planning System. The testing strategy incorporates functional tests for correctness, performance tests for efficiency, and numerical tests for stability, ensuring that the system is robust and scalable.
+
+
+\bibliographystyle{plainnat}
+
+\bibliography{../../refs/References}
+\newpage
+
+
+\section{Appendix}
+
+Any symbolic constants referenced in the test cases (like tolerances or maximum obstacle counts) can be listed here for easier maintenance.
+
+\subsection{Symbolic Parameters}
+
+The definition of the test cases will call for SYMBOLIC\_CONSTANTS.
+Their values are defined in this section for easy maintenance.
+
+
+
+\newpage{}
+
+
+\end{document}
